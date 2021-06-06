@@ -1,0 +1,137 @@
+#!/usr/bin/env python
+
+import sys
+import time
+import serial
+
+import pygtk
+pygtk.require('2.0')
+import gtk, glib
+
+CAL_WEIGHT_GRAMS = 200
+
+
+class Scale(object):
+    def __init__(self, serial_port):
+        self.buff = []
+        self.offset = 0
+        self.weight = 0.0
+        self.gain = 1.0
+        self.interface = serial.Serial(
+                port=serial_port,
+                baudrate = 115200,
+                bytesize=serial.EIGHTBITS,
+                parity = serial.PARITY_NONE,
+                stopbits=serial.STOPBITS_ONE,
+                rtscts=0, xonxoff=0, timeout=1.0)
+        glib.io_add_watch(self.interface.fd, glib.IO_IN, self.read_line)
+
+        time.sleep(1)
+        self.interface.write("ver\n")
+        self.interface.write("scale on\n")
+        self.interface.write("scale on\n")
+
+    def read_line(self, source, condition):
+        val = self.interface.read(1)
+        if len(val):
+            # print 'val:', val
+            if val == '\n':
+                try:
+
+                    result = ''.join(self.buff)
+                    label, weight = result.split()
+                    result = int(''.join(weight))
+                except ValueError as err:
+                    print 'err', err, 'from {}'.format(weight)
+                else:
+                    if weight < 0:
+                        weight += (1<<24)
+                    self.weight = float(weight)
+                self.buff = []
+            else:
+                self.buff.append(val)
+        return True
+
+    def set_scaling(self):
+        if self.weight:
+            self.gain = CAL_WEIGHT_GRAMS/(float((self.weight-self.offset)))
+            print 'gain %f = CAL_WEIGHT_GRAMS(%f)/weight(%f)-self.offset(%d)'\
+                    %(self.gain, CAL_WEIGHT_GRAMS, self.weight, self.offset)
+
+    def set_zero(self):
+        self.offset = self.weight
+
+    def get_val(self):
+        unbiased = self.weight-self.offset
+        if unbiased < 0:
+            unbiased += (1<<24)
+        result = float(self.weight-self.offset)*self.gain
+        print 'raw %d (0x%x)  - offset %d: %d gain %f weight %f '\
+                %(self.weight, self.weight, self.offset, self.weight-self.offset, self.gain, result)
+        return result
+
+
+def delete_event(widget, event, data=None):
+        sys.exit(0)
+        return False
+
+TXT_SIZE=18
+
+class ScaleGui(gtk.Window):
+    def __init__(self, scale_obj):
+        self.scale_obj = scale_obj
+        self.one_weight = 200
+        gtk.Window.__init__(self, gtk.WINDOW_TOPLEVEL)
+        self.set_size_request(120, 120)
+        self.connect("delete_event", delete_event)
+        box = gtk.VBox(False, 0)
+
+        self.label = gtk.Label('<span font="%d">0</span>'%TXT_SIZE)
+        self.label.set_use_markup(True)
+        box.pack_start(self.label)
+
+        button = gtk.Button("Zero")
+        button.connect("clicked", self.set_zero)
+        box.pack_start(button)
+
+        button = gtk.Button("Cal")
+        button.connect("clicked", self.set_cal)
+        box.pack_start(button)
+
+        button = gtk.Button("One")
+        button.connect("clicked", self.set_count)
+        box.pack_start(button)
+
+        self.count = gtk.Label('<span font="%d">0</span>'%TXT_SIZE)
+        self.count.set_use_markup(True)
+        box.pack_start(self.count)
+
+        self.add(box)
+        self.show_all()
+        glib.timeout_add_seconds(1, self.update)
+
+    def set_zero(self, widget):
+        self.scale_obj.set_zero()
+
+    def set_cal(self, widget):
+        self.scale_obj.set_scaling()
+
+    def set_count(self, widget):
+        val = self.scale_obj.get_val()
+        self.one_weight = val
+
+
+    def update(self):
+        val = self.scale_obj.get_val()
+        self.label.set_text('<span font="%d">%f</span>'%(TXT_SIZE,val))
+        self.label.set_use_markup(True)
+
+        count = int(round(val / self.one_weight))
+        self.count.set_text('<span font="%d">%d</span>'%(TXT_SIZE, count))
+        self.count.set_use_markup(True)
+        return True
+
+if __name__ == '__main__':
+    scale = Scale(sys.argv[1])
+    scaleGui = ScaleGui(scale)
+    gtk.main()
