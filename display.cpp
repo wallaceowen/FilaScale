@@ -9,20 +9,17 @@ static TFT_eSPI tft = TFT_eSPI();       // Invoke custom library
 Display::Display(void)
     : m_callback_count(0)
 {
+  memset(m_callbacks, 0, sizeof(m_callbacks));
   tft.init();
   tft.setRotation(0);
   tft.fillScreen(TFT_BLACK);
 }
 
-DisplayCallback::DisplayCallback()
-{
-}
-
-bool Display::add_callback(DisplayCallback *cb)
+bool Display::add_callback(const CallbackData &cd)
 {
     if (m_callback_count < MAX_CALLBACKS)
     {
-        m_callbacks[m_callback_count] = cb;
+        m_callbacks[m_callback_count] = cd;
         ++m_callback_count;
         return true;
     }
@@ -31,11 +28,14 @@ bool Display::add_callback(DisplayCallback *cb)
 
 void Display::loop()
 {
-    static int iteration = 1;
+    static unsigned iteration = 0;
 
-    if (m_callback_count >= iteration)
+    if (m_callback_count > iteration)
     {
-        m_callbacks[iteration]->operator()(this);
+        CallbackData &cd = m_callbacks[iteration];
+        cd.cb(this, cd.user);
     }
+    else
+        iteration = 0;
 }
 
