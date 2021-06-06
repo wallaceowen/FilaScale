@@ -28,9 +28,20 @@ Control::Control(Scale &scale, Display &display, BME280_IF &bme280, Protocol &pr
 
 void Control::show_state()
 {
+    // ...
+    m_mode = M_Update_State;
+}
+void Control::update_state()
+{
 }
 
 void Control::show_menu()
+{
+    // ...
+    m_mode = M_Update_Menu;
+}
+
+void Control::update_menu()
 {
 }
 
@@ -54,8 +65,16 @@ void Control::loop()
             show_state();
             break;
 
+        case M_Update_State:
+            update_state();
+            break;
+
         case M_Show_Menu:
             show_menu();
+            break;
+
+        case M_Update_Menu:
+            update_menu();
             break;
 
         case M_Adjust_BME:
