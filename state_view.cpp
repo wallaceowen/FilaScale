@@ -28,7 +28,7 @@
 #define BUTTON_GAP 2
 
 uint16_t button_colors[] = {TFT_OLIVE, TFT_BLUE, TFT_RED };
-const char *button_labels[] = {"Scale", "Filament", "STOP" };
+const char *button_labels[] = {"Scale", "Drying", "STOP" };
 
 /* State view layout:
  *-------------------------------------+
