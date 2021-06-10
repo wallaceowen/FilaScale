@@ -36,18 +36,24 @@ class Scale(object):
         if len(val):
             # print 'val:', val
             if val == '\n':
-                try:
-
+                if len(self.buff):
                     result = ''.join(self.buff)
-                    label, weight = result.split()
-                    result = int(''.join(weight))
-                except ValueError as err:
-                    print 'err', err, 'from {}'.format(weight)
-                else:
-                    if weight < 0:
-                        weight += (1<<24)
-                    self.weight = float(weight)
-                self.buff = []
+                    result = result.strip()
+                    # print("Received {} (\"{}\"".format(self.buff, result))
+                    try:
+                        label, weightstr = result.split()
+                    except ValueError as err:
+                        print 'err', err, 'from {}'.format(result)
+                    else:
+                        try:
+                            weight = int(''.join(weightstr))
+                        except ValueError as err:
+                            print 'err', err, 'from weightstr {}'.format(weightstr)
+                        else:
+                            if weight < 0:
+                                weight += (1<<24)
+                            self.weight = float(weight)
+                    self.buff = []
             else:
                 self.buff.append(val)
         return True

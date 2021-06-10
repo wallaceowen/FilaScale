@@ -13,16 +13,22 @@
 
 #define MSGLEN 16
 
-int32_t Scale::get_value(void) const
+int32_t Scale::get_raw(void) const
 {
     return m_averager.average();
+}
+
+float Scale::get_calibrated(void) const
+{
+    return (m_raw-m_offset)*m_gain;
 }
 
 Scale::Scale(void) :
     m_hx711(HX711::G_B32),
     m_report_weight(false),
-    m_scale_offset(0),
-    m_scale_gain(1.0)
+    m_raw(0),
+    m_offset(0),
+    m_gain(1.0)
 {
 }
 
@@ -33,6 +39,6 @@ void Scale::loop(void)
 
     m_hx711.wait_for_ready();
     int32_t value = m_hx711.read();
-    m_averager.average(value);
+    m_raw = m_averager.average(value);
 }
 

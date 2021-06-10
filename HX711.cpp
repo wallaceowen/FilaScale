@@ -3,9 +3,7 @@
 #include <Arduino.h>
 #include "HX711.h"
 #include "Averager.h"
-
-#define PD_SCK_PIN D3
-#define PD_DOUT_PIN D4
+#include "ports.h"
 
 void init_spi()
 {

@@ -2,10 +2,13 @@
 #ifndef __control_h
 #define __control_h
 
+#include <stdint.h>
+
 #include "bme280_if.h"
 #include "display.h"
 #include "protocol.h"
 #include "scale.h"
+#include "state_view.h"
 
 class Control
 {
@@ -24,10 +27,13 @@ private:
 
     static void disp_callback_func(Display *d, void *user);
     void disp_callback(Display *d);
+    static void touch_callback_func(Display *d, void *user, uint16_t x, uint16_t y);
+    void touch_callback(Display *d, uint16_t x, uint16_t y);
 
     Mode m_mode;
     Scale &m_scale;
     Display &m_display;
+    StateView &m_state_view;
     BME280_IF &m_bme280;
     Protocol &m_protocol;
 };

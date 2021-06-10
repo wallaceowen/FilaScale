@@ -15,18 +15,20 @@ public:
 
     void loop();
     void report_weight(bool state);
-    int32_t get_value(void) const;
-    void set_offset(int32_t off) { m_scale_offset = off; }
+    int32_t get_raw(void) const;
+    float get_calibrated(void) const;
+    void set_offset(void) { m_offset = m_raw; }
     void set_gain()
     {
-        m_scale_gain = CAL_WEIGHT_GRAMS/(float((this->get_value()-this->m_scale_offset)));
+        m_gain = CAL_WEIGHT_GRAMS/(float((this->get_raw()-this->m_offset)));
     }
 
 private:
     HX711 m_hx711;
     bool m_report_weight;
-    int32_t m_scale_offset;
-    double m_scale_gain;
+    int32_t m_raw;
+    int32_t m_offset;
+    double m_gain;
     Averager m_averager;
 };
 

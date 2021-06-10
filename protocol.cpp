@@ -91,13 +91,13 @@ static void scale_func(Protocol *p, char *cmd, size_t &offset)
     if (!strcasecmp(val, "on"))
         report_weight = true;
     if (!strcasecmp(val, "zero"))
-        p->scale().set_offset(p->scale().get_value());
+        p->scale().set_offset();
     else if (!strcasecmp(val, "gain"))
         p->scale().set_gain();
     else if (!strcasecmp(val, "off"))
         report_weight = false;
     else if (!strcasecmp(val, "value"))
-        show_weight(p->scale().get_value());
+        show_weight(p->scale().get_calibrated());
 }
 
 // Show the commands
@@ -133,9 +133,85 @@ static void show_commands()
     Serial.println("*case is ignored.\r\n");
 }
 
+#if 0
 void Protocol::loop(void)
 {
+    size_t cmd_offset = 0;
+    static char cmd_buffer[MSGLEN];
 
+    int result = get_command(cmd_buffer, sizeof(cmd_buffer), cmd_offset);
+    if (result == -1)
+    {
+        Serial.print("bad command "); 
+        Serial.println(cmd_buffer); 
+        memset(cmd_buffer, 0, sizeof(cmd_buffer));
+        cmd_offset = 0;
+    }
+    else if (result == 1)
+    {
+        bool found = false;
+        for (size_t cnum = 0; cnum < NUM_CMDS; ++cnum)
+        {
+            size_t offset = 0;
+            char *tok = get_tok(cmd_buffer, offset);
+            if (!strcasecmp(commands[cnum].cmd, tok))
+            {
+                found = true;
+                commands[cnum].func(this, cmd_buffer, offset);
+                break;
+            }
+        }
+
+        if (!found)
+            Serial.println("Unknown command.");
+    }
+}
+#endif
+
+void Protocol::loop(void)
+{
+    static size_t cmd_offset{0};
+    static char cmd_buffer[MSGLEN];
+    static bool initialized {false};
+
+    if (!initialized)
+    {
+        cmd_offset = 0U;
+        memset(cmd_buffer, 0, MSGLEN);
+        initialized = true;
+    }
+
+    int result = get_command(cmd_buffer, sizeof(cmd_buffer), cmd_offset);
+    if (result == -1)
+    {
+        // Serial.print("bad command "); 
+        // Serial.println(cmd_buffer); 
+        memset(cmd_buffer, 0, sizeof(cmd_buffer));
+        cmd_offset = 0;
+    }
+    else if (result == 1)
+    {
+        bool found = false;
+        for (size_t cnum = 0; cnum < NUM_CMDS; ++cnum)
+        {
+            size_t offset = 0;
+            char *tok = get_tok(cmd_buffer, offset);
+            if (!strcasecmp(commands[cnum].cmd, tok))
+            {
+                found = true;
+                commands[cnum].func(this, cmd_buffer, offset);
+                break;
+            }
+        }
+
+        if (!found)
+            Serial.println("Unknown command.");
+    }
+}
+
+#if 0
+void Protocol::loop(void)
+{
     size_t cmd_offset = 0;
     char cmd_buffer[MSGLEN];
 
@@ -169,4 +245,5 @@ void Protocol::loop(void)
         }
     }
 }
+#endif
 
