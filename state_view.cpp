@@ -24,6 +24,12 @@
 #define BORDER_THICKNESS 5
 #define MARGIN BORDER_THICKNESS+2
 
+#define BUTTONS_Y 120
+#define BUTTON_GAP 2
+
+uint16_t button_colors[] = {TFT_OLIVE, TFT_BLUE, TFT_RED };
+const char *button_labels[] = {"Scale", "Filament", "STOP" };
+
 /* State view layout:
  *-------------------------------------+
  *          F I L A S C A L E          *
@@ -34,7 +40,6 @@
  *                                     *
  *-------------------------------------+
  */
-
 
 StateView::StateView(Display &d) :
     m_display(d),
@@ -68,7 +73,20 @@ StateView::StateView(Display &d) :
     ++line;
     tft.drawString("WEIGHT", MARGIN, tft.fontHeight(STATE_FONT)*line+MARGIN, STATE_FONT);
 
+    uint16_t button_width = tft.width() / NUM_BUTTONS - (BUTTON_GAP*(NUM_BUTTONS-1));
+
     // Show the buttons
+    for (int i = 0; i < NUM_BUTTONS; ++i)
+    {
+        uint16_t bx = button_width*i;
+        if (i)
+            bx += BUTTON_GAP;
+        Button *b = new Button( Rect(bx, BUTTONS_Y, button_width, tft.height()-BUTTONS_Y),
+                button_colors[i],
+                button_labels[i]);
+        buttons[i] = b;
+        b->draw(m_display);
+    }
 
     // Set up to be told of hits to our buttons
 
@@ -97,7 +115,23 @@ bool StateView::update_state(Scale &scale, BME280_IF &bme)
 
 void StateView::touch_callback(Display *d, uint16_t x, uint16_t y)
 {
-    Serial.println("StateView got touch callback");
+    // Serial.print("StateView got touch callback. x: ");
+    // Serial.print(x);
+    // Serial.print(", y: ");
+    // Serial.println(y);
+
+    // Serial.println("checking buttons");
+    for (int i = 0; i < NUM_BUTTONS; ++i)
+    {
+        if (buttons[i]->pressed(x, y))
+        {
+            Serial.print("Button ");
+            Serial.print(buttons[i]->label);
+            Serial.println(" pressed");
+        }
+    }
+
+    // d->calibrate();
 }
 
 void StateView::touch_callback_func(Display *d, void *user, uint16_t x, uint16_t y)

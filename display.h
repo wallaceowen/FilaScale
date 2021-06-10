@@ -29,11 +29,12 @@ public:
     bool add_callback(const CallbackData&);
     unsigned num_cb(void) { return m_callback_count; }
     TFT_eSPI& get_tft(void);
+    void calibrate(void);
 
 
 private:
     void invoke_callbacks(uint16_t x, uint16_t y);
-    bool check_touch(void);
+    void check_touch(void);
     CallbackData m_callbacks[MAX_CALLBACKS];
     unsigned m_callback_count;
 };

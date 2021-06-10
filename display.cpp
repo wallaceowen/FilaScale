@@ -6,6 +6,9 @@
 
 static TFT_eSPI tft = TFT_eSPI();       // Invoke custom library
 
+// uint16_t cal_params[5] = { 469, 2616, 598, 1790, 7 };
+uint16_t cal_params[5] = { 414, 3054, 602, 2863, 7 };
+
 Display::Display(void)
     : m_callback_count(0)
 {
@@ -13,6 +16,7 @@ Display::Display(void)
   tft.init();
   tft.setRotation(0);
   tft.fillScreen(TFT_BLACK);
+  tft.setTouch(cal_params);
 }
 
 TFT_eSPI& Display::get_tft(void)
@@ -44,7 +48,7 @@ void Display::invoke_callbacks(uint16_t x, uint16_t y)
         iteration = 0;
 }
 
-void calibrate()
+void Display::calibrate(void)
 {
     uint16_t touch_parameters[5];
     tft.calibrateTouch(touch_parameters, TFT_YELLOW, TFT_MAROON, 20);
@@ -58,7 +62,7 @@ void calibrate()
     Serial.println("");
 }
 
-bool Display::check_touch(void)
+void Display::check_touch(void)
 {
     uint16_t x, y;
     auto result = tft.getTouch(&x, &y);
@@ -68,9 +72,9 @@ bool Display::check_touch(void)
     }
 }
 
-void Display::loop()
+void Display::loop(void)
 {
-    Serial.println("Display::loop()");
-    // invoke_callbacks();
+    // Serial.println("Display::loop()");
+    check_touch();
     // calibrate();
 }
