@@ -13,12 +13,13 @@
 struct Thresholds
 {
     char name[16];
-    float low;
-    float high;
+    float high_temp;
+    float high_humidity;
     float dry_temp;
+    float low_filament_grams;
 };
 
-extern Thresholds thresholds[MAX_THRESHOLDS];
+extern const Thresholds thresholds[MAX_THRESHOLDS];
 extern uint16_t num_thresholds;
 
 #endif
