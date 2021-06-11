@@ -33,17 +33,6 @@
 uint16_t button_colors[] = {TFT_OLIVE, TFT_BLUE, TFT_RED };
 const char *button_labels[] = {"Scale", "Drying", "STOP" };
 
-/* State view layout:
- *-------------------------------------+
- *          F I L A S C A L E          *
- *                                     *
- * TEMP            90f 34c             *
- * Humidity        10 %                *
- * Filament       250 g                *
- *                                     *
- *-------------------------------------+
- */
-
 StateView::StateView(Display &d, Scale &s, BME280_IF &b) :
     View(d),
     m_display(d),
