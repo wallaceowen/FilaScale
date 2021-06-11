@@ -17,8 +17,7 @@ public:
     Control(Scale &scale, Display &display, BME280_IF &bme280, Protocol &protocol);
     void loop();
 private:
-    void show_state();
-    void update_state();
+    // void update_state();
     void show_menu();
     void update_menu();
     void adjust_bme();
@@ -32,9 +31,9 @@ private:
 
     Mode m_mode;
     Scale &m_scale;
+    BME280_IF &m_bme280;
     Display &m_display;
     StateView &m_state_view;
-    BME280_IF &m_bme280;
     Protocol &m_protocol;
 };
 

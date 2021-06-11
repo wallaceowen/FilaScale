@@ -29,9 +29,9 @@ void Control::touch_callback_func(Display *d, void *user, uint16_t x, uint16_t y
 Control::Control(Scale &scale, Display &display, BME280_IF &bme280, Protocol &protocol) :
     m_mode(M_Show_State),
     m_scale(scale),
-    m_display(display),
-    m_state_view(*new(state_buff) StateView(m_display)),
     m_bme280(bme280),
+    m_display(display),
+    m_state_view(*new(state_buff) StateView(m_display, m_scale, m_bme280)),
     m_protocol(protocol)
 {
     CallbackData cd;
@@ -40,25 +40,19 @@ Control::Control(Scale &scale, Display &display, BME280_IF &bme280, Protocol &pr
     m_display.add_callback(cd);
 }
 
-void Control::show_state()
-{
-    m_state_view.render();
-}
-void Control::update_state()
-{
-    static auto future = 0;
-    auto now = millis();
+// void Control::update_state()
+// {
+    // static auto future = 0;
+    // auto now = millis();
 
-    // bool changed = m_state_view.update_state(m_scale, m_bme280);
-    m_state_view.update_state(m_scale, m_bme280);
-    // if (changed)
+    // m_state_view.loop();
 
-    if (now > future)
-    {
-        future = now+500;
-        m_state_view.render();
-    }
-}
+    // if (now > future)
+    // {
+        // future = now+500;
+        // m_state_view.render();
+    // }
+// }
 
 void Control::show_menu()
 {
@@ -86,12 +80,12 @@ void Control::loop()
     switch(m_mode)
     {
         case M_Show_State:
-            show_state();
+            m_state_view.show();
             m_mode = M_Update_State;
             break;
 
         case M_Update_State:
-            update_state();
+            m_state_view.loop();
             break;
 
         case M_Show_Menu:

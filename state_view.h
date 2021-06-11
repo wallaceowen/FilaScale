@@ -6,25 +6,36 @@
 #include "display.h"
 #include "button.h"
 #include "scale.h"
-// #include "view.h"
+#include "view.h"
 #include "bme280_if.h"
 
 #define NUM_BUTTONS 3
 
 // class StateView: public View
-class StateView
+class StateView: public View
 {
 public:
-    StateView(Display&);
+    StateView(Display&, Scale &s, BME280_IF &b);
+    // loop only called when this view is active
     void loop();
-    void render();
-    bool update_state(Scale &scale, BME280_IF &bme);
-private:
-    void draw_state();
-    static void touch_callback_func(Display *d, void *user, uint16_t x, uint16_t y);
+
+    // void render();
+    void show();
+
+    bool update();
+
+    // void touch_callback_func(Display *d, void *user, uint16_t x, uint16_t y);
     void touch_callback(Display *d, uint16_t x, uint16_t y);
 
+protected:
+
+private:
+
+    void draw_state();
+
     Display &m_display;
+    Scale &m_scale;
+    BME280_IF &m_bme;
     Button *buttons[NUM_BUTTONS];
     float m_temp;
     float m_humid;

@@ -12,11 +12,11 @@ uint16_t cal_params[5] = { 414, 3054, 602, 2863, 7 };
 Display::Display(void)
     : m_callback_count(0)
 {
-  memset(m_callbacks, 0, sizeof(m_callbacks));
-  tft.init();
-  tft.setRotation(0);
-  tft.fillScreen(TFT_BLACK);
-  tft.setTouch(cal_params);
+    memset(m_callbacks, 0, sizeof(m_callbacks));
+    tft.init();
+    tft.setRotation(ROTATION);
+    tft.fillScreen(TFT_BLACK);
+    tft.setTouch(cal_params);
 }
 
 TFT_eSPI& Display::get_tft(void)

@@ -5,6 +5,27 @@
 #include <stdint.h>
 #include <TFT_eSPI.h> // Hardware-specific library
 
+#define LANDSCAPE_ORIENTATION
+
+#ifdef LANDSCAPE_ORIENTATION
+#define ROTATION 3
+#define WIDTH 320
+#define HEIGHT 240
+#define VALUES_X 160
+#define STATE_FONT 4
+#else
+#define ROTATION 2
+#define WIDTH 240
+#define HEIGHT 320
+#define VALUES_X 100
+#define STATE_FONT 4
+#endif
+
+
+#define BORDER_THICKNESS 5
+#define MARGIN BORDER_THICKNESS+2
+
+
 class Display;
 
 #define MAX_CALLBACKS 10

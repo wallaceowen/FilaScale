@@ -4,6 +4,8 @@
 
 #include "state_view.h"
 
+// moved to display.h
+#if 0
 #define LANDSCAPE_ORIENTATION
 
 #ifdef LANDSCAPE_ORIENTATION
@@ -23,6 +25,7 @@
 
 #define BORDER_THICKNESS 5
 #define MARGIN BORDER_THICKNESS+2
+#endif
 
 #define BUTTONS_Y 120
 #define BUTTON_GAP 2
@@ -41,21 +44,28 @@ const char *button_labels[] = {"Scale", "Drying", "STOP" };
  *-------------------------------------+
  */
 
-StateView::StateView(Display &d) :
+StateView::StateView(Display &d, Scale &s, BME280_IF &b) :
+    View(d),
     m_display(d),
+    m_scale(s),
+    m_bme(b),
     m_temp(0.0),
     m_humid(0.0),
     m_weight(0.0),
     m_full_weight(0.0)
 {
+    // TFT_eSPI &tft = m_display.get_tft();
+    // tft.setRotation(ROTATION);
+
+    this->show();
+
+    // Set up to be told of hits to our buttons
+}
+
+// Show the static part of the view
+void StateView::show()
+{
     TFT_eSPI &tft = m_display.get_tft();
-    tft.setRotation(ROTATION);
-
-    CallbackData cd;
-    cd.cb = touch_callback_func;
-    cd.user = this;
-    m_display.add_callback(cd);
-
 
     // Draw our box
     tft.fillRect(0, 0, WIDTH-1, HEIGHT-1, TFT_WHITE);
@@ -88,29 +98,39 @@ StateView::StateView(Display &d) :
         b->draw(m_display);
     }
 
-    // Set up to be told of hits to our buttons
-
+    // Now show the state
+    draw_state();
 }
 
-bool StateView::update_state(Scale &scale, BME280_IF &bme)
+// Update the state we render.  Side-effect: maintain changed,
+// used to know whether to update the gui from the updated values
+bool StateView::update(void)
 {
     bool changed = false;
-    if (scale.get_calibrated() != m_weight)
+    if (m_scale.get_calibrated() != m_weight)
     {
-        m_weight = scale.get_calibrated();
+        m_weight = m_scale.get_calibrated();
         changed = true;
     }
-    if (bme.temp() != m_temp)
+    if (m_bme.temp() != m_temp)
     {
-        m_temp = bme.temp();
+        m_temp = m_bme.temp();
         changed = true;
     }
-    if (bme.humid() != m_humid)
+    if (m_bme.humid() != m_humid)
     {
-        m_humid = bme.humid();
+        m_humid = m_bme.humid();
         changed = true;
     }
     return changed;
+}
+
+void StateView::loop()
+{
+    if (update())
+    {
+        draw_state();
+    }
 }
 
 void StateView::touch_callback(Display *d, uint16_t x, uint16_t y)
@@ -134,12 +154,14 @@ void StateView::touch_callback(Display *d, uint16_t x, uint16_t y)
     // d->calibrate();
 }
 
-void StateView::touch_callback_func(Display *d, void *user, uint16_t x, uint16_t y)
-{
-    StateView *state_view = reinterpret_cast<StateView*>(user);
-    state_view->touch_callback(d, x, y);
-}
+// void StateView::touch_callback_func(Display *d, void *user, uint16_t x, uint16_t y)
+// {
+    // StateView *state_view = reinterpret_cast<*>(user);
+    // state_view->touch_callback(d, x, y);
+// }
 
+// Update the state on the screen with the latest values we hold.
+// Only called when the state has changed.
 void StateView::draw_state()
 {
     TFT_eSPI &tft = m_display.get_tft();
@@ -184,11 +206,9 @@ void StateView::draw_state()
     ++line;
 }
 
-
-void StateView::render()
-{
-    TFT_eSPI &tft = m_display.get_tft();
-
-    draw_state();
-}
+// void StateView::render()
+// {
+    // // TFT_eSPI &tft = m_display.get_tft();
+    // draw_state();
+// }
 
