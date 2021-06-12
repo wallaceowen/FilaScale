@@ -23,9 +23,9 @@ bool View::update()
 {
 }
 
-void View::touch_callback_func(Display *d, void *user, uint16_t x, uint16_t y)
+void View::touch_callback_func(Display *d, void *user, uint16_t x, uint16_t y, bool pressed)
 {
     View *view = reinterpret_cast<View*>(user);
-    view->touch_callback(d, x, y);
+    view->touch_callback(d, x, y, pressed);
 }
 

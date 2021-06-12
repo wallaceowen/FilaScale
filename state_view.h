@@ -25,7 +25,10 @@ public:
     bool update();
 
     // void touch_callback_func(Display *d, void *user, uint16_t x, uint16_t y);
-    void touch_callback(Display *d, uint16_t x, uint16_t y);
+    void touch_callback(Display *d, uint16_t x, uint16_t y, bool pressed);
+
+    void active(bool v) { m_active = v; }
+    bool active(void) const { return m_active; }
 
 protected:
 
@@ -37,6 +40,7 @@ private:
     Scale &m_scale;
     BME280_IF &m_bme;
     Button *buttons[NUM_BUTTONS];
+    bool m_active;
     float m_temp;
     float m_humid;
     float m_weight;

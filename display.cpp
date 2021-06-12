@@ -9,14 +9,16 @@ static TFT_eSPI tft = TFT_eSPI();       // Invoke custom library
 // uint16_t cal_params[5] = { 469, 2616, 598, 1790, 7 };
 uint16_t cal_params[5] = { 414, 3054, 602, 2863, 7 };
 
-Display::Display(void)
-    : m_callback_count(0)
+Display::Display(void) :
+    m_touch_state(false),
+    m_callback_count(0)
 {
     memset(m_callbacks, 0, sizeof(m_callbacks));
     tft.init();
     tft.setRotation(ROTATION);
     tft.fillScreen(TFT_BLACK);
     tft.setTouch(cal_params);
+    // tft.setTextPadding(5);
 }
 
 TFT_eSPI& Display::get_tft(void)
@@ -35,14 +37,14 @@ bool Display::add_callback(const CallbackData &cd)
     return false;
 }
 
-void Display::invoke_callbacks(uint16_t x, uint16_t y)
+void Display::invoke_callbacks(uint16_t x, uint16_t y, bool pressed)
 {
     static unsigned iteration = 0;
 
     if (m_callback_count > iteration)
     {
         CallbackData &cd = m_callbacks[iteration];
-        cd.cb(this, cd.user, x, y);
+        cd.cb(this, cd.user, x, y, pressed);
     }
     else
         iteration = 0;
@@ -68,7 +70,20 @@ void Display::check_touch(void)
     auto result = tft.getTouch(&x, &y);
     if (result)
     {
-        invoke_callbacks(x, y);
+        if (!m_touch_state)
+        {
+            m_touch_state=true;
+            invoke_callbacks(x, y, m_touch_state);
+        }
+    }
+    else
+    {
+        if (m_touch_state)
+        {
+            tft.last_touched(x, y);
+            m_touch_state = false;
+            invoke_callbacks(x, y, m_touch_state);
+        }
     }
 }
 

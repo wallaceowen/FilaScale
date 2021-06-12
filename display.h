@@ -30,13 +30,15 @@ class Display;
 
 #define MAX_CALLBACKS 10
 
-typedef void (*DisplayCallbackFunc)(Display *d, void *user);
-typedef void (*TouchCallbackFunc)(Display *d, void *user, uint16_t x, uint16_t y);
+typedef void (*TouchCallbackFunc)(
+        Display *d,
+        void *user,
+        uint16_t x,
+        uint16_t y,
+        bool pressed);
 
 struct CallbackData
 {
-    // CallbackData(DisplayCallbackFunc c, void *u) : cb(c), user(u) { }
-
     TouchCallbackFunc cb;
     void *user;
 };
@@ -54,8 +56,10 @@ public:
 
 
 private:
-    void invoke_callbacks(uint16_t x, uint16_t y);
+    void invoke_callbacks(uint16_t x, uint16_t y, bool pressed);
     void check_touch(void);
+
+    bool m_touch_state;
     CallbackData m_callbacks[MAX_CALLBACKS];
     unsigned m_callback_count;
 };

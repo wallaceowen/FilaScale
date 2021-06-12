@@ -19,12 +19,13 @@ Button::Button(const Rect &r, int c, const char *l)
 bool Button::draw(Display &d)
 {
     TFT_eSPI &tft = d.get_tft();
+    int16_t height = tft.fontHeight(BUTTON_FONT);
     tft.fillRoundRect(rect.x, rect.y, rect.w, rect.h, BUTTON_RADIUS, color);
     tft.setTextColor(TFT_WHITE);
     tft.setTextDatum(TL_DATUM);
     int16_t t_width = tft.textWidth(label, BUTTON_FONT);
     int32_t label_x = rect.x+(rect.w/2)-(t_width/2);
-    int32_t label_y = rect.y+(rect.h/2);
+    int32_t label_y = rect.y+(rect.h/2)-height/2;
     tft.drawString(label, label_x, label_y, BUTTON_FONT);
 }
 
