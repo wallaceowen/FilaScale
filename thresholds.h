@@ -8,18 +8,25 @@
 
 #include <stdint.h>
 
-#define MAX_THRESHOLDS 5
+#define MAX_THRESHOLDS 25
 
-struct Thresholds
+struct Threshold
 {
     char name[16];
-    float high_temp;
-    float high_humidity;
-    float dry_temp;
-    float low_filament_grams;
+    float low;
+    float high;
+    float optimal;
 };
 
-extern const Thresholds thresholds[MAX_THRESHOLDS];
-extern uint16_t num_thresholds;
+class Thresholds
+{
+public:
+    Thresholds();
+    bool add_threshold(const Threshold& rhs);
+
+private:
+    static Threshold ms_thresholds[MAX_THRESHOLDS];
+    uint16_t m_num_thresholds;
+};
 
 #endif

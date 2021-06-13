@@ -5,11 +5,27 @@
 
 #include "thresholds.h"
 
-const Thresholds thresholds[MAX_THRESHOLDS] = {
-    {"PLA", 4.0, 33.09, 50.0, 40.0 },
-    {"ASA", 4.0, 33.09, 90, 40.0 },
-    {"Nylon", 4.0, 33.09, 90, 40.0 },
+Threshold Thresholds::ms_thresholds[MAX_THRESHOLDS] = {
+    {"PLA-DRYTEMP", 0.0, 90.0, 50.0 },
+    {"ASA-DRYTEMP", 0.0, 90.0, 90.0 },
+    {"Nylon-DRYTEMP", 0.0, 90.0, 40.0 },
 };
 
-uint16_t num_thresholds = 10;
+#define NUM_THRESHOLDS (sizeof(ms_thresholds)/sizeof(ms_thresholds[0]))
 
+Thresholds::Thresholds()
+    : m_num_thresholds(NUM_THRESHOLDS)
+{
+}
+
+bool Thresholds::add_threshold(const Threshold& rhs)
+{
+    if (m_num_thresholds < (NUM_THRESHOLDS-1))
+    {
+        // struct assignment
+        ms_thresholds[m_num_thresholds] = rhs;
+        ++m_num_thresholds;
+        return true;
+    }
+    return false;
+}

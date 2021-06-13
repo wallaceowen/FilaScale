@@ -6,10 +6,23 @@
 
 #define UPDATE_INTERVAL 250
 #define STATE_Y 40
-#define BUTTONS_Y 190
-#define BUTTONS_HEIGHT 40
+
+#define HORIZ_BUTTONS
+#ifdef HORIZ_BUTTONS
+#define MENU_X 4
+#define MENU_Y 190
+#define MENU_HEIGHT 40
+#define MENU_WIDTH 320
+#define STATE_MENU_ORIENT Menu::O_Horiz
+#else
+#define MENU_X 4
+#define MENU_Y 4
+#define MENU_HEIGHT 120
+#define MENU_WIDTH 96
+#define STATE_MENU_ORIENT Menu::O_Vert
+#endif
+
 #define BUTTON_GAP 2
-#define BUTTONS_START 4
 #define R_MARGIN 10
 
 #define WIDTH 320
@@ -19,26 +32,30 @@
 #define BORDER_THICKNESS 5
 #define MARGIN BORDER_THICKNESS+2
 
+#define SCREEN_BG TFT_BLACK
+#define VALUE_BG TFT_BLACK
+#define TEXT_BG TFT_WHITE
+
 // #define DEBUG_TOUCH
 
 uint16_t button_colors[NUM_BUTTONS] = {TFT_PURPLE, TFT_BLUE, TFT_RED };
 const char *button_labels[NUM_BUTTONS] = {"Scale", "Drying", "STOP" };
 
 ButtonData state_menu_button_data[] = {
-    ButtonData("SETUP", TFT_PURPLE, TFT_WHITE),
-    ButtonData("REPORT", TFT_ORANGE, TFT_WHITE),
+    ButtonData("CFG", TFT_PURPLE, TFT_WHITE),
+    ButtonData("CAL", TFT_GREEN, TFT_BLACK),
+    ButtonData("CONN", TFT_ORANGE, TFT_WHITE),
     ButtonData("STOP", TFT_RED, TFT_WHITE)
 };
 
-#define NUM_STATE_BUTTONS 3
-#define STATE_MENU_ORIENT Menu::O_Horiz
+#define NUM_STATE_BUTTONS (sizeof(state_menu_button_data)/sizeof(state_menu_button_data[0]))
 
 StateView::StateView(Display &d, Scale &s, BME280_IF &b) :
     View(d),
     m_display(d),
     m_menu(
             d,
-            Rect(BUTTONS_START, BUTTONS_Y, m_display.get_tft().width(), BUTTONS_HEIGHT),
+            Rect(MENU_X, MENU_Y, MENU_WIDTH, MENU_HEIGHT),
             state_menu_button_data, NUM_STATE_BUTTONS, STATE_MENU_ORIENT),
     m_scale(s),
     m_bme(b),
@@ -72,7 +89,7 @@ void StateView::show()
     TFT_eSPI &tft = m_display.get_tft();
 
     // Fill screen with dark grey
-    tft.fillRect(0, 0, WIDTH, HEIGHT, TFT_DARKGREY);
+    tft.fillRect(0, 0, WIDTH, HEIGHT, SCREEN_BG);
 
     // Show the view name and our field names
     tft.setTextColor(TFT_WHITE);
@@ -152,7 +169,7 @@ void StateView::draw_state()
     TFT_eSPI &tft = m_display.get_tft();
     char value_buffer[45];
     // tft.setTextColor(TFT_DARKGREEN);
-    tft.setTextColor(TFT_BLACK);
+    tft.setTextColor(TEXT_BG);
     int line = 1;
 
     sprintf(value_buffer, "%3.1f°C %3.1f°F", m_temp, (m_temp*9/5.0+32.0));
@@ -162,7 +179,7 @@ void StateView::draw_state()
             tft.fontHeight(STATE_FONT)*line+BORDER_THICKNESS+STATE_Y,
             width,
             tft.fontHeight(STATE_FONT)+BORDER_THICKNESS,
-            TFT_LIGHTGREY);
+            VALUE_BG);
     tft.drawString(value_buffer, VALUES_X, tft.fontHeight(STATE_FONT)*line+BORDER_THICKNESS+STATE_Y, STATE_FONT);
     ++line;
 
@@ -172,7 +189,7 @@ void StateView::draw_state()
             tft.fontHeight(STATE_FONT)*line+BORDER_THICKNESS+STATE_Y,
             width,
             tft.fontHeight(STATE_FONT)+BORDER_THICKNESS,
-            TFT_LIGHTGREY);
+            VALUE_BG);
     tft.drawString(value_buffer, VALUES_X, tft.fontHeight(STATE_FONT)*line+BORDER_THICKNESS+STATE_Y, STATE_FONT);
     ++line;
 
@@ -182,7 +199,7 @@ void StateView::draw_state()
             tft.fontHeight(STATE_FONT)*line+BORDER_THICKNESS+STATE_Y,
             width,
             tft.fontHeight(STATE_FONT)+BORDER_THICKNESS,
-            TFT_LIGHTGREY);
+            VALUE_BG);
     tft.drawString(value_buffer, VALUES_X, tft.fontHeight(STATE_FONT)*line+BORDER_THICKNESS+STATE_Y, STATE_FONT);
     ++line;
 }

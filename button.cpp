@@ -7,6 +7,8 @@
 #define BUTTON_FONT 4
 #define BUTTON_RADIUS 10
 
+static char dbg_buffer[72];
+
 ButtonData::ButtonData(const char *l, uint16_t pc, uint16_t ptc) :
     label(l),
     color(pc),
@@ -20,6 +22,9 @@ Button::Button(const char *l, const Rect &r, uint16_t c, uint16_t tc) :
     color(c),
     txt_color(tc)
 {
+    // sprintf(dbg_buffer, "\"%s\" created at %d, %d, %d, %d",
+            // m_label, rect.x, rect.y, rect.x+rect.w, rect.y+rect.h);
+    // Serial.println(dbg_buffer);
 }
 
 bool Button::draw(Display &d)
@@ -41,10 +46,9 @@ bool Button::draw(Display &d)
 
 bool Button::within(uint16_t x, uint16_t y)
 {
-    // static char buff[72];
-    // sprintf(buff, "\"%s\".within %d, %d vs %d, %d, %d, %d",
+    // sprintf(dbg_buffer, "\"%s\".within %d, %d vs %d, %d, %d, %d",
             // m_label, x, y, rect.x, rect.y, rect.x+rect.w, rect.y+rect.h);
-    // Serial.println(buff);
+    // Serial.println(dbg_buffer);
 
     return ((x > rect.x)
             && (x < rect.x+rect.w)

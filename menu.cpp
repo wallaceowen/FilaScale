@@ -35,7 +35,7 @@ Menu::Menu(Display &d,
                 button_w = rect.w;
                 button_h = rect.h / num_buttons;
                 button_x = rect.x;
-                button_y = rect.y+button_w*i;
+                button_y = rect.y+button_h*i;
                 break;
             }
             case O_Horiz:
