@@ -19,12 +19,9 @@ public:
 private:
     void show_errors();
 
-    static void disp_callback_func(Display *d, void *user);
-    void disp_callback(Display *d);
-#ifdef BOZO
     static void touch_callback_func(Display *d, void *user, uint16_t x, uint16_t y, bool pressed);
-    void touch_callback(Display *d, uint16_t x, uint16_t y, bool touched);
-#endif
+    void touch_callback(uint16_t x, uint16_t y, bool touched);
+
     void button_callback(const char *label, bool pressed);
 
     Mode m_mode;

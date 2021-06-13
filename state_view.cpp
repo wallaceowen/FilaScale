@@ -12,6 +12,15 @@
 #define BUTTONS_START 4
 #define R_MARGIN 10
 
+#define WIDTH 320
+#define HEIGHT 240
+#define VALUES_X 148
+#define STATE_FONT 4
+#define BORDER_THICKNESS 5
+#define MARGIN BORDER_THICKNESS+2
+
+// #define DEBUG_TOUCH
+
 uint16_t button_colors[NUM_BUTTONS] = {TFT_PURPLE, TFT_BLUE, TFT_RED };
 const char *button_labels[NUM_BUTTONS] = {"Scale", "Drying", "STOP" };
 
@@ -39,6 +48,21 @@ StateView::StateView(Display &d, Scale &s, BME280_IF &b) :
     m_weight(0.0),
     m_full_weight(0.0)
 {
+    m_menu.set_callback(state_menu_callback_func, this);
+}
+
+void StateView::state_menu_callback(const char *label, bool pressed)
+{
+    Serial.print("State menu callback got \"");
+    Serial.print(label),
+    Serial.print("\" ");
+    Serial.println(pressed?"PRESSED":"RELEASED");
+}
+
+void StateView::state_menu_callback_func(const char *label, bool pressed, void *user_data)
+{
+    StateView *sv = reinterpret_cast<StateView*>(user_data);
+    sv->state_menu_callback(label, pressed);
 }
 
 // Show the static part of the view
@@ -106,18 +130,17 @@ void StateView::loop()
     }
 }
 
-void StateView::touch_callback(Display *d, uint16_t x, uint16_t y, bool pressed)
+void StateView::touch_callback(uint16_t x, uint16_t y, bool pressed)
 {
 #ifdef DEBUG_TOUCH
     Serial.print("StateView got touch callback. x: ");
     Serial.print(x);
     Serial.print(", y: ");
     Serial.println(y);
-
     Serial.println("checking buttons");
 #endif
 
-    m_menu.check_touch(d, x, y, pressed);
+    m_menu.check_touch(&m_display, x, y, pressed);
 
     // d->calibrate();
 }
@@ -127,12 +150,12 @@ void StateView::touch_callback(Display *d, uint16_t x, uint16_t y, bool pressed)
 void StateView::draw_state()
 {
     TFT_eSPI &tft = m_display.get_tft();
-    char value_buffer[40];
+    char value_buffer[45];
     // tft.setTextColor(TFT_DARKGREEN);
     tft.setTextColor(TFT_BLACK);
     int line = 1;
 
-    sprintf(value_buffer, "%3.1fC %3.1fF", m_temp, (m_temp*9/5.0+32.0));
+    sprintf(value_buffer, "%3.1f°C %3.1f°F", m_temp, (m_temp*9/5.0+32.0));
     int width = tft.width()-VALUES_X-R_MARGIN;
     tft.fillRect(
             VALUES_X,

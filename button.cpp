@@ -34,9 +34,9 @@ bool Button::draw(Display &d)
     int32_t label_y = rect.y+(rect.h/2)-height/2;
     tft.drawString(m_label, label_x, label_y, BUTTON_FONT);
 
-    char dbg_buff[60];
-    sprintf(dbg_buff, "drawing \"%s\" at %d, %d", m_label, label_x, label_y);
-    Serial.println(dbg_buff);
+    // char dbg_buff[60];
+    // sprintf(dbg_buff, "drawing \"%s\" at %d, %d", m_label, label_x, label_y);
+    // Serial.println(dbg_buff);
 }
 
 bool Button::within(uint16_t x, uint16_t y)

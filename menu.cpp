@@ -15,7 +15,11 @@ typedef Button *BPTR;
 Menu::Menu(Display &d,
         const Rect &rect,
         const ButtonData bdata[],
-        const uint16_t num, Orient o) : num_buttons(num)
+        const uint16_t num,
+        Orient o) :
+    num_buttons(num),
+    m_mcb(0),
+    m_user_data(0)
 {
     m_buttons = new BPTR[num_buttons];
 
@@ -55,6 +59,12 @@ Menu::Menu(Display &d,
     }
 }
 
+void Menu::set_callback(MenuCB m, void *user_data)
+{
+    m_mcb = m;
+    m_user_data = user_data;
+}
+
 void Menu::show(Display &d)
 {
     for (unsigned i = 0; i < num_buttons; ++i)
@@ -67,12 +77,14 @@ bool Menu::check_touch(Display *d, uint16_t x, uint16_t y, bool pressed)
     {
         if (m_buttons[i]->within(x, y))
         {
-            Serial.print("Button ");
-            Serial.print(m_buttons[i]->label());
-            if (pressed)
-                Serial.println(" pressed");
-            else
-                Serial.println(" released");
+            // Serial.print("Button ");
+            // Serial.print(m_buttons[i]->label());
+            // if (pressed)
+                // Serial.println(" pressed");
+            // else
+                // Serial.println(" released");
+            if (m_mcb)
+                m_mcb(m_buttons[i]->label(), pressed, m_user_data);
             return true;
         }
     }

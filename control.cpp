@@ -4,34 +4,24 @@
 
 static char state_buff[sizeof(StateView)];
 
-static void control_button_callback_func(const char *label, void *user, bool pressed);
-
-#ifdef BOZO
-void Control::disp_callback(Display *d)
+void Control::touch_callback(uint16_t x, uint16_t y, bool pressed)
 {
-    Serial.println("Control got display callback");
-}
-
-void Control::disp_callback_func(Display *d, void *user)
-{
-    Control *control = reinterpret_cast<Control*>(user);
-    control->disp_callback(d);
-}
-
-void Control::button_callback(const char *label, bool pressed)
-{
+#ifdef DEBUG_TOUCH
     if (pressed)
         Serial.println("Control got touch callback pressed");
     else
         Serial.println("Control got touch callback released");
+#endif
+
+    if (m_view)
+        m_view->touch_callback(x, y, pressed);
 }
 
-void Control::button_callback_func(const char *label, void *user, bool pressed)
+void Control::touch_callback_func(Display *d, void *user, uint16_t x, uint16_t y, bool pressed)
 {
     Control *control = reinterpret_cast<Control*>(user);
-    control->button_callback(label, pressed);
+    control->touch_callback(x, y, pressed);
 }
-#endif
 
 Control::Control(Scale &scale, Display &display, BME280_IF &bme280, Protocol &protocol) :
     m_mode(M_Show),
@@ -42,12 +32,10 @@ Control::Control(Scale &scale, Display &display, BME280_IF &bme280, Protocol &pr
     m_view(m_state_view),
     m_protocol(protocol)
 {
-    // CallbackData cd;
-    // cd.cb = touch_callback_func;
-    // cd.user = this;
-    // m_display.add_callback(cd);
-
-    // m_buttons.add_callback(control_button_callback_func);
+    CallbackData cd;
+    cd.cb = touch_callback_func;
+    cd.user = this;
+    m_display.add_callback(cd);
 }
 
 void Control::show_errors()
