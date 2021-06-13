@@ -15,9 +15,22 @@
 uint16_t button_colors[NUM_BUTTONS] = {TFT_PURPLE, TFT_BLUE, TFT_RED };
 const char *button_labels[NUM_BUTTONS] = {"Scale", "Drying", "STOP" };
 
+ButtonData state_menu_button_data[] = {
+    ButtonData("SETUP", TFT_PURPLE, TFT_WHITE),
+    ButtonData("REPORT", TFT_ORANGE, TFT_WHITE),
+    ButtonData("STOP", TFT_RED, TFT_WHITE)
+};
+
+#define NUM_STATE_BUTTONS 3
+#define STATE_MENU_ORIENT Menu::O_Horiz
+
 StateView::StateView(Display &d, Scale &s, BME280_IF &b) :
     View(d),
     m_display(d),
+    m_menu(
+            d,
+            Rect(BUTTONS_START, BUTTONS_Y, m_display.get_tft().width(), BUTTONS_HEIGHT),
+            state_menu_button_data, NUM_STATE_BUTTONS, STATE_MENU_ORIENT),
     m_scale(s),
     m_bme(b),
     m_active(false),
@@ -26,8 +39,6 @@ StateView::StateView(Display &d, Scale &s, BME280_IF &b) :
     m_weight(0.0),
     m_full_weight(0.0)
 {
-    // if (m_active)
-        // this->show();
 }
 
 // Show the static part of the view
@@ -51,20 +62,8 @@ void StateView::show()
     ++line;
     tft.drawString("WEIGHT", MARGIN, tft.fontHeight(STATE_FONT)*line+MARGIN+STATE_Y, STATE_FONT);
 
-    uint16_t button_width = tft.width() / NUM_BUTTONS - (BUTTON_GAP*(NUM_BUTTONS-1));
-
     // Show the buttons
-    for (int i = 0; i < NUM_BUTTONS; ++i)
-    {
-        uint16_t bx = button_width*i;
-        uint16_t button_height = BUTTONS_HEIGHT;
-        Button *b = new Button( Rect(bx+BUTTONS_START, BUTTONS_Y,
-                    button_width, button_height),
-                    button_colors[i],
-                    button_labels[i]);
-        buttons[i] = b;
-        b->draw(m_display);
-    }
+    m_menu.show(m_display);
 
     // Now show the state
     draw_state();
@@ -118,18 +117,7 @@ void StateView::touch_callback(Display *d, uint16_t x, uint16_t y, bool pressed)
     Serial.println("checking buttons");
 #endif
 
-    for (int i = 0; i < NUM_BUTTONS; ++i)
-    {
-        if (buttons[i]->pressed(x, y))
-        {
-            Serial.print("Button ");
-            Serial.print(buttons[i]->label);
-            if (pressed)
-                Serial.println(" pressed");
-            else
-                Serial.println(" released");
-        }
-    }
+    m_menu.check_touch(d, x, y, pressed);
 
     // d->calibrate();
 }
