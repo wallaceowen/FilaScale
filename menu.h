@@ -13,12 +13,20 @@ class Menu
 {
 public:
     enum Orient { O_Vert, O_Horiz };
+
     Menu(
             Display &d,
+
+            // Size of one window in Menu; all same size
             const Rect &r,
+
+            // array, num_buttons in len
             const ButtonData *bdata,
             const uint16_t num_buttons,
+
+            // Vertial or horizontal
             Orient o);
+
     void show(Display &d);
     bool check_touch(Display *d, uint16_t x, uint16_t y, bool pressed);
     void set_callback(MenuCB m, void *user_data);

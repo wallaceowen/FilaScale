@@ -1,33 +1,16 @@
-// state_view.cpp
+// calib_view.cpp
 
 #include <stdio.h>
 
-#include "state_view.h"
+#include "calib_view.h"
 
-#define UPDATE_INTERVAL 250
-#define STATE_Y 40
+#if 0
 
-#define HORIZ_BUTTONS
-#ifdef HORIZ_BUTTONS
-#define MENU_X 4
-#define MENU_Y 190
-// #define MENU_HEIGHT 40
-#define MENU_HEIGHT 40
-// #define MENU_WIDTH 320
-#define MENU_WIDTH 80
-#define STATE_MENU_ORIENT Menu::O_Horiz
-#else
 #define MENU_X 4
 #define MENU_Y 4
-// #define MENU_HEIGHT 120
 #define MENU_HEIGHT 40
-// #define MENU_WIDTH 96
 #define MENU_WIDTH 80
 #define STATE_MENU_ORIENT Menu::O_Vert
-#endif
-
-#define BUTTON_GAP 2
-#define R_MARGIN 10
 
 #define WIDTH 320
 #define HEIGHT 240
@@ -37,27 +20,23 @@
 #define MARGIN BORDER_THICKNESS+2
 
 #define SCREEN_BG TFT_BLACK
-#define VALUE_BG TFT_BLACK
-#define TEXT_BG TFT_WHITE
 
-// #define DEBUG_TOUCH
-
-ButtonData state_menu_button_data[] = {
+ButtonData calib_menu_button_data[] = {
     ButtonData("CFG", TFT_PURPLE, TFT_WHITE),
     ButtonData("CAL", TFT_GREEN, TFT_BLACK),
     ButtonData("CONN", TFT_ORANGE, TFT_WHITE),
     ButtonData("STOP", TFT_RED, TFT_WHITE)
 };
 
-#define NUM_STATE_BUTTONS (sizeof(state_menu_button_data)/sizeof(state_menu_button_data[0]))
+#define NUM_STATE_BUTTONS (sizeof(calib_menu_button_data)/sizeof(calib_menu_button_data[0]))
 
-StateView::StateView(Display &d, ViewChangeCallback ccb, void *change_user_data, Scale &s, BME280_IF &b) :
-    View(d, ccb, change_user_data),
+CalibView::CalibView(Display &d, Scale &s, BME280_IF &b) :
+    View(d),
     m_display(d),
     m_menu(
             d,
             Rect(MENU_X, MENU_Y, MENU_WIDTH, MENU_HEIGHT),
-            state_menu_button_data, NUM_STATE_BUTTONS, STATE_MENU_ORIENT),
+            calib_menu_button_data, NUM_STATE_BUTTONS, STATE_MENU_ORIENT),
     m_scale(s),
     m_bme(b),
     m_active(false),
@@ -66,29 +45,27 @@ StateView::StateView(Display &d, ViewChangeCallback ccb, void *change_user_data,
     m_weight(0.0),
     m_full_weight(0.0)
 {
-    m_menu.set_callback(state_menu_callback_func, this);
+    m_menu.set_callback(calib_menu_callback_func, this);
 }
 
-void StateView::state_menu_callback(const char *label, bool pressed)
+void CalibView::calib_menu_callback(const char *label, bool pressed)
 {
     Serial.print("State menu callback got \"");
     Serial.print(label),
     Serial.print("\" ");
     Serial.println(pressed?"PRESSED":"RELEASED");
-    if (m_change_cb)
-        m_change_cb(label, m_user_data);
 }
 
-void StateView::state_menu_callback_func(const char *label, bool pressed, void *user_data)
+void CalibView::calib_menu_callback_func(const char *label, bool pressed, void *user_data)
 {
-    StateView *sv = reinterpret_cast<StateView*>(user_data);
-    sv->state_menu_callback(label, pressed);
+    CalibView *sv = reinterpret_cast<CalibView*>(user_data);
+    sv->calib_menu_callback(label, pressed);
 }
 
 // Show the static part of the view
-void StateView::show()
+void CalibView::show()
 {
-    Serial.println("StateView::show()");
+    Serial.println("CalibView::show()");
     TFT_eSPI &tft = m_display.get_tft();
 
     // Fill screen with dark grey
@@ -115,7 +92,7 @@ void StateView::show()
 
 // Update the state we render.  Side-effect: maintain changed,
 // used to know whether to update the gui from the updated values
-bool StateView::update(void)
+bool CalibView::update(void)
 {
     bool changed = false;
     if (m_scale.get_calibrated() != m_weight)
@@ -137,7 +114,7 @@ bool StateView::update(void)
 }
 
 // Call this often.  It only does something every UPDATE_INTERVAL.
-void StateView::loop()
+void CalibView::loop()
 {
     static auto scheduled = millis()+UPDATE_INTERVAL;
 
@@ -150,10 +127,10 @@ void StateView::loop()
     }
 }
 
-void StateView::touch_callback(uint16_t x, uint16_t y, bool pressed)
+void CalibView::touch_callback(uint16_t x, uint16_t y, bool pressed)
 {
 #ifdef DEBUG_TOUCH
-    Serial.print("StateView got touch callback. x: ");
+    Serial.print("CalibView got touch callback. x: ");
     Serial.print(x);
     Serial.print(", y: ");
     Serial.println(y);
@@ -167,7 +144,7 @@ void StateView::touch_callback(uint16_t x, uint16_t y, bool pressed)
 
 // Update the state on the screen with the latest values we hold.
 // called at UPDATE_INTERVAL
-void StateView::draw_state()
+void CalibView::draw_state()
 {
     TFT_eSPI &tft = m_display.get_tft();
     char value_buffer[45];
@@ -175,7 +152,7 @@ void StateView::draw_state()
     int line = 1;
 
     sprintf(value_buffer, "%3.1f°C %3.1f°F", m_temp, (m_temp*9/5.0+32.0));
-    int width = tft.width()-VALUES_X-R_MARGIN;
+    int width = tft.width()-VALUES_X;
     tft.fillRect(
             VALUES_X,
             tft.fontHeight(STATE_FONT)*line+BORDER_THICKNESS+STATE_Y,
@@ -206,3 +183,4 @@ void StateView::draw_state()
     ++line;
 }
 
+#endif

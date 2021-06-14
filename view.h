@@ -5,10 +5,12 @@
 
 #include "display.h"
 
+typedef void (*ViewChangeCallback)(const char *view_name, void *user);
+
 class View
 {
 public:
-    View(Display&);
+    View(Display&, ViewChangeCallback, void*);
 
     // Only called if this is the active view
     virtual void loop(void);
@@ -24,6 +26,8 @@ public:
 protected:
 
     Display &m_display;
+    ViewChangeCallback m_change_cb;
+    void *m_user_data;
 };
 
 #endif

@@ -3,6 +3,7 @@
 #include "control.h"
 
 static char state_buff[sizeof(StateView)];
+// static char calib_buff[sizeof(CalibView)];
 
 void Control::touch_callback(uint16_t x, uint16_t y, bool pressed)
 {
@@ -28,9 +29,10 @@ Control::Control(Scale &scale, Display &display, BME280_IF &bme280, Protocol &pr
     m_scale(scale),
     m_bme280(bme280),
     m_display(display),
-    m_state_view(new(state_buff) StateView(m_display, m_scale, m_bme280)),
-    m_view(m_state_view),
-    m_protocol(protocol)
+    m_state_view(new(state_buff) StateView(m_display, change_view_func, this, m_scale, m_bme280)),
+    // m_calib_view(new(calib_buff) CalibView(m_display, m_scale, m_bme280)),
+    m_protocol(protocol),
+    m_view(m_state_view)
 {
     CallbackData cd;
     cd.cb = touch_callback_func;
@@ -41,6 +43,24 @@ Control::Control(Scale &scale, Display &display, BME280_IF &bme280, Protocol &pr
 void Control::show_errors()
 {
 }
+
+void Control::change_view(const char *view_name)
+{
+    Serial.print("Control::change_view got ");
+    Serial.println(view_name);
+
+    if (!strcmp(view_name, "CAL"))
+    {
+        // m_view = m_calib_view;
+    }
+}
+
+void Control::change_view_func(const char *viewname, void *user)
+{
+    Control *c = reinterpret_cast<Control*>(user);
+    c->change_view(viewname);
+}
+
 
 void Control::loop()
 {

@@ -33,14 +33,14 @@ Menu::Menu(Display &d,
             case O_Vert:
             {
                 button_w = rect.w;
-                button_h = rect.h / num_buttons;
+                button_h = rect.h;
                 button_x = rect.x;
                 button_y = rect.y+button_h*i;
                 break;
             }
             case O_Horiz:
             {
-                button_w = rect.w / num_buttons;
+                button_w = rect.w;
                 button_h = rect.h;
                 button_x = rect.x+button_w*i;
                 button_y = rect.y;
@@ -90,3 +90,4 @@ bool Menu::check_touch(Display *d, uint16_t x, uint16_t y, bool pressed)
     }
     return false;
 }
+

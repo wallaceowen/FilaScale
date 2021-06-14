@@ -1,7 +1,9 @@
-// state_view.h
+// calib_view.h
 
-#ifndef __state_view_h
-#define __state_view_h
+#ifndef __calib_view_h
+#define __calib_view_h
+
+#if 0
 
 #include "display.h"
 #include "button.h"
@@ -12,13 +14,11 @@
 
 #define NUM_BUTTONS 3
 
-// class StateView: public View
-class StateView: public View
+
+class CalibView: public View
 {
 public:
-    // ctor
-    StateView(Display &d, ViewChangeCallback ccb, void *change_user_data, Scale &s, BME280_IF &b);
-
+    CalibView(Display&, Scale &s, BME280_IF &b);
     // loop only called when this view is active
     void loop();
 
@@ -37,8 +37,8 @@ protected:
 
 private:
 
-    static void state_menu_callback_func(const char *label, bool pressed, void *user_data);
-    void state_menu_callback(const char *label, bool pressed);
+    static void calib_menu_callback_func(const char *label, bool pressed, void *user_data);
+    void calib_menu_callback(const char *label, bool pressed);
 
     void draw_state();
 
@@ -56,5 +56,7 @@ private:
     float m_weight;
     float m_full_weight;
 };
+
+#endif
 
 #endif
