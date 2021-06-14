@@ -69,13 +69,16 @@ StateView::StateView(Display &d, ViewChangeCallback ccb, void *change_user_data,
     m_menu.set_callback(state_menu_callback_func, this);
 }
 
+// All the state menus are for views.  But a menu button could be handled
+// differently here, doing something other than telling control to change the view.
 void StateView::state_menu_callback(const char *label, bool pressed)
 {
-    Serial.print("State menu callback got \"");
-    Serial.print(label),
-    Serial.print("\" ");
-    Serial.println(pressed?"PRESSED":"RELEASED");
-    if (m_change_cb)
+    // Serial.print("State menu callback got \"");
+    // Serial.print(label),
+    // Serial.print("\" ");
+    // Serial.println(pressed?"PRESSED":"RELEASED");
+    // Signal to the control module that a new view is requested
+    if (m_change_cb && !pressed)
         m_change_cb(label, m_user_data);
 }
 

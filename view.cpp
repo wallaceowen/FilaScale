@@ -9,15 +9,3 @@ View::View(Display &d, ViewChangeCallback change_cb, void *ud) :
 {
 }
 
-void View::loop()
-{
-}
-
-void View::show()
-{
-}
-
-bool View::update()
-{
-}
-
