@@ -4,11 +4,11 @@
 
 #include "menu.h"
 
-#define BUTTON_GAP 2
-#define BUTTONS_START 4
-#define BUTTONS_Y 190
-#define BUTTONS_HEIGHT 40
-#define BUTTONS_START 4
+// #define BUTTON_GAP 2
+// #define BUTTONS_START 4
+// #define BUTTONS_Y 190
+// #define BUTTONS_HEIGHT 40
+// #define BUTTONS_START 4
 
 typedef Button *BPTR;
 

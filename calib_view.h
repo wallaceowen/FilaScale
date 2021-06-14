@@ -3,13 +3,12 @@
 #ifndef __calib_view_h
 #define __calib_view_h
 
-#if 0
-
 #include "display.h"
 #include "button.h"
 #include "scale.h"
 #include "view.h"
 #include "menu.h"
+#include "dialog.h"
 #include "bme280_if.h"
 
 #define NUM_BUTTONS 3
@@ -18,45 +17,45 @@
 class CalibView: public View
 {
 public:
-    CalibView(Display&, Scale &s, BME280_IF &b);
+    enum CalibState { CS_Ask, CS_Zero, CS_Gain, CS_NUmStates };
+
+    CalibView(Display&, ViewChangeCallback ccb, void *change_user_data, Scale &s);
     // loop only called when this view is active
+    // Call this often.  It drives the state machine.
     void loop();
 
-    // void render();
+    // Render the static parts of the view when commanded by Control objhect
+    // (or after displaying a simple dialog, which doesn't do save-unders)
     void show();
 
-    bool update();
-
-    // void touch_callback_func(Display *d, void *user, uint16_t x, uint16_t y);
     void touch_callback(uint16_t x, uint16_t y, bool pressed);
 
     void active(bool v) { m_active = v; }
     bool active(void) const { return m_active; }
 
+    // To handle menu choices in dialogs we show
+    void menu_callback(const char *label, bool pressed);
+    static void menu_callback_func(const char *label, bool pressed, void *user_data);
+
 protected:
+
+    bool update();
 
 private:
 
-    static void calib_menu_callback_func(const char *label, bool pressed, void *user_data);
-    void calib_menu_callback(const char *label, bool pressed);
+    static void calib_dialog_callback_func(const char *label, bool pressed, void *user_data);
+    void calib_dialog_callback(const char *label, bool pressed);
 
-    void draw_state();
+    void draw_calib();
 
-    Display &m_display;
-    Scale &m_scale;
-    BME280_IF &m_bme;
-#ifdef OLD_WAY
-    Button *buttons[NUM_BUTTONS];
-#else
-    Menu m_menu;
-#endif
-    bool m_active;
-    float m_temp;
-    float m_humid;
-    float m_weight;
-    float m_full_weight;
+    Display   &m_display;
+    CalibState m_state;
+    Dialog     m_ask_dialog;
+    Dialog     m_zero_dialog;
+    Dialog     m_gain_dialog;
+    Dialog    *m_current_dialog;
+    bool       m_active;
+    Scale     &m_scale;
 };
-
-#endif
 
 #endif

@@ -79,7 +79,7 @@ void StateView::state_menu_callback(const char *label, bool pressed)
     // Serial.println(pressed?"PRESSED":"RELEASED");
     // Signal to the control module that a new view is requested
     if (m_change_cb && !pressed)
-        m_change_cb(label, m_user_data);
+        m_change_cb(label, m_change_data);
 }
 
 void StateView::state_menu_callback_func(const char *label, bool pressed, void *user_data)
@@ -98,11 +98,13 @@ void StateView::show()
     tft.fillRect(0, 0, WIDTH, HEIGHT, SCREEN_BG);
 
     // Show the view name and our field names
-    tft.setTextColor(TFT_WHITE);
     int line = 0;
-    tft.drawString("Filament Management", MARGIN, tft.fontHeight(STATE_FONT)*line+MARGIN, STATE_FONT);
+    tft.setTextColor(TFT_WHITE);
+    tft.setTextDatum(TC_DATUM);
+    tft.drawString("Filament Management", tft.width()/2, tft.fontHeight(STATE_FONT)*line+MARGIN, STATE_FONT);
     ++line;
     tft.setTextColor(TFT_YELLOW);
+    tft.setTextDatum(TL_DATUM);
     tft.drawString("TEMP", MARGIN, tft.fontHeight(STATE_FONT)*line+MARGIN+STATE_Y, STATE_FONT);
     ++line;
     tft.drawString("HUMIDITY", MARGIN, tft.fontHeight(STATE_FONT)*line+MARGIN+STATE_Y, STATE_FONT);

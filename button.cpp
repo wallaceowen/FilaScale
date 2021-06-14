@@ -22,9 +22,9 @@ Button::Button(const char *l, const Rect &r, uint16_t c, uint16_t tc) :
     color(c),
     txt_color(tc)
 {
-    // sprintf(dbg_buffer, "\"%s\" created at %d, %d, %d, %d",
-            // m_label, rect.x, rect.y, rect.x+rect.w, rect.y+rect.h);
-    // Serial.println(dbg_buffer);
+    sprintf(dbg_buffer, "button \"%s\" created at x %d, y %d, w %d, h %d",
+            m_label, rect.x, rect.y, rect.x+rect.w, rect.y+rect.h);
+    Serial.println(dbg_buffer);
 }
 
 bool Button::draw(Display &d)
