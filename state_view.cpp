@@ -22,7 +22,7 @@
 // #define MENU_HEIGHT 120
 #define MENU_HEIGHT 40
 // #define MENU_WIDTH 96
-#define MENU_WIDTH 80
+#define MENU_WIDTH 25
 #define STATE_MENU_ORIENT Menu::O_Vert
 #endif
 

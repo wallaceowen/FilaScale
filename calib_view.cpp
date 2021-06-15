@@ -5,10 +5,10 @@
 #include "calib_view.h"
 
 #define CALIB_Y 10
-#define DLG_X 4
-#define DLG_Y 4
-#define DLG_HEIGHT 200
-#define DLG_WIDTH 80
+#define DLG_X 18
+#define DLG_Y 18
+#define DLG_HEIGHT 160
+#define DLG_WIDTH 270
 
 #define WIDTH 320
 #define HEIGHT 240
@@ -20,8 +20,8 @@
 #define SCREEN_BG TFT_BLACK
 
 ButtonData ok_cancel_bd[] = {
-    ButtonData("OK", TFT_GREEN, TFT_BLACK),
-    ButtonData("CANCEL", TFT_BLUE, TFT_WHITE),
+    ButtonData("OK", TFT_BLUE, TFT_BLACK),
+    ButtonData("CANCEL", TFT_DARKGREY, TFT_WHITE),
 };
 
 #define NUM_OK_BUTTONS (sizeof(ok_cancel_bd)/sizeof(ok_cancel_bd[0]))
