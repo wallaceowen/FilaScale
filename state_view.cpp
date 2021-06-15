@@ -3,38 +3,24 @@
 #include <stdio.h>
 
 #include "state_view.h"
+#include "bar.h"
 
 #define UPDATE_INTERVAL 250
 #define STATE_Y 40
+#define VALUES_X 148
 
-#define HORIZ_BUTTONS
-#ifdef HORIZ_BUTTONS
 #define MENU_X 4
 #define MENU_Y 190
-// #define MENU_HEIGHT 40
 #define MENU_HEIGHT 40
-// #define MENU_WIDTH 320
 #define MENU_WIDTH 80
 #define STATE_MENU_ORIENT Menu::O_Horiz
-#else
-#define MENU_X 4
-#define MENU_Y 4
-// #define MENU_HEIGHT 120
-#define MENU_HEIGHT 40
-// #define MENU_WIDTH 96
-#define MENU_WIDTH 25
-#define STATE_MENU_ORIENT Menu::O_Vert
-#endif
 
-#define BUTTON_GAP 2
 #define R_MARGIN 10
 
-#define WIDTH 320
-#define HEIGHT 240
-#define VALUES_X 148
 #define STATE_FONT 4
 #define BORDER_THICKNESS 5
 #define MARGIN BORDER_THICKNESS+2
+#define PLOT_THICKNESS 10
 
 #define SCREEN_BG TFT_BLACK
 #define VALUE_BG TFT_BLACK
@@ -95,7 +81,7 @@ void StateView::show()
     TFT_eSPI &tft = m_display.get_tft();
 
     // Fill screen with dark grey
-    tft.fillRect(0, 0, WIDTH, HEIGHT, SCREEN_BG);
+    tft.fillRect(0, 0, tft.width(), tft.height(), SCREEN_BG);
 
     // Show the view name and our field names
     int line = 0;
@@ -180,34 +166,31 @@ void StateView::draw_state()
     int line = 1;
 
     sprintf(value_buffer, "%3.1f°C %3.1f°F", m_temp, (m_temp*9/5.0+32.0));
-    int width = tft.width()-VALUES_X-R_MARGIN;
-    tft.fillRect(
-            VALUES_X,
-            tft.fontHeight(STATE_FONT)*line+BORDER_THICKNESS+STATE_Y,
-            width,
-            tft.fontHeight(STATE_FONT)+BORDER_THICKNESS,
-            VALUE_BG);
-    tft.drawString(value_buffer, VALUES_X, tft.fontHeight(STATE_FONT)*line+BORDER_THICKNESS+STATE_Y, STATE_FONT);
+    int x = VALUES_X;
+    int y = STATE_Y+tft.fontHeight(STATE_FONT)*line+BORDER_THICKNESS;
+    int width = tft.width()-VALUES_X;
+
+    tft.fillRect( x, y, width, tft.fontHeight(STATE_FONT)+BORDER_THICKNESS, VALUE_BG);
+    plot_bar(m_display, Rect(x, y+BORDER_THICKNESS, width, PLOT_THICKNESS),
+            m_temp, 0, 50, TFT_BLUE, TFT_ORANGE);
+    tft.drawString(value_buffer, x, y, STATE_FONT);
     ++line;
 
     sprintf(value_buffer, "%4.2f%%RH", m_humid);
-    tft.fillRect(
-            VALUES_X,
-            tft.fontHeight(STATE_FONT)*line+BORDER_THICKNESS+STATE_Y,
-            width,
-            tft.fontHeight(STATE_FONT)+BORDER_THICKNESS,
+    y = STATE_Y+tft.fontHeight(STATE_FONT)*line+BORDER_THICKNESS;
+    tft.fillRect(x, y, width, tft.fontHeight(STATE_FONT)+BORDER_THICKNESS,
             VALUE_BG);
-    tft.drawString(value_buffer, VALUES_X, tft.fontHeight(STATE_FONT)*line+BORDER_THICKNESS+STATE_Y, STATE_FONT);
+    plot_bar(m_display, Rect(x, y+BORDER_THICKNESS, width, PLOT_THICKNESS),
+            m_humid, 0, 95, TFT_BLUE, TFT_ORANGE);
+    tft.drawString(value_buffer, x, y, STATE_FONT);
     ++line;
 
     sprintf(value_buffer, "%4.2fg", m_weight);
-    tft.fillRect(
-            VALUES_X,
-            tft.fontHeight(STATE_FONT)*line+BORDER_THICKNESS+STATE_Y,
-            width,
-            tft.fontHeight(STATE_FONT)+BORDER_THICKNESS,
-            VALUE_BG);
-    tft.drawString(value_buffer, VALUES_X, tft.fontHeight(STATE_FONT)*line+BORDER_THICKNESS+STATE_Y, STATE_FONT);
+    y = STATE_Y+tft.fontHeight(STATE_FONT)*line+BORDER_THICKNESS;
+    tft.fillRect(x, y, width, tft.fontHeight(STATE_FONT)+BORDER_THICKNESS, VALUE_BG);
+    plot_bar(m_display, Rect(x, y+BORDER_THICKNESS, width, PLOT_THICKNESS),
+            m_weight, 0, 500, TFT_BLUE, TFT_ORANGE);
+    tft.drawString(value_buffer, x, y, STATE_FONT);
     ++line;
 }
 
