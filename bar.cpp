@@ -39,21 +39,9 @@ void plot_bar(
     int outlo = 0;
     int outhi = rect.w;
     int plotval = map((int) value, inlo, inhi, outlo, outhi);
-    {
-        char b[96];
-        sprintf(b, "plot_bar: plotval %d = map(value %u, inlo %u, outlo %d, inhi %u, outhi %u)",
-            plotval, value, inlo, outlo, inhi, outhi);
-        Serial.println(b);
-    }
+
     if (plotval < 0)
         plotval = 0;
-
-    {
-        char b[96];
-        sprintf(b, "   fillRect(%u, %u, %d, %u, %d)",
-            rect.x, rect.y, plotval, rect.h, incolor);
-        Serial.println(b);
-    }
 
     tft.fillRect(rect.x, rect.y, plotval, rect.h, incolor);
     tft.fillRect(rect.x+plotval, rect.y, rect.w-plotval, rect.h, outcolor);
