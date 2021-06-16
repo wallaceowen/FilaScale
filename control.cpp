@@ -44,6 +44,10 @@ void Control::calib_cb(const char *result)
 {
     Serial.print("Control::calib_cb got ");
     Serial.println(result);
+    if (!strcmp(result, "CANCEL"))
+    {
+        this->change_view("STATE");
+    }
 }
 
 void Control::calib_cb_func(const char *viewname, void *user)
@@ -59,7 +63,15 @@ void Control::change_view(const char *view_name)
         m_view = m_calib_view;
         m_mode = M_Show;
     }
+    else if (!strcmp(view_name, "STATE"))
+    {
+        m_view = m_state_view;
+        m_mode = M_Show;
+    }
+    TFT_eSPI &tft = m_display.get_tft();
+    tft.fillScreen(TFT_BLACK);
 }
+
 void Control::change_view_func(const char *viewname, void *user)
 { Control *c = reinterpret_cast<Control*>(user); c->change_view(viewname); }
 

@@ -5,7 +5,7 @@
 #include "state_view.h"
 #include "bar.h"
 
-#define UPDATE_INTERVAL 250
+#define UPDATE_INTERVAL 500
 #define STATE_Y 40
 #define VALUES_X 148
 
@@ -17,14 +17,16 @@
 
 #define R_MARGIN 10
 
+#define TITLE_FONT 4
 #define STATE_FONT 4
 #define BORDER_THICKNESS 5
 #define MARGIN BORDER_THICKNESS+2
 #define PLOT_THICKNESS 10
+#define LINE_GAP 10
 
 #define SCREEN_BG TFT_BLACK
 #define VALUE_BG TFT_BLACK
-#define TEXT_BG TFT_WHITE
+#define TEXT_FG TFT_WHITE
 
 // #define DEBUG_TOUCH
 
@@ -85,11 +87,13 @@ void StateView::show()
 
     // Show the view name and our field names
     int line = 0;
+    tft.setTextSize(2);
     tft.setTextColor(TFT_WHITE);
     tft.setTextDatum(TC_DATUM);
-    tft.drawString("Filament Management", tft.width()/2, tft.fontHeight(STATE_FONT)*line+MARGIN, STATE_FONT);
+    tft.drawString("FilaScale", tft.width()/2, tft.fontHeight(TITLE_FONT)*line+MARGIN, TITLE_FONT);
     ++line;
-    tft.setTextColor(TFT_YELLOW);
+    tft.setTextSize(1);
+    tft.setTextColor(TFT_YELLOW, TFT_BLACK);
     tft.setTextDatum(TL_DATUM);
     tft.drawString("TEMP", MARGIN, tft.fontHeight(STATE_FONT)*line+MARGIN+STATE_Y, STATE_FONT);
     ++line;
@@ -162,7 +166,7 @@ void StateView::draw_state()
 {
     TFT_eSPI &tft = m_display.get_tft();
     char value_buffer[45];
-    tft.setTextColor(TEXT_BG);
+    tft.setTextColor(TEXT_FG);
     int line = 1;
 
     sprintf(value_buffer, "%3.1f°C %3.1f°F", m_temp, (m_temp*9/5.0+32.0));
@@ -172,7 +176,7 @@ void StateView::draw_state()
 
     tft.fillRect( x, y, width, tft.fontHeight(STATE_FONT)+BORDER_THICKNESS, VALUE_BG);
     plot_bar(m_display, Rect(x, y+BORDER_THICKNESS, width, PLOT_THICKNESS),
-            m_temp, 0, 50, TFT_BLUE, TFT_ORANGE);
+            m_temp, 0, 50, TFT_ORANGE, TFT_BLUE);
     tft.drawString(value_buffer, x, y, STATE_FONT);
     ++line;
 
@@ -181,7 +185,7 @@ void StateView::draw_state()
     tft.fillRect(x, y, width, tft.fontHeight(STATE_FONT)+BORDER_THICKNESS,
             VALUE_BG);
     plot_bar(m_display, Rect(x, y+BORDER_THICKNESS, width, PLOT_THICKNESS),
-            m_humid, 0, 95, TFT_BLUE, TFT_ORANGE);
+            m_humid, 0, 95, TFT_ORANGE, TFT_BLUE);
     tft.drawString(value_buffer, x, y, STATE_FONT);
     ++line;
 
@@ -189,8 +193,49 @@ void StateView::draw_state()
     y = STATE_Y+tft.fontHeight(STATE_FONT)*line+BORDER_THICKNESS;
     tft.fillRect(x, y, width, tft.fontHeight(STATE_FONT)+BORDER_THICKNESS, VALUE_BG);
     plot_bar(m_display, Rect(x, y+BORDER_THICKNESS, width, PLOT_THICKNESS),
-            m_weight, 0, 500, TFT_BLUE, TFT_ORANGE);
+            m_weight, 0, 200, TFT_ORANGE, TFT_BLUE);
     tft.drawString(value_buffer, x, y, STATE_FONT);
     ++line;
 }
 
+#ifdef BOZO
+// Update the state on the screen with the latest values we hold.
+// called at UPDATE_INTERVAL
+void StateView::draw_state()
+{
+    TFT_eSPI &tft = m_display.get_tft();
+    char value_buffer[45];
+    tft.setTextColor(TEXT_FG);
+    int line = 1;
+    int field_spacing = tft.fontHeight(STATE_FONT) + LINE_GAP;
+
+    sprintf(value_buffer, "%3.1f°C %3.1f°F", m_temp, (m_temp*9/5.0+32.0));
+    int x = VALUES_X;
+    int y = STATE_Y+field_spacing*line;
+    int width = tft.width()-VALUES_X;
+
+    tft.fillRect( x, y, width, field_spacing, VALUE_BG);
+    plot_bar(m_display, Rect(x, y+LINE_GAP, width, PLOT_THICKNESS),
+            m_temp, 0, 50, TFT_ORANGE, TFT_BLUE);
+    tft.drawString(value_buffer, x, y, STATE_FONT);
+    ++line;
+
+    sprintf(value_buffer, "%4.2f%%RH", m_humid);
+    y = STATE_Y+tft.fontHeight(STATE_FONT)*line+BORDER_THICKNESS;
+    tft.fillRect(x, y, width, tft.fontHeight(STATE_FONT)+BORDER_THICKNESS,
+            VALUE_BG);
+    plot_bar(m_display, Rect(x, y+BORDER_THICKNESS, width, PLOT_THICKNESS),
+            m_humid, 0, 95, TFT_ORANGE, TFT_BLUE);
+    tft.drawString(value_buffer, x, y, STATE_FONT);
+    ++line;
+
+    sprintf(value_buffer, "%4.2fg", m_weight);
+    y = STATE_Y+tft.fontHeight(STATE_FONT)*line+BORDER_THICKNESS;
+    tft.fillRect(x, y, width, tft.fontHeight(STATE_FONT)+BORDER_THICKNESS, VALUE_BG);
+    plot_bar(m_display, Rect(x, y+BORDER_THICKNESS, width, PLOT_THICKNESS),
+            m_weight, 0, 200, TFT_ORANGE, TFT_BLUE);
+    tft.drawString(value_buffer, x, y, STATE_FONT);
+    ++line;
+}
+
+#endif

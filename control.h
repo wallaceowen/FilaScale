@@ -24,8 +24,10 @@ private:
 
     static void change_view_func(const char *view_name, void *user);
     void change_view(const char *view_name);
+// #ifdef BOZO
     static void calib_cb_func(const char *result, void *user);
     void calib_cb(const char *result);
+// #endif
 
     Mode m_mode;
     Scale &m_scale;

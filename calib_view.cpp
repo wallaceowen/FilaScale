@@ -20,8 +20,8 @@
 #define SCREEN_BG TFT_BLACK
 
 ButtonData ok_cancel_bd[] = {
-    ButtonData("OK", TFT_BLUE, TFT_BLACK),
-    ButtonData("CANCEL", TFT_DARKGREY, TFT_WHITE),
+    ButtonData("OK", TFT_DARKGREEN, TFT_WHITE),
+    ButtonData("CANCEL", TFT_RED, TFT_WHITE),
 };
 
 #define NUM_OK_BUTTONS (sizeof(ok_cancel_bd)/sizeof(ok_cancel_bd[0]))
@@ -47,7 +47,7 @@ CalibView::CalibView(Display &d, ViewChangeCallback ccb, void *change_user_data,
     m_gain_dialog(
             d,
             Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT),
-            "Put calibration weight on scale",
+            "Put cal wt. on scale",
             "Press OK or CANCEL",
             ok_cancel_bd, NUM_OK_BUTTONS),
     m_current_dialog(&m_ask_dialog),
@@ -131,11 +131,12 @@ void CalibView::menu_callback(const char *label, bool pressed)
                     break;
                 case  CS_Gain:
                     m_scale.set_gain();
+
                     m_current_dialog = &m_ask_dialog;
                     m_state = CS_Ask;
                     // Tell control to go back to state view
                     if (m_change_cb)
-                        m_change_cb(label, m_change_data);
+                        m_change_cb("CANCEL", m_change_data);
                     break;
                 default:
                     break;

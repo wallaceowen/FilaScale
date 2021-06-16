@@ -69,7 +69,7 @@ void Dialog::show(void)
     tft.fillRect(
             m_rect.x, m_rect.y,
             m_rect.w, m_rect.h,
-            TFT_YELLOW);
+            TFT_WHITE);
     tft.drawRect(
             m_rect.x+1, m_rect.y+1,
             m_rect.w-2, m_rect.h-2,
