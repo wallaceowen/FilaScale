@@ -43,6 +43,8 @@ protected:
 
 private:
 
+    void set_state(CalibState cs);
+
     static void calib_dialog_callback_func(const char *label, bool pressed, void *user_data);
     void calib_dialog_callback(const char *label, bool pressed);
 

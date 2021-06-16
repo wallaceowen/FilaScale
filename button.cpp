@@ -31,7 +31,8 @@ bool Button::draw(Display &d)
 {
     TFT_eSPI &tft = d.get_tft();
     int16_t height = tft.fontHeight(BUTTON_FONT);
-    tft.fillRoundRect(rect.x, rect.y, rect.w, rect.h, BUTTON_RADIUS, color);
+    // tft.fillRoundRect(rect.x, rect.y, rect.w, rect.h, BUTTON_RADIUS, color);
+    tft.fillRect(rect.x, rect.y, rect.w, rect.h, color);
     tft.setTextColor(txt_color);
     tft.setTextDatum(TL_DATUM);
     int16_t t_width = tft.textWidth(m_label, BUTTON_FONT);

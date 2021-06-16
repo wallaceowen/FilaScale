@@ -44,7 +44,10 @@ void Control::calib_cb(const char *result)
 {
     Serial.print("Control::calib_cb got ");
     Serial.println(result);
-    if (!strcmp(result, "CANCEL"))
+    // Not currently doing anything differently, but we might
+    // want to let them know they cancelled calibration and the
+    // ramifications
+    if ((!strcmp(result, "CANCEL")) || (!strcmp(result, "DONE")))
     {
         this->change_view("STATE");
     }

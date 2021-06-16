@@ -91,6 +91,27 @@ void CalibView::touch_callback(uint16_t x, uint16_t y, bool pressed)
 
 }
 
+void CalibView::set_state(CalibState cs)
+{
+    m_state = cs;
+    switch (m_state)
+    {
+        case CS_Ask:
+            m_current_dialog = &m_ask_dialog;
+            break;
+        case CS_Zero:
+            m_current_dialog = &m_zero_dialog;
+           break;
+        case CS_Gain:
+            m_current_dialog = &m_gain_dialog;
+            break;
+        default:
+            m_state = CS_Ask;
+            m_current_dialog = &m_ask_dialog;
+           break;
+    }
+}
+
 void CalibView::menu_callback(const char *label, bool pressed)
 {
     Serial.print("Calib menu callback got \"");
@@ -107,36 +128,34 @@ void CalibView::menu_callback(const char *label, bool pressed)
     {
         if (!strcmp(label, "CANCEL"))
         {
+            // Reset state to Ask
+            set_state(CS_Ask);
             // Tell control to go back to state view
             if (m_change_cb)
                 m_change_cb(label, m_change_data);
         }
         else if (!strcmp(label, "OK"))
         {
+            // Switch to the next state
             switch(m_state)
             {
                 case CS_Ask:
-                    m_current_dialog = &m_zero_dialog;
+                    set_state(CS_Zero);
                     this->show();
-                    m_state = CS_Zero;
                     break;
 
                 case  CS_Zero:
                     m_scale.set_offset();
-
-                    // Now show the gain dialog
-                    m_current_dialog = &m_gain_dialog;
+                    set_state(CS_Gain);
                     this->show();
                     m_state = CS_Gain;;
                     break;
                 case  CS_Gain:
                     m_scale.set_gain();
-
-                    m_current_dialog = &m_ask_dialog;
-                    m_state = CS_Ask;
+                    set_state(CS_Ask);
                     // Tell control to go back to state view
                     if (m_change_cb)
-                        m_change_cb("CANCEL", m_change_data);
+                        m_change_cb("DONE", m_change_data);
                     break;
                 default:
                     break;
@@ -168,43 +187,29 @@ bool CalibView::update()
     return true;
 }
 
-// Call this often.  It only does something every UPDATE_INTERVAL.
 void CalibView::loop()
 {
-    // Serial.println("CalibView::loop()");
+#ifdef CALIBVIEW_LOOP_HAS_A_JOB
+    Serial.println("CalibView::loop()");
     TFT_eSPI &tft = m_display.get_tft();
     switch(m_state)
     {
-        // case CS_Init:
-            // // Clear the display, prompt for operator to clear the scale
-            // // for zero
-            // // Fill screen with blackness
-            // tft.fillRect(0, 0, WIDTH, HEIGHT, SCREEN_BG);
-            // m_state = CS_Ask;
-            // m_current_dialog = &m_ask_dialog;
-            // this->show();
-            // // switch state to CS_Ask
+        case CS_Init:
+            break;
 
         case CS_Ask:
-            // m_current_dialog = &m_zero_dialog;
-            // m_state = CS_Zero;
-            // this->show();
             break;
 
         case  CS_Zero:
-            // Read the scale for a few seconds, save the last value as offset
-            // and then show the gain command ("Please set the calibrated weight on the scale")
-            // and change m_state to CS_Gain
             break;
 
         case  CS_Gain:
-            // Read the scale for a few seconds, Compute the gain from the last value
-            // then switch to CS_Ask
             break;
 
         default:
             break;
     }
+#endif
 }
 
 

@@ -5,13 +5,17 @@
 #include "state_view.h"
 #include "bar.h"
 
-#define UPDATE_INTERVAL 500
-#define STATE_Y 40
-#define VALUES_X 148
+#define SCREEN_W 320
+#define SCREEN_H 240
 
-#define MENU_X 4
-#define MENU_Y 190
-#define MENU_HEIGHT 40
+#define UPDATE_INTERVAL 500
+#define VALUES_X 148
+#define LABELS_X VALUES_X
+#define VALUES_Y 40
+
+#define MENU_X 0
+#define MENU_HEIGHT 36
+#define MENU_Y SCREEN_H-MENU_HEIGHT
 #define MENU_WIDTH 80
 #define STATE_MENU_ORIENT Menu::O_Horiz
 
@@ -22,13 +26,20 @@
 #define BORDER_THICKNESS 5
 #define MARGIN BORDER_THICKNESS+2
 #define PLOT_THICKNESS 10
-#define LINE_GAP 10
+#define VALUES_GAP 10
 
 #define SCREEN_BG TFT_BLACK
 #define VALUE_BG TFT_BLACK
-#define TEXT_FG TFT_WHITE
+#define VALUE_FG TFT_WHITE
 
 // #define DEBUG_TOUCH
+
+void show_x_y_line(const char *what, int x, int y, int line)
+{
+    char buffer[60];
+    sprintf(buffer, "%s line: %d x: %d y: %d", what, line, x, y);
+    Serial.println(buffer);
+}
 
 ButtonData state_menu_button_data[] = {
     ButtonData("CFG", TFT_PURPLE, TFT_WHITE),
@@ -36,8 +47,9 @@ ButtonData state_menu_button_data[] = {
     ButtonData("CONN", TFT_ORANGE, TFT_WHITE),
     ButtonData("STOP", TFT_RED, TFT_WHITE)
 };
-
 #define NUM_STATE_BUTTONS (sizeof(state_menu_button_data)/sizeof(state_menu_button_data[0]))
+
+#define NUM_STATE_LINES 4
 
 StateView::StateView(Display &d, ViewChangeCallback ccb, void *change_user_data, Scale &s, BME280_IF &b) :
     View(d, ccb, change_user_data),
@@ -55,6 +67,10 @@ StateView::StateView(Display &d, ViewChangeCallback ccb, void *change_user_data,
     m_full_weight(0.0)
 {
     m_menu.set_callback(state_menu_callback_func, this);
+
+    TFT_eSPI &tft = m_display.get_tft();
+    tft.setTextSize(2);
+    m_title_height = tft.fontHeight(STATE_FONT);
 }
 
 // All the state menus are for views.  But a menu button could be handled
@@ -79,27 +95,40 @@ void StateView::state_menu_callback_func(const char *label, bool pressed, void *
 // Show the static part of the view
 void StateView::show()
 {
-    Serial.println("StateView::show()");
+
+    // Serial.println("StateView::show()");
     TFT_eSPI &tft = m_display.get_tft();
 
     // Fill screen with dark grey
     tft.fillRect(0, 0, tft.width(), tft.height(), SCREEN_BG);
 
     // Show the view name and our field names
-    int line = 0;
     tft.setTextSize(2);
+    int title_height = tft.fontHeight(STATE_FONT);
     tft.setTextColor(TFT_WHITE);
     tft.setTextDatum(TC_DATUM);
-    tft.drawString("FilaScale", tft.width()/2, tft.fontHeight(TITLE_FONT)*line+MARGIN, TITLE_FONT);
-    ++line;
+    tft.drawString("FilaScale", tft.width()/2, 0, TITLE_FONT);
+
     tft.setTextSize(1);
     tft.setTextColor(TFT_YELLOW, TFT_BLACK);
-    tft.setTextDatum(TL_DATUM);
-    tft.drawString("TEMP", MARGIN, tft.fontHeight(STATE_FONT)*line+MARGIN+STATE_Y, STATE_FONT);
+    tft.setTextDatum(TR_DATUM);
+
+    int width = VALUES_X;
+    int field_spacing = (MENU_Y-VALUES_Y)/NUM_STATE_LINES;
+    int line = 0;
+    int x = VALUES_X-VALUES_GAP;
+    // int y = VALUES_Y+(tft.fontHeight(STATE_FONT)/2);
+    int y = m_title_height+(tft.fontHeight(STATE_FONT)/2);
+    tft.drawString("TEMP", x, y, STATE_FONT);
+    show_x_y_line("show", x, y, line);
     ++line;
-    tft.drawString("HUMIDITY", MARGIN, tft.fontHeight(STATE_FONT)*line+MARGIN+STATE_Y, STATE_FONT);
+    y += field_spacing;
+    tft.drawString("HUMIDITY", x, y, STATE_FONT);
+    show_x_y_line("show", x, y, line);
     ++line;
-    tft.drawString("WEIGHT", MARGIN, tft.fontHeight(STATE_FONT)*line+MARGIN+STATE_Y, STATE_FONT);
+    y += field_spacing;
+    tft.drawString("WEIGHT", x, y, STATE_FONT);
+    show_x_y_line("show", x, y, line);
 
     // Show the buttons
     m_menu.show(m_display);
@@ -156,8 +185,6 @@ void StateView::touch_callback(uint16_t x, uint16_t y, bool pressed)
 #endif
 
     m_menu.check_touch(&m_display, x, y, pressed);
-
-    // d->calibrate();
 }
 
 // Update the state on the screen with the latest values we hold.
@@ -166,76 +193,49 @@ void StateView::draw_state()
 {
     TFT_eSPI &tft = m_display.get_tft();
     char value_buffer[45];
-    tft.setTextColor(TEXT_FG);
-    int line = 1;
+    tft.setTextColor(VALUE_FG, VALUE_BG);
+    tft.setTextPadding(12);
 
-    sprintf(value_buffer, "%3.1f°C %3.1f°F", m_temp, (m_temp*9/5.0+32.0));
-    int x = VALUES_X;
-    int y = STATE_Y+tft.fontHeight(STATE_FONT)*line+BORDER_THICKNESS;
     int width = tft.width()-VALUES_X;
-
-    tft.fillRect( x, y, width, tft.fontHeight(STATE_FONT)+BORDER_THICKNESS, VALUE_BG);
-    plot_bar(m_display, Rect(x, y+BORDER_THICKNESS, width, PLOT_THICKNESS),
-            m_temp, 0, 50, TFT_ORANGE, TFT_BLUE);
-    tft.drawString(value_buffer, x, y, STATE_FONT);
-    ++line;
-
-    sprintf(value_buffer, "%4.2f%%RH", m_humid);
-    y = STATE_Y+tft.fontHeight(STATE_FONT)*line+BORDER_THICKNESS;
-    tft.fillRect(x, y, width, tft.fontHeight(STATE_FONT)+BORDER_THICKNESS,
-            VALUE_BG);
-    plot_bar(m_display, Rect(x, y+BORDER_THICKNESS, width, PLOT_THICKNESS),
-            m_humid, 0, 95, TFT_ORANGE, TFT_BLUE);
-    tft.drawString(value_buffer, x, y, STATE_FONT);
-    ++line;
-
-    sprintf(value_buffer, "%4.2fg", m_weight);
-    y = STATE_Y+tft.fontHeight(STATE_FONT)*line+BORDER_THICKNESS;
-    tft.fillRect(x, y, width, tft.fontHeight(STATE_FONT)+BORDER_THICKNESS, VALUE_BG);
-    plot_bar(m_display, Rect(x, y+BORDER_THICKNESS, width, PLOT_THICKNESS),
-            m_weight, 0, 200, TFT_ORANGE, TFT_BLUE);
-    tft.drawString(value_buffer, x, y, STATE_FONT);
-    ++line;
-}
-
-#ifdef BOZO
-// Update the state on the screen with the latest values we hold.
-// called at UPDATE_INTERVAL
-void StateView::draw_state()
-{
-    TFT_eSPI &tft = m_display.get_tft();
-    char value_buffer[45];
-    tft.setTextColor(TEXT_FG);
-    int line = 1;
-    int field_spacing = tft.fontHeight(STATE_FONT) + LINE_GAP;
-
-    sprintf(value_buffer, "%3.1f°C %3.1f°F", m_temp, (m_temp*9/5.0+32.0));
-    int x = VALUES_X;
-    int y = STATE_Y+field_spacing*line;
-    int width = tft.width()-VALUES_X;
-
-    tft.fillRect( x, y, width, field_spacing, VALUE_BG);
-    plot_bar(m_display, Rect(x, y+LINE_GAP, width, PLOT_THICKNESS),
-            m_temp, 0, 50, TFT_ORANGE, TFT_BLUE);
-    tft.drawString(value_buffer, x, y, STATE_FONT);
-    ++line;
-
-    sprintf(value_buffer, "%4.2f%%RH", m_humid);
-    y = STATE_Y+tft.fontHeight(STATE_FONT)*line+BORDER_THICKNESS;
-    tft.fillRect(x, y, width, tft.fontHeight(STATE_FONT)+BORDER_THICKNESS,
-            VALUE_BG);
-    plot_bar(m_display, Rect(x, y+BORDER_THICKNESS, width, PLOT_THICKNESS),
-            m_humid, 0, 95, TFT_ORANGE, TFT_BLUE);
-    tft.drawString(value_buffer, x, y, STATE_FONT);
-    ++line;
-
-    sprintf(value_buffer, "%4.2fg", m_weight);
-    y = STATE_Y+tft.fontHeight(STATE_FONT)*line+BORDER_THICKNESS;
-    tft.fillRect(x, y, width, tft.fontHeight(STATE_FONT)+BORDER_THICKNESS, VALUE_BG);
-    plot_bar(m_display, Rect(x, y+BORDER_THICKNESS, width, PLOT_THICKNESS),
-            m_weight, 0, 200, TFT_ORANGE, TFT_BLUE);
-    tft.drawString(value_buffer, x, y, STATE_FONT);
-    ++line;
-}
-
+    int field_spacing = (MENU_Y-VALUES_Y)/NUM_STATE_LINES;
+#ifdef DEBUG_FIELD_SPACING
+    {
+        char buffer[70];
+        sprintf(buffer, "field_spacing %d = (MENU_Y %d- VALUES_Y %d)/ NUM_STATE_LINES %d",
+                (MENU_Y - VALUES_Y)/NUM_STATE_LINES,
+                MENU_Y, VALUES_Y, NUM_STATE_LINES);
+        Serial.println(buffer);
+    }
 #endif
+
+    int line = 0;
+    int x = VALUES_X;
+    int y = m_title_height+(tft.fontHeight(STATE_FONT)/2);
+    int bar_y = y+tft.fontHeight(STATE_FONT);
+
+    plot_bar(m_display, Rect(x, bar_y, width, PLOT_THICKNESS),
+            m_temp, 0, 50, TFT_ORANGE, TFT_BLUE);
+    sprintf(value_buffer, "%3.1f °C  ", m_temp);
+    tft.drawString(value_buffer, x, y, STATE_FONT);
+    ++line;
+
+    y += field_spacing;
+    bar_y = y+tft.fontHeight(STATE_FONT);
+
+    plot_bar(m_display, Rect(x, bar_y, width, PLOT_THICKNESS),
+            m_humid, 0, 95, TFT_ORANGE, TFT_BLUE);
+    sprintf(value_buffer, "%4.2f %%RH  ", m_humid);
+    tft.drawString(value_buffer, x, y, STATE_FONT);
+    ++line;
+
+    y += field_spacing;
+    bar_y = y+tft.fontHeight(STATE_FONT);
+
+    plot_bar(m_display, Rect(x, bar_y, width, PLOT_THICKNESS),
+            m_weight, 0, 200, TFT_ORANGE, TFT_BLUE);
+    if (m_weight >= 1000.0)
+        sprintf(value_buffer, "%4.3f Kg    ", m_weight/1000.0);
+    else
+        sprintf(value_buffer, "%4.3f g     ", m_weight);
+    tft.drawString(value_buffer, x, y, STATE_FONT);
+}

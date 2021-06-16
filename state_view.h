@@ -50,6 +50,7 @@ private:
     float m_humid;
     float m_weight;
     float m_full_weight;
+    uint16_t m_title_height;
 };
 
 #endif
