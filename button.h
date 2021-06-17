@@ -6,6 +6,9 @@
 #include "display.h"
 #include "rect.h"
 
+#define BUTTON_FONT 4
+#define BUTTON_RADIUS 10
+
 struct ButtonData
 {
     ButtonData(const char *label, uint16_t color, uint16_t tcolor);

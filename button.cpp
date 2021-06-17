@@ -4,9 +4,6 @@
 
 #include "button.h"
 
-#define BUTTON_FONT 4
-#define BUTTON_RADIUS 10
-
 static char dbg_buffer[72];
 
 ButtonData::ButtonData(const char *l, uint16_t pc, uint16_t ptc) :

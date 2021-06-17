@@ -11,6 +11,8 @@ class Display;
 
 #define MAX_CALLBACKS 10
 
+#define SCREEN_BG TFT_BLACK
+
 typedef void (*TouchCallbackFunc)(
         Display *d,
         void *user,

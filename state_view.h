@@ -19,7 +19,7 @@ public:
     // ctor
     StateView(Display &d, ViewChangeCallback ccb, void *change_user_data, Scale &s, BME280_IF &b);
 
-    // loop only called when this view is active
+    // call this often?
     void loop();
 
     // void render();
@@ -28,9 +28,6 @@ public:
     bool update();
 
     void touch_callback(uint16_t x, uint16_t y, bool pressed);
-
-    void active(bool v) { m_active = v; }
-    bool active(void) const { return m_active; }
 
 protected:
 
@@ -45,7 +42,6 @@ private:
     Scale &m_scale;
     BME280_IF &m_bme;
     Menu m_menu;
-    bool m_active;
     float m_temp;
     float m_humid;
     float m_weight;

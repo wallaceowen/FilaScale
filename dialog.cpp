@@ -22,18 +22,57 @@ ButtonData dialog_button_data[] = {
 };
 #endif
 
+void show_rect(const char *label, const Rect &r)
+{
+    char rbuf[60];
+    sprintf(rbuf, "%s rect: %u %u %u %u",
+            label, r.x, r.y, r.w, r.h);
+    Serial.println(rbuf);
+}
+
+Rect computeMenuRect(const Rect &in,
+        // uint16_t dialog_x,
+        // uint16_t dialog_y,
+        // uint16_t dialog_w,
+        // uint16_t dialog_h,
+        uint16_t num_buttons,
+        Menu::Orient o)
+{
+    if (o == Menu::O_Vert)
+    {
+        // return Rect(
+        Rect r(
+                in.x,
+                in.y,
+                in.w/num_buttons,
+                in.h);
+        show_rect("vert", r);
+        return r;
+    }
+    else
+    {
+        // return Rect(
+        Rect r(
+                in.x,
+                in.y+in.h,
+            in.w/num_buttons, DIALOG_MENU_HEIGHT);
+        show_rect("horiz", r);
+        return r;
+    }
+}
+
 Dialog::Dialog(Display &d,
         const Rect &rect,
         const char *title,
         const char *prompt,
         const ButtonData *button_data,
-        unsigned num_buttons) :
+        unsigned num_buttons, Menu::Orient o) :
     m_display(d),
     m_rect(rect),
     m_menu(d,
-            Rect(m_rect.x, m_rect.y+m_rect.h-DIALOG_MENU_HEIGHT, m_rect.w/num_buttons, DIALOG_MENU_HEIGHT),
-            button_data, num_buttons,
-            Menu::O_Horiz),
+            // Rect(m_rect.x, m_rect.y+m_rect.h-DIALOG_MENU_HEIGHT, m_rect.w/num_buttons, DIALOG_MENU_HEIGHT),
+            computeMenuRect(rect, num_buttons, o),
+            button_data, num_buttons, o),
     m_title(title),
     m_prompt(prompt)
 {

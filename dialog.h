@@ -13,7 +13,8 @@ public:
             const char *title,
             const char *prompt,
             const ButtonData *button_data,
-            unsigned num_buttons);
+            unsigned num_buttons,
+            Menu::Orient o=Menu::O_Horiz);
 
     // Returns true when dialog anwsered, false while dialog still running
     virtual bool loop(void);

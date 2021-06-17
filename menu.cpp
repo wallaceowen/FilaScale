@@ -12,6 +12,19 @@
 
 typedef Button *BPTR;
 
+int widest_button(TFT_eSPI &tft, const ButtonData bdata[], uint16_t num)
+{
+    int widest = 0;
+    for (uint16_t i = 0; i < num; ++i)
+    {
+        int l = tft.textWidth(bdata[i].label, BUTTON_FONT);
+        if (l > widest) 
+            widest = l;
+    }
+
+    return widest;
+}
+
 Menu::Menu(Display &d,
         const Rect &rect,
         const ButtonData bdata[],
@@ -22,6 +35,11 @@ Menu::Menu(Display &d,
     m_user_data(0)
 {
     m_buttons = new BPTR[num_buttons];
+    TFT_eSPI &tft = d.get_tft();
+
+    int widest = widest_button(tft, bdata, num);
+    Serial.print("--> menu widest = ");
+    Serial.println(widest);
 
     // Make the buttons
     for (int i = 0; i < num_buttons; ++i)
@@ -32,8 +50,8 @@ Menu::Menu(Display &d,
         {
             case O_Vert:
             {
-                button_w = rect.w;
-                button_h = rect.h;
+                button_w = widest;
+                button_h = rect.h/num_buttons;
                 button_x = rect.x;
                 button_y = rect.y+button_h*i;
                 break;
@@ -50,6 +68,7 @@ Menu::Menu(Display &d,
                 break;
         }
 
+        // Make a new Button ctor that accepts ButtonData passed by ref
         Button *b = new Button(
                 bdata[i].label,
                 Rect(button_x, button_y, button_w, button_h),

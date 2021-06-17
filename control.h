@@ -10,6 +10,7 @@
 #include "scale.h"
 #include "state_view.h"
 #include "calib_view.h"
+#include "config_view.h"
 
 class Control
 {
@@ -24,8 +25,12 @@ private:
 
     static void change_view_func(const char *view_name, void *user);
     void change_view(const char *view_name);
+
     static void calib_cb_func(const char *result, void *user);
     void calib_cb(const char *result);
+
+    static void config_cb_func(const char *result, void *user);
+    void config_cb(const char *result);
 
     Mode m_mode;
     Scale &m_scale;
@@ -33,9 +38,11 @@ private:
     Display &m_display;
     StateView *m_state_view;
     CalibView *m_calib_view;
+    ConfigView *m_config_view;
 
     View *m_view;
     Protocol &m_protocol;
 };
 
 #endif
+

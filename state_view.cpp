@@ -28,7 +28,7 @@
 #define PLOT_THICKNESS 10
 #define VALUES_GAP 10
 
-#define SCREEN_BG TFT_BLACK
+// #define SCREEN_BG TFT_BLACK
 #define VALUE_BG TFT_BLACK
 #define VALUE_FG TFT_WHITE
 
@@ -44,14 +44,17 @@ void show_x_y_line(const char *what, int x, int y, int line)
 ButtonData state_menu_button_data[] = {
     ButtonData("CFG", TFT_PURPLE, TFT_WHITE),
     ButtonData("CAL", TFT_GREEN, TFT_BLACK),
-    ButtonData("CONN", TFT_ORANGE, TFT_WHITE),
+    ButtonData("NET", TFT_ORANGE, TFT_WHITE),
     ButtonData("STOP", TFT_RED, TFT_WHITE)
 };
 #define NUM_STATE_BUTTONS (sizeof(state_menu_button_data)/sizeof(state_menu_button_data[0]))
 
 #define NUM_STATE_LINES 4
 
-StateView::StateView(Display &d, ViewChangeCallback ccb, void *change_user_data, Scale &s, BME280_IF &b) :
+StateView::StateView(Display &d,
+        ViewChangeCallback ccb,
+        void *change_user_data,
+        Scale &s, BME280_IF &b) :
     View(d, ccb, change_user_data),
     m_display(d),
     m_menu(
@@ -60,7 +63,6 @@ StateView::StateView(Display &d, ViewChangeCallback ccb, void *change_user_data,
             state_menu_button_data, NUM_STATE_BUTTONS, STATE_MENU_ORIENT),
     m_scale(s),
     m_bme(b),
-    m_active(false),
     m_temp(0.0),
     m_humid(0.0),
     m_weight(0.0),
