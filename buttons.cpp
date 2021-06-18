@@ -22,6 +22,7 @@ Buttons::Buttons(Display &d, const Rect &w, uint16_t r, uint16_t c) :
     else
     {
         buttons = new BPTR[rows*columns];
+        memset(buttons, 0, (rows*columns)*sizeof(BPTR));
     }
 }
 
@@ -31,9 +32,13 @@ bool Buttons::add_button(const ButtonData &bd, uint16_t row, uint16_t col)
     {
         uint16_t width = where.w/columns;
         uint16_t height = where.h/rows;
-        Button *b = new Button(
-                bd, Rect(where.x+width*columns, where.y+height*row, width, height));
+        uint16_t x = where.x+width*columns;
+        uint16_t y = where.y+height*row;
+
+        Button *b = new Button(bd, Rect(x, y, width, height));
+
         buttons[(row*columns)+col] = b;
+
         return true;
     }
     return false;
@@ -45,6 +50,10 @@ void Buttons::show()
     {
         for (unsigned row = 0; row < rows; ++row)
         {
+            Serial.print("showing button ");
+            Serial.print(row);
+            Serial.print(", ");
+            Serial.println(column);
             Button *b = buttons[row*columns+column];
             if (b)
                 b->draw(tft);

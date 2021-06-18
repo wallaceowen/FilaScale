@@ -37,6 +37,8 @@ private:
 
     void set_state(ConfigState cs);
 
+    void add_threshold_buttons();
+
     static void config_dialog_callback_func(const char *label, bool pressed, void *user_data);
     void config_dialog_callback(const char *label, bool pressed);
 
@@ -45,7 +47,8 @@ private:
     Display        &m_display;
     ConfigState     m_state;
     Dialog          m_offer_config_dialog;
-    Dialog          m_thresh_config_dialog;
+    // Dialog       m_thresh_config_dialog;
+    NewDialog       m_thresh_config_dialog;
     Dialog          m_network_config_dialog;
     DialogBase     *m_current_dialog;
 };

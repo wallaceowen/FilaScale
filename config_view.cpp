@@ -27,20 +27,21 @@ static ButtonData config_offer_bd[] = {
 };
 #define NUM_CO_BUTTONS (sizeof(config_offer_bd)/sizeof(config_offer_bd[0]))
 
+#define THRESH_ROWS 2
+#define  THRESH_COLS 3
 static ButtonData thresh_bd[] = {
-    ButtonData("WEIGHT", TFT_GREEN, TFT_WHITE),
-    ButtonData("PLA", TFT_BLUE, TFT_WHITE),
-    ButtonData("ABS", TFT_GREEN, TFT_WHITE),
-    ButtonData("ASA", TFT_BLUE, TFT_WHITE),
-    ButtonData("Nylon", TFT_GREEN, TFT_WHITE),
-    ButtonData("PETG", TFT_BLUE, TFT_WHITE),
+    ButtonData("WEIGHT", TFT_BLACK, TFT_WHITE),
+    ButtonData("PLA", TFT_BLACK, TFT_WHITE),
+    ButtonData("ABS", TFT_BLACK, TFT_WHITE),
+    ButtonData("Nylon", TFT_BLACK, TFT_WHITE),
+    ButtonData("PETG", TFT_BLACK, TFT_WHITE),
     ButtonData("CANCEL", TFT_RED, TFT_WHITE),
 };
 #define NUM_THRESH_BUTTONS (sizeof(thresh_bd)/sizeof(thresh_bd[0]))
 
 static ButtonData network_bd[] = {
     ButtonData("IP", TFT_BLUE, TFT_WHITE),
-    ButtonData("NETMASK", TFT_BLUE, TFT_WHITE),
+    ButtonData("NETMASK", TFT_GREEN, TFT_WHITE),
     ButtonData("GATEWAY", TFT_BLUE, TFT_WHITE),
     ButtonData("CANCEL", TFT_RED, TFT_WHITE),
 };
@@ -48,6 +49,17 @@ static ButtonData network_bd[] = {
 
 
 static const char *state_names[] = { "COS_Offer", "COS_Thresholds", "COS_Network", "COS_NUmStates" };
+
+
+void ConfigView::add_threshold_buttons()
+{
+    for (int i = 0; i < NUM_THRESH_BUTTONS; ++i)
+    {
+        m_thresh_config_dialog.add_button(thresh_bd[i], i/THRESH_COLS,
+                i%THRESH_COLS);
+    }
+
+}
 
 // Here is where we configure our filament temperature and humidity thresholds, for each of
 // the types of filament defined
@@ -61,13 +73,19 @@ ConfigView::ConfigView(Display &d, ViewChangeCallback ccb, void *change_user_dat
             "CONFIG",
             "Choose an option",
             config_offer_bd, NUM_CO_BUTTONS),
+    // m_thresh_config_dialog(
+            // d,
+            // Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT),
+            // "THRESHOLDS",
+            // "Select a threshold to adjust",
+            // thresh_bd, NUM_THRESH_BUTTONS,
+            // Menu::O_Vert),
     m_thresh_config_dialog(
             d,
             Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT),
             "THRESHOLDS",
             "Select a threshold to adjust",
-            thresh_bd, NUM_THRESH_BUTTONS,
-            Menu::O_Vert),
+            THRESH_ROWS, THRESH_COLS),
     m_network_config_dialog(
             d,
             Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT),
@@ -77,6 +95,8 @@ ConfigView::ConfigView(Display &d, ViewChangeCallback ccb, void *change_user_dat
             Menu::O_Vert),
     m_current_dialog(&m_offer_config_dialog)
 {
+    add_threshold_buttons();
+
     m_offer_config_dialog.set_callback(menu_callback_func, this);
     m_thresh_config_dialog.set_callback(menu_callback_func, this);
     m_network_config_dialog.set_callback(menu_callback_func, this);

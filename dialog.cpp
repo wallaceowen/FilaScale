@@ -149,7 +149,7 @@ bool NewDialog::check_touch(uint16_t x, uint16_t y, bool pressed)
 
 void NewDialog::show(void)
 {
-    Serial.println("NewDialog::show()");
+    Serial.println("NewDialog::show(1)");
 
     TFT_eSPI &tft = m_display.get_tft();
     tft.fillRect(
@@ -167,12 +167,19 @@ void NewDialog::show(void)
     // Show the prompt
     tft.setTextDatum(TL_DATUM);
     tft.drawString(m_prompt, m_rect.x+PROMPT_X, m_rect.y+PROMPT_Y, DIALOG_FONT);
+    Serial.println("NewDialog::show(2)");
     // Show the menu
     m_buttons.show();
+    Serial.println("NewDialog::show(3)");
 }
 
 // Returns true when dialog anwsered, false while dialog still running
 bool NewDialog::loop(void)
 {
     Serial.println("NewDialog::loop()");
+}
+
+bool NewDialog::add_button(const ButtonData &bd, uint16_t row, uint16_t col)
+{
+    return m_buttons.add_button(bd, row, col);
 }
