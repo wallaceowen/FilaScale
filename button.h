@@ -13,10 +13,11 @@ typedef void (*ButtonCB)(const char *label, bool pressed, void *user_data);
 
 struct ButtonData
 {
-    ButtonData(const char *label, uint16_t color, uint16_t tcolor);
+    ButtonData(const char *label, uint16_t color, uint16_t fg, uint16_t bg);
     const char *label;
     uint16_t color;
-    uint16_t txt_color;
+    uint16_t fg;
+    uint16_t bg;
 };
 
 class Button

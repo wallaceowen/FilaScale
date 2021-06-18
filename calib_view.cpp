@@ -20,8 +20,8 @@
 #define SCREEN_BG TFT_BLACK
 
 static ButtonData ok_cancel_bd[] = {
-    ButtonData("OK", TFT_DARKGREEN, TFT_WHITE),
-    ButtonData("CANCEL", TFT_RED, TFT_WHITE),
+    ButtonData("OK", TFT_DARKGREEN, TFT_WHITE, TFT_DARKGREEN),
+    ButtonData("CANCEL", TFT_RED, TFT_WHITE, TFT_RED),
 };
 #define NUM_OK_BUTTONS (sizeof(ok_cancel_bd)/sizeof(ok_cancel_bd[0]))
 

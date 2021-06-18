@@ -11,7 +11,7 @@ public:
 
     virtual bool loop(void) = 0;
     virtual void show(void) = 0;
-    virtual void set_callback(ButtonCB, void*);
+    virtual void set_callback(ButtonCB, void*) = 0;
     virtual bool check_touch(uint16_t x, uint16_t y, bool pressed) = 0;
 
 protected:

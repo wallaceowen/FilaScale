@@ -21,29 +21,29 @@
 #define SCREEN_BG TFT_BLACK
 
 static ButtonData config_offer_bd[] = {
-    ButtonData("THRESH", TFT_BLUE, TFT_WHITE),
-    ButtonData("NET", TFT_GREEN, TFT_WHITE),
-    ButtonData("CANCEL", TFT_RED, TFT_WHITE),
+    ButtonData("THRESH", TFT_BLUE, TFT_WHITE, TFT_BLUE),
+    ButtonData("NET", TFT_GREEN, TFT_WHITE, TFT_GREEN),
+    ButtonData("CANCEL", TFT_RED, TFT_WHITE, TFT_RED),
 };
 #define NUM_CO_BUTTONS (sizeof(config_offer_bd)/sizeof(config_offer_bd[0]))
 
 #define THRESH_ROWS 2
 #define  THRESH_COLS 3
 static ButtonData thresh_bd[] = {
-    ButtonData("WEIGHT", TFT_NAVY, TFT_WHITE),
-    ButtonData("PLA", TFT_DARKGREEN, TFT_WHITE),
-    ButtonData("ABS", TFT_DARKCYAN, TFT_WHITE),
-    ButtonData("Nylon", TFT_MAROON, TFT_WHITE),
-    ButtonData("PETG", TFT_DARKGREY, TFT_WHITE),
-    ButtonData("CANCEL", TFT_RED, TFT_WHITE),
+    ButtonData("WEIGHT", TFT_NAVY, TFT_WHITE, TFT_NAVY),
+    ButtonData("PLA", TFT_DARKGREEN, TFT_WHITE, TFT_DARKGREEN),
+    ButtonData("ABS", TFT_DARKCYAN, TFT_WHITE, TFT_DARKCYAN),
+    ButtonData("Nylon", TFT_MAROON, TFT_WHITE, TFT_MAROON),
+    ButtonData("PETG", TFT_DARKGREY, TFT_WHITE, TFT_DARKGREY),
+    ButtonData("CANCEL", TFT_RED, TFT_WHITE, TFT_RED),
 };
 #define NUM_THRESH_BUTTONS (sizeof(thresh_bd)/sizeof(thresh_bd[0]))
 
 static ButtonData network_bd[] = {
-    ButtonData("IP", TFT_BLUE, TFT_WHITE),
-    ButtonData("NETMASK", TFT_GREEN, TFT_WHITE),
-    ButtonData("GATEWAY", TFT_BLUE, TFT_WHITE),
-    ButtonData("CANCEL", TFT_RED, TFT_WHITE),
+    ButtonData("IP", TFT_BLUE, TFT_WHITE, TFT_BLUE),
+    ButtonData("NETMASK", TFT_GREEN, TFT_WHITE, TFT_GREEN),
+    ButtonData("GATEWAY", TFT_BLUE, TFT_WHITE, TFT_BLUE),
+    ButtonData("CANCEL", TFT_RED, TFT_WHITE, TFT_RED),
 };
 #define NUM_NET_BUTTONS (sizeof(network_bd)/sizeof(network_bd[0]))
 
@@ -149,9 +149,11 @@ void ConfigView::set_state(ConfigState cs)
     }
 }
 
+// Callback that is invoked as a side-effect of either the Menu or Buttons class
+// being asked to check_touch().
 void ConfigView::menu_callback(const char *label, bool pressed)
 {
-#ifdef DEBUG_TOUCH
+#ifdef DEBUG_MENU_CALLBACK
     Serial.print("Config menu callback got \"");
     Serial.print(label),
     Serial.print("\" state = ");
@@ -165,25 +167,60 @@ void ConfigView::menu_callback(const char *label, bool pressed)
     // then deal with switching to that state
     if (!pressed)
     {
-        TFT_eSPI &tft = m_display.get_tft();
-        tft.fillRect(0, 0, tft.width(), tft.height(), SCREEN_BG);
-        if (!strcmp(label, "CANCEL"))
+        switch(m_state)
         {
-            // Reset state to offer
-            set_state(COS_Offer);
+            case COS_Offer:
+            {
+                TFT_eSPI &tft = m_display.get_tft();
+                tft.fillRect(0, 0, tft.width(), tft.height(), SCREEN_BG);
+                if (!strcmp(label, "CANCEL"))
+                {
+                    // Reset state to offer
+                    set_state(COS_Offer);
 
-            // Tell control to go back to state view
-            m_change_cb("CANCEL", m_change_data);
+                    // Tell control to go back to state view
+                    m_change_cb("CANCEL", m_change_data);
+                }
+                else if (!strcmp(label, "THRESH"))
+                {
+                    set_state(COS_Thresholds);
+                }
+                else if (!strcmp(label, "NET"))
+                {
+                    set_state(COS_Network);
+                }
+                this->show();
+                break;
+            }
+
+            case  COS_Thresholds:
+                if (!strcmp(label, "CANCEL"))
+                {
+                    // Reset state to offer
+                    set_state(COS_Offer);
+
+                    // Tell control to go back to state view
+                    m_change_cb("CANCEL", m_change_data);
+                }
+                Serial.println("Add code to handle Thresh selections");
+                break;
+
+            case  COS_Network:
+                if (!strcmp(label, "CANCEL"))
+                {
+                    // Reset state to offer
+                    set_state(COS_Offer);
+
+                    // Tell control to go back to state view
+                    m_change_cb("CANCEL", m_change_data);
+                }
+                Serial.println("Add code to handle Network selections");
+                break;
+
+            default:
+                break;
         }
-        else if (!strcmp(label, "THRESH"))
-        {
-            set_state(COS_Thresholds);
-        }
-        else if (!strcmp(label, "NET"))
-        {
-            set_state(COS_Network);
-        }
-        this->show();
+
     }
 }
 
@@ -223,7 +260,7 @@ void ConfigView::loop()
         case  COS_Thresholds:
             break;
 
-        case  COS_Filament:
+        case  COS_Network:
             break;
 
         default:

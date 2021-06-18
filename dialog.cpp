@@ -1,22 +1,6 @@
+
 #include "dialog.h"
-
-// #define TITLE_X
-// #define TITLE_Y
-
-#define DIALOG_MENU_HEIGHT 32
-#define TITLE_FONT 4
-#define DIALOG_FONT 4
-
-#define PROMPT_X 4
-#define PROMPT_Y 30
-
-// void show_rect(const char *label, const Rect &r)
-// {
-    // char rbuf[60];
-    // sprintf(rbuf, "%s rect: %u %u %u %u",
-            // label, r.x, r.y, r.w, r.h);
-    // Serial.println(rbuf);
-// }
+#include "config.h"
 
 DialogBase::DialogBase(Display &d, const Rect &rect, const char *title, const char *prompt) :
     m_display(d),
@@ -35,7 +19,6 @@ Rect computeMenuRect(const Rect &in, uint16_t num_buttons, Menu::Orient o)
                 in.y,
                 in.w,
                 in.h);
-        // show_rect("vert", r);
         return r;
     }
     else
@@ -44,7 +27,6 @@ Rect computeMenuRect(const Rect &in, uint16_t num_buttons, Menu::Orient o)
                 in.x,
                 in.h-DIALOG_MENU_HEIGHT,
             in.w/num_buttons, DIALOG_MENU_HEIGHT);
-        // show_rect("horiz", r);
         return r;
     }
 }
@@ -143,7 +125,11 @@ void NewDialog::set_callback(ButtonCB mcb, void *user_data)
 
 bool NewDialog::check_touch(uint16_t x, uint16_t y, bool pressed)
 {
-    return m_buttons.check_touch(x, y, pressed);
+    // return m_buttons.check_touch(x, y, pressed);
+    bool r = m_buttons.check_touch(x, y, pressed);
+    Serial.print("NewDialog::check_touch(): ");
+    Serial.println(r);
+    return r;
 }
 
 #define SHOW_NEW

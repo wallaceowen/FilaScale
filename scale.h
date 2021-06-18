@@ -5,8 +5,9 @@
 
 #include "HX711.h"
 #include "Averager.h"
+#include "config.h"
 
-#define CAL_WEIGHT_GRAMS 200.0
+// #define CAL_WEIGHT_GRAMS 200.0
 
 class Scale
 {
