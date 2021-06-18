@@ -34,12 +34,14 @@
 
 // #define DEBUG_TOUCH
 
+#ifdef DEBUG
 void show_x_y_line(const char *what, int x, int y, int line)
 {
     char buffer[60];
     sprintf(buffer, "%s line: %d x: %d y: %d", what, line, x, y);
     Serial.println(buffer);
 }
+#endif
 
 ButtonData state_menu_button_data[] = {
     ButtonData("CFG", TFT_PURPLE, TFT_WHITE),
@@ -122,15 +124,21 @@ void StateView::show()
     // int y = VALUES_Y+(tft.fontHeight(STATE_FONT)/2);
     int y = m_title_height+(tft.fontHeight(STATE_FONT)/2);
     tft.drawString("TEMP", x, y, STATE_FONT);
+#ifdef DEBUG
     show_x_y_line("show", x, y, line);
+#endif
     ++line;
     y += field_spacing;
     tft.drawString("HUMIDITY", x, y, STATE_FONT);
+#ifdef DEBUG
     show_x_y_line("show", x, y, line);
+#endif
     ++line;
     y += field_spacing;
     tft.drawString("WEIGHT", x, y, STATE_FONT);
+#ifdef DEBUG
     show_x_y_line("show", x, y, line);
+#endif
 
     // Show the buttons
     m_menu.show();

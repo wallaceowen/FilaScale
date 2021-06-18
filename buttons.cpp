@@ -32,7 +32,7 @@ bool Buttons::add_button(const ButtonData &bd, uint16_t row, uint16_t col)
     {
         uint16_t width = where.w/columns;
         uint16_t height = where.h/rows;
-        uint16_t x = where.x+width*columns;
+        uint16_t x = where.x+width*col;
         uint16_t y = where.y+height*row;
 
         Button *b = new Button(bd, Rect(x, y, width, height));
@@ -50,13 +50,17 @@ void Buttons::show()
     {
         for (unsigned row = 0; row < rows; ++row)
         {
-            Serial.print("showing button ");
-            Serial.print(row);
-            Serial.print(", ");
-            Serial.println(column);
             Button *b = buttons[row*columns+column];
             if (b)
+            {
+#ifdef DEBUG
+                Serial.print("showing button ");
+                Serial.print(row);
+                Serial.print(", ");
+                Serial.println(column);
+#endif
                 b->draw(tft);
+            }
         }
     }
 }

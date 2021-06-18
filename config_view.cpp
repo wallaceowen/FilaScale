@@ -6,10 +6,10 @@
 #include "stock_buttons.h"
 
 #define CALIB_Y 10
-#define DLG_X 18
-#define DLG_Y 18
-#define DLG_HEIGHT 160
-#define DLG_WIDTH 270
+#define DLG_X 0
+#define DLG_Y 0
+#define DLG_HEIGHT 240
+#define DLG_WIDTH 320
 
 #define WIDTH 320
 #define HEIGHT 240
@@ -55,8 +55,9 @@ void ConfigView::add_threshold_buttons()
 {
     for (int i = 0; i < NUM_THRESH_BUTTONS; ++i)
     {
-        m_thresh_config_dialog.add_button(thresh_bd[i], i/THRESH_COLS,
-                i%THRESH_COLS);
+        uint16_t row = i/THRESH_COLS;
+        uint16_t column = i%THRESH_COLS;
+        m_thresh_config_dialog.add_button(thresh_bd[i], row, column);
     }
 
 }
@@ -73,13 +74,6 @@ ConfigView::ConfigView(Display &d, ViewChangeCallback ccb, void *change_user_dat
             "CONFIG",
             "Choose an option",
             config_offer_bd, NUM_CO_BUTTONS),
-    // m_thresh_config_dialog(
-            // d,
-            // Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT),
-            // "THRESHOLDS",
-            // "Select a threshold to adjust",
-            // thresh_bd, NUM_THRESH_BUTTONS,
-            // Menu::O_Vert),
     m_thresh_config_dialog(
             d,
             Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT),
@@ -201,7 +195,7 @@ void ConfigView::menu_callback_func(const char *label, bool pressed, void *user_
 // Show the static part of the view
 void ConfigView::show()
 {
-    Serial.println("ConfigView::show()");
+    // Serial.println("ConfigView::show()");
     TFT_eSPI &tft = m_display.get_tft();
 
     // Show the initial dialog
@@ -210,7 +204,7 @@ void ConfigView::show()
 
 bool ConfigView::update()
 {
-    Serial.println("ConfigView::update()");
+    // Serial.println("ConfigView::update()");
     return true;
 }
 
