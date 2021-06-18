@@ -3,15 +3,12 @@
 // #define TITLE_X
 // #define TITLE_Y
 
-#define PROMPT_X
-#define PROMPT_Y
-
 #define DIALOG_MENU_HEIGHT 32
 #define TITLE_FONT 4
 #define DIALOG_FONT 4
 
-#define PROMPT_X 20
-#define PROMPT_Y 60
+#define PROMPT_X 4
+#define PROMPT_Y 30
 
 // void show_rect(const char *label, const Rect &r)
 // {
@@ -45,7 +42,7 @@ Rect computeMenuRect(const Rect &in, uint16_t num_buttons, Menu::Orient o)
     {
         Rect r(
                 in.x,
-                in.y,
+                in.h-DIALOG_MENU_HEIGHT,
             in.w/num_buttons, DIALOG_MENU_HEIGHT);
         // show_rect("horiz", r);
         return r;
@@ -118,13 +115,14 @@ bool Dialog::loop(void)
     Serial.println("Dialog::loop()");
 }
 
+#define BUTTONS_Y 128
 NewDialog::NewDialog(Display &d,
         const Rect &rect,
         const char *title,
         const char *prompt,
         uint16_t rows, uint16_t columns) :
     DialogBase(d, rect, title, prompt),
-    m_buttons(d, Rect(rect.x, rect.y, rect.w, rect.h), rows, columns)
+    m_buttons(d, Rect(rect.x, BUTTONS_Y, rect.w, rect.h-BUTTONS_Y), rows, columns)
 {
     // char dbuf[65];
     // sprintf(dbuf, "dialog \"%s\" rect: %u %u %u %u",
@@ -148,10 +146,11 @@ bool NewDialog::check_touch(uint16_t x, uint16_t y, bool pressed)
     return m_buttons.check_touch(x, y, pressed);
 }
 
+#define SHOW_NEW
 void NewDialog::show(void)
 {
     TFT_eSPI &tft = m_display.get_tft();
-#ifdef BOZO
+#ifdef SHOW_NEW
     tft.fillRect(
             m_rect.x, m_rect.y,
             m_rect.w, m_rect.h,

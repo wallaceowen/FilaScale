@@ -30,11 +30,11 @@ static ButtonData config_offer_bd[] = {
 #define THRESH_ROWS 2
 #define  THRESH_COLS 3
 static ButtonData thresh_bd[] = {
-    ButtonData("WEIGHT", TFT_BLACK, TFT_WHITE),
-    ButtonData("PLA", TFT_BLACK, TFT_WHITE),
-    ButtonData("ABS", TFT_BLACK, TFT_WHITE),
-    ButtonData("Nylon", TFT_BLACK, TFT_WHITE),
-    ButtonData("PETG", TFT_BLACK, TFT_WHITE),
+    ButtonData("WEIGHT", TFT_NAVY, TFT_WHITE),
+    ButtonData("PLA", TFT_DARKGREEN, TFT_WHITE),
+    ButtonData("ABS", TFT_DARKCYAN, TFT_WHITE),
+    ButtonData("Nylon", TFT_MAROON, TFT_WHITE),
+    ButtonData("PETG", TFT_DARKGREY, TFT_WHITE),
     ButtonData("CANCEL", TFT_RED, TFT_WHITE),
 };
 #define NUM_THRESH_BUTTONS (sizeof(thresh_bd)/sizeof(thresh_bd[0]))
@@ -151,12 +151,14 @@ void ConfigView::set_state(ConfigState cs)
 
 void ConfigView::menu_callback(const char *label, bool pressed)
 {
+#ifdef DEBUG_TOUCH
     Serial.print("Config menu callback got \"");
     Serial.print(label),
     Serial.print("\" state = ");
     Serial.print(state_names[m_state]),
     Serial.print(" pressed = ");
     Serial.println(pressed?"PRESSED":"RELEASED");
+#endif
 
     // enum ConfigState { COS_Offer, COS_Thresholds, COS_Network, COS_NUmStates };
     // Here we check m_state to see what state to switch to,
