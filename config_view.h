@@ -42,12 +42,12 @@ private:
 
     void draw_config();
 
-    Display    &m_display;
-    ConfigState m_state;
-    Dialog      m_offer_config_dialog;
-    Dialog      m_thresh_config_dialog;
-    Dialog      m_network_config_dialog;
-    Dialog     *m_current_dialog;
+    Display        &m_display;
+    ConfigState     m_state;
+    Dialog          m_offer_config_dialog;
+    Dialog          m_thresh_config_dialog;
+    Dialog          m_network_config_dialog;
+    DialogBase     *m_current_dialog;
 };
 
 #endif

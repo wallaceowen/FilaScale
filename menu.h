@@ -7,8 +7,6 @@
 
 #include "button.h"
 
-typedef void (*MenuCB)(const char *label, bool pressed, void *user_data);
-
 class Menu
 {
 public:
@@ -27,15 +25,16 @@ public:
             // Vertial or horizontal
             Orient o);
 
-    void show(Display &d);
-    bool check_touch(Display *d, uint16_t x, uint16_t y, bool pressed);
-    void set_callback(MenuCB m, void *user_data);
+    void show();
+    bool check_touch(uint16_t x, uint16_t y, bool pressed);
+    void set_callback(ButtonCB m, void *user_data);
 
 private:
-    uint16_t num_buttons;
-    MenuCB   m_mcb;
-    void    *m_user_data;
-    Button **m_buttons;
+    Display    &m_display;
+    uint16_t    num_buttons;
+    ButtonCB    m_bcb;
+    void       *m_user_data;
+    Button    **m_buttons;
 };
 
 #endif

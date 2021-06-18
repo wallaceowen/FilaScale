@@ -133,7 +133,7 @@ void StateView::show()
     show_x_y_line("show", x, y, line);
 
     // Show the buttons
-    m_menu.show(m_display);
+    m_menu.show();
 
     // Now show the state
     draw_state();
@@ -186,7 +186,7 @@ void StateView::touch_callback(uint16_t x, uint16_t y, bool pressed)
     Serial.println("checking buttons");
 #endif
 
-    m_menu.check_touch(&m_display, x, y, pressed);
+    m_menu.check_touch(x, y, pressed);
 }
 
 // Update the state on the screen with the latest values we hold.

@@ -10,7 +10,7 @@
 // #define BUTTONS_HEIGHT 40
 // #define BUTTONS_START 4
 
-typedef Button *BPTR;
+// typedef Button *BPTR;
 
 int widest_button(TFT_eSPI &tft, const ButtonData bdata[], uint16_t num)
 {
@@ -30,8 +30,9 @@ Menu::Menu(Display &d,
         const ButtonData bdata[],
         const uint16_t num,
         Orient o) :
+    m_display(d),
     num_buttons(num),
-    m_mcb(0),
+    m_bcb(0),
     m_user_data(0)
 {
     m_buttons = new BPTR[num_buttons];
@@ -70,27 +71,25 @@ Menu::Menu(Display &d,
 
         // Make a new Button ctor that accepts ButtonData passed by ref
         Button *b = new Button(
-                bdata[i].label,
-                Rect(button_x, button_y, button_w, button_h),
-                bdata[i].color, bdata[i].txt_color);
+                bdata[i], Rect(button_x, button_y, button_w, button_h));
 
         m_buttons[i] = b;
     }
 }
 
-void Menu::set_callback(MenuCB m, void *user_data)
+void Menu::set_callback(ButtonCB m, void *user_data)
 {
-    m_mcb = m;
+    m_bcb = m;
     m_user_data = user_data;
 }
 
-void Menu::show(Display &d)
+void Menu::show()
 {
     for (unsigned i = 0; i < num_buttons; ++i)
-        m_buttons[i]->draw(d);
+        m_buttons[i]->draw(m_display);
 }
 
-bool Menu::check_touch(Display *d, uint16_t x, uint16_t y, bool pressed)
+bool Menu::check_touch(uint16_t x, uint16_t y, bool pressed)
 {
     for (int i = 0; i < num_buttons; ++i)
     {
@@ -102,8 +101,8 @@ bool Menu::check_touch(Display *d, uint16_t x, uint16_t y, bool pressed)
                 // Serial.println(" pressed");
             // else
                 // Serial.println(" released");
-            if (m_mcb)
-                m_mcb(m_buttons[i]->label(), pressed, m_user_data);
+            if (m_bcb)
+                m_bcb(m_buttons[i]->label(), pressed, m_user_data);
             return true;
         }
     }

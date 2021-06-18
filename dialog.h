@@ -2,8 +2,29 @@
 #define __dialog_h
 
 #include "menu.h"
+#include "buttons.h"
 
-class Dialog
+class DialogBase
+{
+public:
+    DialogBase(Display&, const Rect &rect, const char *title, const char *prompt);
+
+    virtual bool loop(void) = 0;
+    virtual void show(void) = 0;
+    virtual void set_callback(ButtonCB, void*);
+    virtual bool check_touch(uint16_t x, uint16_t y, bool pressed) = 0;
+
+protected:
+    Display &m_display;
+    const Rect   m_rect;
+    const char  *m_title;
+    const char  *m_prompt;
+};
+
+
+
+
+class Dialog: public DialogBase
 {
 public:
     // enum DialogState { DS_Init, DS_Prompting, DS_Answered };
@@ -17,18 +38,37 @@ public:
             Menu::Orient o=Menu::O_Horiz);
 
     // Returns true when dialog anwsered, false while dialog still running
+    bool loop(void);
+    void show(void);
+    void set_callback(ButtonCB, void*);
+    bool check_touch(uint16_t x, uint16_t y, bool pressed);
+
+private:
+    Menu         m_menu;
+};
+
+class NewDialog: public DialogBase
+{
+public:
+    // enum DialogState { DS_Init, DS_Prompting, DS_Answered };
+
+    NewDialog(Display&,
+            const Rect &rect,
+            const char *title,
+            const char *prompt,
+            uint16_t rows,
+            uint16_t cols
+            );
+
+    // Returns true when dialog anwsered, false while dialog still running
     virtual bool loop(void);
     void show(void);
 
-    void set_callback(MenuCB, void*);
-    bool check_touch(Display *d, uint16_t x, uint16_t y, bool pressed);
+    void set_callback(ButtonCB, void*);
+    bool check_touch(uint16_t x, uint16_t y, bool pressed);
 
 private:
-    Display &m_display;
-    const Rect   m_rect;
-    Menu         m_menu;
-    const char  *m_title;
-    const char  *m_prompt;
+    Buttons      m_buttons;
 };
 
 #endif

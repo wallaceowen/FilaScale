@@ -23,7 +23,6 @@ static ButtonData ok_cancel_bd[] = {
     ButtonData("OK", TFT_DARKGREEN, TFT_WHITE),
     ButtonData("CANCEL", TFT_RED, TFT_WHITE),
 };
-
 #define NUM_OK_BUTTONS (sizeof(ok_cancel_bd)/sizeof(ok_cancel_bd[0]))
 
 static const char *state_names[] = { "CS_Ask", "CS_Zero", "CS_Gain", "CS_NUmStates" };
@@ -86,7 +85,7 @@ void CalibView::touch_callback(uint16_t x, uint16_t y, bool pressed)
     Serial.println("checking buttons");
 #endif
 
-    m_current_dialog->check_touch(&m_display, x, y, pressed);
+    m_current_dialog->check_touch(x, y, pressed);
 
 }
 

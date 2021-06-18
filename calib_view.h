@@ -46,13 +46,13 @@ private:
 
     void draw_calib();
 
-    Display   &m_display;
-    CalibState m_state;
-    Dialog     m_ask_dialog;
-    Dialog     m_zero_dialog;
-    Dialog     m_gain_dialog;
-    Dialog    *m_current_dialog;
-    Scale     &m_scale;
+    Display     &m_display;
+    CalibState   m_state;
+    Dialog       m_ask_dialog;
+    Dialog       m_zero_dialog;
+    Dialog       m_gain_dialog;
+    DialogBase  *m_current_dialog;
+    Scale       &m_scale;
 };
 
 #endif

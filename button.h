@@ -9,6 +9,8 @@
 #define BUTTON_FONT 4
 #define BUTTON_RADIUS 10
 
+typedef void (*ButtonCB)(const char *label, bool pressed, void *user_data);
+
 struct ButtonData
 {
     ButtonData(const char *label, uint16_t color, uint16_t tcolor);
@@ -20,15 +22,16 @@ struct ButtonData
 class Button
 {
 public:
-    Button(const char *label, const Rect &r, uint16_t color, uint16_t txt_color);
+    Button(const ButtonData &data, const Rect &r);
     bool draw(Display &d);
+    bool draw(TFT_eSPI&);
     bool within(uint16_t x, uint16_t y);
-    const char *label(void) const { return m_label; }
+    const char *label(void) const { return b_d.label; }
 private:
-    const char *m_label;
+    ButtonData b_d;
     Rect rect;
-    uint16_t color;
-    uint16_t txt_color;
 };
+
+typedef Button *BPTR;
 
 #endif
