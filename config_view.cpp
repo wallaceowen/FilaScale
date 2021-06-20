@@ -149,6 +149,8 @@ void ConfigView::set_state(ConfigState cs)
     }
 }
 
+#define DEBUG_MENU_CALLBACK
+
 // Callback that is invoked as a side-effect of either the Menu or Buttons class
 // being asked to check_touch().
 void ConfigView::menu_callback(const char *label, bool pressed)
@@ -162,11 +164,11 @@ void ConfigView::menu_callback(const char *label, bool pressed)
     Serial.println(pressed?"PRESSED":"RELEASED");
 #endif
 
-    // enum ConfigState { COS_Offer, COS_Thresholds, COS_Network, COS_NUmStates };
-    // Here we check m_state to see what state to switch to,
-    // then deal with switching to that state
+    // Only check the state when button released
     if (!pressed)
     {
+        // Here we check m_state to see what state to switch to,
+        // then deal with switching to that state
         switch(m_state)
         {
             case COS_Offer:

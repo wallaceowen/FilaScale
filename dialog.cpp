@@ -10,6 +10,33 @@ DialogBase::DialogBase(Display &d, const Rect &rect, const char *title, const ch
 {
 }
 
+
+void DialogBase::show(void)
+{
+    // Serial.println("DialogBase::show()");
+    TFT_eSPI &tft = m_display.get_tft();
+    tft.fillRect(
+            m_rect.x, m_rect.y,
+            m_rect.w, m_rect.h,
+            TFT_WHITE);
+    tft.drawRect(
+            m_rect.x+1, m_rect.y+1,
+            m_rect.w-2, m_rect.h-2,
+            TFT_ORANGE);
+    tft.setTextColor(TFT_BLACK);
+
+    // Show the title at the top
+    tft.setTextDatum(TC_DATUM);
+    // tft.drawString(m_title, m_rect.x+(m_rect.w/2), m_rect.y, TITLE_FONT);
+    tft.drawString(m_title, m_rect.x+(m_rect.w/2), m_rect.y, TITLE_FONT);
+
+    // Show the prompt just below it
+    tft.setTextDatum(TL_DATUM);
+
+    // tft.drawString(m_prompt, m_rect.x+PROMPT_X, m_rect.y+PROMPT_Y, DIALOG_FONT);
+    tft.drawString(m_prompt, m_rect.x+PROMPT_X, m_rect.y+tft.fontHeight(TITLE_FONT), DIALOG_FONT);
+}
+
 Rect computeMenuRect(const Rect &in, uint16_t num_buttons, Menu::Orient o)
 {
     if (o == Menu::O_Vert)
@@ -66,27 +93,10 @@ bool Dialog::check_touch(uint16_t x, uint16_t y, bool pressed)
     return m_menu.check_touch(x, y, pressed);
 }
 
-
 void Dialog::show(void)
 {
-    // Serial.println("Dialog::show()");
+    this->DialogBase::show();
 
-    TFT_eSPI &tft = m_display.get_tft();
-    tft.fillRect(
-            m_rect.x, m_rect.y,
-            m_rect.w, m_rect.h,
-            TFT_WHITE);
-    tft.drawRect(
-            m_rect.x+1, m_rect.y+1,
-            m_rect.w-2, m_rect.h-2,
-            TFT_ORANGE);
-    tft.setTextColor(TFT_BLACK);
-    // Show the title
-    tft.setTextDatum(TC_DATUM);
-    tft.drawString(m_title, m_rect.x+(m_rect.w/2), m_rect.y, TITLE_FONT);
-    // Show the prompt
-    tft.setTextDatum(TL_DATUM);
-    tft.drawString(m_prompt, m_rect.x+PROMPT_X, m_rect.y+PROMPT_Y, DIALOG_FONT);
     // Show the menu
     m_menu.show();
 }
@@ -98,77 +108,65 @@ bool Dialog::loop(void)
 }
 
 #define BUTTONS_Y 128
-NewDialog::NewDialog(Display &d,
+GridDialog::GridDialog(Display &d,
         const Rect &rect,
         const char *title,
         const char *prompt,
         uint16_t rows, uint16_t columns) :
     DialogBase(d, rect, title, prompt),
     m_buttons(d, Rect(rect.x, BUTTONS_Y, rect.w, rect.h-BUTTONS_Y), rows, columns)
-{
-    // char dbuf[65];
-    // sprintf(dbuf, "dialog \"%s\" rect: %u %u %u %u",
-            // m_title,
-            // m_rect.x,
-            // m_rect.y,
-            // m_rect.w,
-            // m_rect.h);
-    // Serial.println(dbuf);
+{ this->show(); }
 
-    this->show();
-}
-
-void NewDialog::set_callback(ButtonCB mcb, void *user_data)
+void GridDialog::set_callback(ButtonCB mcb, void *user_data)
 {
     m_buttons.set_callback(mcb, user_data);
 }
 
-bool NewDialog::check_touch(uint16_t x, uint16_t y, bool pressed)
+bool GridDialog::check_touch(uint16_t x, uint16_t y, bool pressed)
 {
     // return m_buttons.check_touch(x, y, pressed);
     bool r = m_buttons.check_touch(x, y, pressed);
-    Serial.print("NewDialog::check_touch(): ");
+    Serial.print("GridDialog::check_touch(): ");
     Serial.println(r);
-    return r;
+    return r?1:0;
 }
 
-#define SHOW_NEW
-void NewDialog::show(void)
+void GridDialog::show(void)
 {
-    TFT_eSPI &tft = m_display.get_tft();
-#ifdef SHOW_NEW
-    tft.fillRect(
-            m_rect.x, m_rect.y,
-            m_rect.w, m_rect.h,
-            TFT_WHITE);
-    tft.drawRect(
-            m_rect.x+1, m_rect.y+1,
-            m_rect.w-2, m_rect.h-2,
-            TFT_ORANGE);
-    tft.setTextColor(TFT_BLACK);
-    // Show the title
-    tft.setTextDatum(TC_DATUM);
-    tft.drawString(m_title, m_rect.x+(m_rect.w/2), m_rect.y, TITLE_FONT);
-    // Show the prompt
-    tft.setTextDatum(TL_DATUM);
-    tft.drawString(m_prompt, m_rect.x+PROMPT_X, m_rect.y+PROMPT_Y, DIALOG_FONT);
-#else
-    tft.fillRect(
-            m_rect.x, m_rect.y,
-            m_rect.w, m_rect.h,
-            TFT_BLACK);
-#endif
-    // Show the menu
+    this->DialogBase::show();
+
+    // Show the buttons
     m_buttons.show();
 }
 
 // Returns true when dialog anwsered, false while dialog still running
-bool NewDialog::loop(void)
+bool GridDialog::loop(void)
 {
-    Serial.println("NewDialog::loop()");
+    Serial.println("GridDialog::loop()");
 }
 
-bool NewDialog::add_button(const ButtonData &bd, uint16_t row, uint16_t col)
+bool GridDialog::add_button(const ButtonData &bd, uint16_t row, uint16_t col)
 {
     return m_buttons.add_button(bd, row, col);
+}
+
+MyGridDialog::MyGridDialog(Display &d,
+        const Rect &rect,
+        const char *title,
+        const char *prompt,
+        uint16_t rows, uint16_t columns) :
+    GridDialog(d, rect, title, prompt, rows, columns),
+    m_adj(d, Rect(rect.x, rect.y+80, rect.w, 40), "TITLE", "PROMPT", "VARNAME", 20, 500)
+{
+}
+
+bool MyGridDialog::check_touch(uint16_t x, uint16_t y, bool pressed)
+{
+    bool r = this->GridDialog::check_touch(x, y, pressed);
+    Serial.print("GridDialog::check_touch(): ");
+    Serial.println(r?1:0);
+    r = m_adj.check_touch(x, y, pressed);
+    Serial.print("MyGridDialog::check_touch(): ");
+    Serial.println(r?1:0);
+    return r?1:0;
 }

@@ -11,7 +11,7 @@ struct ValMapper
     ValMapper(uint16_t inl, uint16_t inh, uint16_t outl, uint16_t outh)
         : inlo(inl), inhi(inh), outlo(outl), outhi(outh) {}
 
-    uint16_t map(uint16_t val)
+    uint16_t map(uint16_t val) const
     { return ::map(val, inlo, inhi, outlo, outhi); }
 
     uint16_t inlo;

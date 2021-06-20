@@ -7,12 +7,19 @@
 #include "button.h"
 #include "label.h"
 #include "rect.h"
-#include "dialog.h"
 #include "val_mapper.h"
+#include "slider.h"
 
 #define ADJ_FONT 4
 #define ADJ_RADIUS 10
 
+/*
+ * A very simple class for a bar graph that maps it's display width to the input
+ * range, and allows the user to move their finger over the bar, assigning new
+ * values of the pixel pressed position on the bar to member var position.
+ * Calls to get the value use a reverse map to convert the screen position touched
+ * into a proportional value in the output range.
+ */
 class Adjuster
 {
 public:
@@ -25,23 +32,33 @@ public:
             const char *v,
             uint16_t min,
             uint16_t max);
+
     bool loop(void);
     void show(void);
-    // bool check_touch(uint16_t x, uint16_t y, bool pressed);
+    bool check_touch(uint16_t x, uint16_t y, bool pressed);
+    // uint16_t get_value(void) { return value; }
+    uint16_t get_value(void) const;
 
 private:
 
-    Display &m_display;
-    const Rect      rect;
-    Button          less_button;
-    Button          more_button;
-    Label           current_l;
+    void update_bar(uint16_t);
+
+    Display        &m_display;
+    TFT_eSPI       &m_tft;
+    const Rect      m_rect;
+    Button          m_less_button;
+    Button          m_more_button;
+    Label           m_current_l;
+    Slider          m_slider;
     const char     *m_title;
     const char     *m_prompt;
-    const char     *varname;
-    const ValMapper mapper;
-    const uint16_t  inmin;
-    const uint16_t  inmax;
+    const char     *m_varname;
+    const ValMapper m_inmap;
+    const ValMapper m_outmap;
+    const uint16_t  m_inmin;
+    const uint16_t  m_inmax;
+
+    uint16_t        value;
 };
 
 #endif

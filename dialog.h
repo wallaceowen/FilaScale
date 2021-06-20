@@ -9,8 +9,9 @@ class DialogBase
 public:
     DialogBase(Display&, const Rect &rect, const char *title, const char *prompt);
 
+    virtual void show(void);
+
     virtual bool loop(void) = 0;
-    virtual void show(void) = 0;
     virtual void set_callback(ButtonCB, void*) = 0;
     virtual bool check_touch(uint16_t x, uint16_t y, bool pressed) = 0;
 
@@ -20,9 +21,6 @@ protected:
     const char  *m_title;
     const char  *m_prompt;
 };
-
-
-
 
 class Dialog: public DialogBase
 {
@@ -47,12 +45,12 @@ private:
     Menu         m_menu;
 };
 
-class NewDialog: public DialogBase
+class GridDialog: public DialogBase
 {
 public:
     // enum DialogState { DS_Init, DS_Prompting, DS_Answered };
 
-    NewDialog(Display&,
+    GridDialog(Display&,
             const Rect &rect,
             const char *title,
             const char *prompt,
@@ -65,12 +63,30 @@ public:
     void show(void);
 
     void set_callback(ButtonCB, void*);
-    bool check_touch(uint16_t x, uint16_t y, bool pressed);
+    virtual bool check_touch(uint16_t x, uint16_t y, bool pressed);
     bool add_button(const ButtonData &bd, uint16_t row, uint16_t col);
 
 
 private:
     Buttons      m_buttons;
 };
+
+#include "adjuster.h"
+
+class MyGridDialog: public GridDialog
+{
+public:
+    MyGridDialog(Display&d,
+            const Rect &rect,
+            const char *title,
+            const char *prompt,
+            uint16_t rows,
+            uint16_t cols
+            );
+    bool check_touch(uint16_t x, uint16_t y, bool pressed);
+private:
+    Adjuster m_adj;
+};
+
 
 #endif

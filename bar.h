@@ -27,7 +27,7 @@ protected:
     uint16_t m_incolor;
     uint16_t m_outcolor;
     uint16_t m_val;
-}
+};
 
 #else
 extern void plot_bar(
