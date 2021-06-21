@@ -59,12 +59,12 @@ StateView::StateView(Display &d,
         Scale &s, BME280_IF &b) :
     View(d, ccb, change_user_data),
     m_display(d),
+    m_scale(s),
+    m_bme(b),
     m_menu(
             d,
             Rect(MENU_X, MENU_Y, MENU_WIDTH, MENU_HEIGHT),
             state_menu_button_data, NUM_STATE_BUTTONS, STATE_MENU_ORIENT),
-    m_scale(s),
-    m_bme(b),
     m_temp(0.0),
     m_humid(0.0),
     m_weight(0.0),
@@ -108,7 +108,6 @@ void StateView::show()
 
     // Show the view name and our field names
     tft.setTextSize(2);
-    int title_height = tft.fontHeight(STATE_FONT);
     tft.setTextColor(TFT_WHITE);
     tft.setTextDatum(TC_DATUM);
     tft.drawString("FilaScale", tft.width()/2, 0, TITLE_FONT);
@@ -117,7 +116,6 @@ void StateView::show()
     tft.setTextColor(TFT_YELLOW, TFT_BLACK);
     tft.setTextDatum(TR_DATUM);
 
-    int width = VALUES_X;
     int field_spacing = (MENU_Y-VALUES_Y)/NUM_STATE_LINES;
     int line = 0;
     int x = VALUES_X-VALUES_GAP;

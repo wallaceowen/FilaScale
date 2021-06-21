@@ -31,7 +31,7 @@ public:
 
 protected:
 
-    bool update();
+    bool update(void);
 
 private:
 
@@ -39,10 +39,10 @@ private:
 
     void add_threshold_buttons();
 
+    void draw_config(void);
+
     static void config_dialog_callback_func(const char *label, bool pressed, void *user_data);
     void config_dialog_callback(const char *label, bool pressed);
-
-    void draw_config();
 
     Display        &m_display;
     ConfigState     m_state;

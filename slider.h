@@ -8,12 +8,11 @@
 #include "display.h"
 #include "rect.h"
 
-#define SLIDER_COLOR TFT_BLUE
+#define SLIDER_BG_COLOR TFT_BLUE
 #define SLIDER_HEIGHT 30
 #define SLIDER_BAR_HEIGHT 20
-#define SLIDER_BUTTON_RADIUS 14
+#define SLIDER_BUTTON_RADIUS 12
 #define SLIDER_BUTTON_COLOR TFT_RED
-#define SLIDER_BG_COLOR TFT_WHITE
 
 class Slider
 {

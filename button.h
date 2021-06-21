@@ -24,8 +24,8 @@ class Button
 {
 public:
     Button(const ButtonData &data, const Rect &r);
-    bool draw(Display &d);
-    bool draw(TFT_eSPI&);
+    void draw(Display &d);
+    void draw(TFT_eSPI&);
     bool within(uint16_t x, uint16_t y);
     const char *label(void) const { return b_d.label; }
 private:

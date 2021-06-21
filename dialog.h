@@ -11,7 +11,7 @@ public:
 
     virtual void show(void);
 
-    virtual bool loop(void) = 0;
+    virtual void loop(void) = 0;
     virtual void set_callback(ButtonCB, void*) = 0;
     virtual bool check_touch(uint16_t x, uint16_t y, bool pressed) = 0;
 
@@ -36,7 +36,7 @@ public:
             Menu::Orient o=Menu::O_Horiz);
 
     // Returns true when dialog anwsered, false while dialog still running
-    bool loop(void);
+    void loop(void);
     void show(void);
     void set_callback(ButtonCB, void*);
     bool check_touch(uint16_t x, uint16_t y, bool pressed);
@@ -59,7 +59,7 @@ public:
             );
 
     // Returns true when dialog anwsered, false while dialog still running
-    virtual bool loop(void);
+    virtual void loop(void);
     void show(void);
 
     void set_callback(ButtonCB, void*);

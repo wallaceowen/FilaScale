@@ -15,14 +15,13 @@
 
 #define BUTTON_WIDTH 20
 #define BUTTON_HEIGHT 20
-#define BAR_HEIGHT 20
 
 #define BAR_X BUTTON_WIDTH
 
 // FIXME
 #define LABELS_Y PROMPT_Y+20
 #define LABELS_WIDTH 20
-#define LABELS_HEIGHT 20
+#define LABELS_HEIGHT 16
 #define BAR_Y LABELS_Y+LABELS_HEIGHT
 #define BUTTONS_Y BAR_Y
 
@@ -45,19 +44,25 @@ Adjuster::Adjuster(
     m_display(d),
     m_tft(d.get_tft()),
     m_rect(r),
-    m_less_button(less_button_data, Rect(m_rect.x, BUTTONS_Y, BUTTON_WIDTH, BUTTON_HEIGHT)),
-    m_more_button(more_button_data, Rect(m_rect.x+m_rect.w-BUTTON_WIDTH, BUTTONS_Y, BUTTON_WIDTH, BUTTON_HEIGHT)),
     m_current_l(current_label_data, Rect(m_rect.x+LABELS_WIDTH, LABELS_Y, m_rect.w-LABELS_WIDTH, LABELS_HEIGHT)),
-    m_slider(d, Rect(m_rect.x+BAR_X, m_rect.y+BAR_Y, m_rect.w-(2*BUTTON_WIDTH), BAR_HEIGHT)),
+    m_less_button(less_button_data, Rect(m_rect.x, BUTTONS_Y, BUTTON_WIDTH, BUTTON_HEIGHT)),
+    m_slider(d,
+            Rect(m_rect.x+BAR_X,
+                // m_rect.y+LABELS_Y+m_tft.fontHeight(DIALOG_FONT),
+                BUTTONS_Y,
+                m_rect.w-(2*BUTTON_WIDTH),
+                SLIDER_HEIGHT)),
+    m_more_button(more_button_data, Rect(m_rect.x+m_rect.w-BUTTON_WIDTH, BUTTONS_Y, BUTTON_WIDTH, BUTTON_HEIGHT)),
     m_title(t),
     m_prompt(p),
     m_varname(v),
-    m_inmin(min),
-    m_inmax(max),
     m_inmap(min, max, m_rect.x, m_rect.x+m_rect.w),
     m_outmap(m_rect.x, m_rect.x+m_rect.w, min, max),
+    m_inmin(min),
+    m_inmax(max),
     value(0)
 {
+    this->show();
 }
 
 
@@ -71,9 +76,9 @@ bool Adjuster::check_touch(uint16_t x, uint16_t y, bool pressed)
 
         // uint16_t mapped = m_inmap.map(value);
         update_bar(value);
-        return true;
+        return 1;
     }
-    if (m_more_button.within(x, y))
+    else if (m_more_button.within(x, y))
     {
         Serial.println("more button within");
         if (value < m_inmax)
@@ -81,14 +86,21 @@ bool Adjuster::check_touch(uint16_t x, uint16_t y, bool pressed)
 
         // uint16_t mapped = m_inmap.map(value);
         update_bar(value);
-        return true;
+        return 1;
     }
 
-    if (m_slider.within(x, y))
+    else if (m_slider.within(x, y))
     {
         Serial.println("slider within");
-        return true;
+        return 1;
     }
+
+    else
+    {
+        Serial.println("Adjuster: nothing within.");
+        return 0;
+    }
+    return 0;
 }
 
 void Adjuster::update_bar(uint16_t plotval)
@@ -99,7 +111,7 @@ void Adjuster::update_bar(uint16_t plotval)
     m_slider.set(plotval);
 }
 
-bool Adjuster::loop(void)
+void Adjuster::loop(void)
 {
 }
 
@@ -125,8 +137,12 @@ void Adjuster::show(void)
     m_tft.setTextDatum(TL_DATUM);
     m_tft.drawString(m_prompt, m_rect.x+PROMPT_X, m_rect.y+PROMPT_Y, DIALOG_FONT);
 
+    Serial.println("Adjuster: drawing labels and buttons.");
+    m_current_l.draw(m_tft);
+    m_less_button.draw(m_tft);
     // Show the slider
     m_slider.show();
+    m_more_button.draw(m_tft);
 }
 
 // bool Adjuster::check_touch(uint16_t x, uint16_t y, bool pressed)

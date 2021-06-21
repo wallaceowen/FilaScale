@@ -237,7 +237,7 @@ void ConfigView::menu_callback_func(const char *label, bool pressed, void *user_
 void ConfigView::show()
 {
     // Serial.println("ConfigView::show()");
-    TFT_eSPI &tft = m_display.get_tft();
+    // TFT_eSPI &tft = m_display.get_tft();
 
     // Show the initial dialog
     m_current_dialog->show();
@@ -246,14 +246,20 @@ void ConfigView::show()
 bool ConfigView::update()
 {
     // Serial.println("ConfigView::update()");
-    return true;
+    return false;
 }
 
+void ConfigView::draw_config(void)
+{
+    m_current_dialog->show();
+}
+
+#define CONFIG_UPDATE_INTERVAL 500
 void ConfigView::loop()
 {
 #ifdef CALIBVIEW_LOOP_HAS_A_JOB
     Serial.println("ConfigView::loop()");
-    TFT_eSPI &tft = m_display.get_tft();
+    // TFT_eSPI &tft = m_display.get_tft();
     switch(m_state)
     {
         case COS_Offer:
@@ -269,6 +275,16 @@ void ConfigView::loop()
             break;
     }
 #endif
+    static auto scheduled = millis()+CONFIG_UPDATE_INTERVAL;
+
+    auto now = millis();
+    if (now > scheduled)
+    {
+        if (update())
+            draw_config();
+        scheduled = now+CONFIG_UPDATE_INTERVAL;
+    }
+
 }
 
 

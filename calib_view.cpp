@@ -174,7 +174,7 @@ void CalibView::menu_callback_func(const char *label, bool pressed, void *user_d
 void CalibView::show()
 {
     Serial.println("CalibView::show()");
-    TFT_eSPI &tft = m_display.get_tft();
+    // TFT_eSPI &tft = m_display.get_tft();
 
     // Show the initial dialog
     m_current_dialog->show();

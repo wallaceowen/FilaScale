@@ -102,12 +102,12 @@ void Dialog::show(void)
 }
 
 // Returns true when dialog anwsered, false while dialog still running
-bool Dialog::loop(void)
+void Dialog::loop(void)
 {
     Serial.println("Dialog::loop()");
 }
 
-#define BUTTONS_Y 128
+#define BUTTONS_Y 180
 GridDialog::GridDialog(Display &d,
         const Rect &rect,
         const char *title,
@@ -140,7 +140,7 @@ void GridDialog::show(void)
 }
 
 // Returns true when dialog anwsered, false while dialog still running
-bool GridDialog::loop(void)
+void GridDialog::loop(void)
 {
     Serial.println("GridDialog::loop()");
 }
@@ -158,6 +158,7 @@ MyGridDialog::MyGridDialog(Display &d,
     GridDialog(d, rect, title, prompt, rows, columns),
     m_adj(d, Rect(rect.x, rect.y+80, rect.w, 40), "TITLE", "PROMPT", "VARNAME", 20, 500)
 {
+    m_adj.show();
 }
 
 bool MyGridDialog::check_touch(uint16_t x, uint16_t y, bool pressed)

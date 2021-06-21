@@ -47,8 +47,8 @@ Menu::Menu(Display &d,
     // Make the buttons
     for (int i = 0; i < num_buttons; ++i)
     {
-        uint16_t button_w, button_h;
-        uint16_t button_x, button_y;
+        uint16_t button_w=0, button_h=0;
+        uint16_t button_x=0, button_y=0;
         switch (o)
         {
             case O_Vert:
