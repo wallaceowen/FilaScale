@@ -10,6 +10,12 @@ DialogBase::DialogBase(Display &d, const Rect &rect, const char *title, const ch
     m_title(title),
     m_prompt(prompt)
 {
+#ifdef DEBUG_DIALOG_BASE
+    char msg[56];
+    sprintf(msg, "%s dlg_base rect: [%u, %u, %u, %u]",
+            m_title, rect.x, rect.y, rect.w, rect.h);
+    Serial.println(msg);
+#endif
 }
 
 
@@ -20,11 +26,7 @@ void DialogBase::show(void)
     tft.fillRect(
             m_rect.x, m_rect.y,
             m_rect.w, m_rect.h,
-            TFT_WHITE);
-    tft.drawRect(
-            m_rect.x+1, m_rect.y+1,
-            m_rect.w-2, m_rect.h-2,
-            TFT_ORANGE);
+            TFT_BLACK);
     tft.setTextColor(TFT_BLACK);
 
     // Show the title at the top, center justified

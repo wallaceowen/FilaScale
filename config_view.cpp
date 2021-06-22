@@ -269,11 +269,6 @@ bool ConfigView::update()
     return false;
 }
 
-void ConfigView::draw_config(void)
-{
-    m_current_dialog->show();
-}
-
 #define CONFIG_UPDATE_INTERVAL 500
 void ConfigView::loop()
 {
@@ -301,7 +296,7 @@ void ConfigView::loop()
     if (now > scheduled)
     {
         if (update())
-            draw_config();
+            m_current_dialog->show();
         scheduled = now+CONFIG_UPDATE_INTERVAL;
     }
 

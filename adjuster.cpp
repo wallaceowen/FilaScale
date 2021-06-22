@@ -79,9 +79,9 @@ Adjuster::Adjuster(
                 BUTTON_WIDTH, BUTTON_HEIGHT)),
     m_varname(v),
     // Map from app to display
-    m_inmap(min, max, m_rect.x, m_rect.x+m_rect.w),
+    m_inmap("in", min, max, m_rect.x, m_rect.x+m_rect.w),
     // Map from display to app
-    m_outmap(m_rect.x, m_rect.x+m_rect.w, min, max),
+    m_outmap("out", m_rect.x, m_rect.x+m_rect.w, min, max),
     m_inmin(min),
     m_inmax(max),
     m_value(0)
@@ -136,7 +136,7 @@ void Adjuster::update_bar(uint16_t plotval)
     // m_tft.drawRect(m_rect.x, m_rect.y, m_rect.w, m_rect.h-1, TFT_WHITE);
     m_slider.set(plotval);
     char plotlabel[16];
-    sprintf(plotlabel, "%u", m_outmap.map(plotval));
+    sprintf(plotlabel, "%u    ", m_outmap.map(plotval));
     m_current_l.set_label(plotlabel);
     m_current_l.draw(m_tft);
 }

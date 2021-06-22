@@ -4,9 +4,10 @@
 
 #include "label.h"
 
-#define DEBUG_NEWLABEL_DRAW
+// #define DEBUG_NEWLABEL_DRAW
+// #define DEBUG_LABEL_CTOR
 
-#if defined(DEBUG_NEWLABEL_DRAW)
+#if defined(DEBUG_NEWLABEL_DRAW) || defined(DEBUG_LABEL_CTOR)
 static char dbg_buffer[72];
 #endif
 
@@ -21,7 +22,6 @@ Label::Label(const LabelData &d, const Rect &r) :
     m_labeldata(d),
     m_rect(r)
 {
-#define DEBUG_LABEL_CTOR
 #ifdef DEBUG_LABEL_CTOR
     // int16_t t_width = tft.textWidth(m_labeldata.label, m_labeldata.font);
     // int16_t height = tft.fontHeight(m_labeldata.font);
@@ -49,8 +49,8 @@ void Label::set_label(const char *txt)
 void Label::draw(TFT_eSPI &tft)
 {
     tft.setTextColor(m_labeldata.fg, m_labeldata.bg);
-    int16_t t_height = tft.fontHeight(m_labeldata.font);
     int16_t t_width = tft.textWidth(m_labeldata.label, m_labeldata.font);
+    int16_t t_height = tft.fontHeight(m_labeldata.font);
     if (m_labeldata.center)
     {
         tft.setTextDatum(TC_DATUM);
@@ -80,11 +80,5 @@ void Label::draw(TFT_eSPI &tft)
         }
 #endif
     }
-
-#ifdef DEBUG_NEWLABEL_DRAW
-    // {
-        // sprintf(dbg_buffer, "drawing new label \"%s\" at %d, %d", m_labeldata.label, m_rect.x, m_rect.y);
-        // Serial.println(dbg_buffer);
-    // }
-#endif
 }
+
