@@ -10,7 +10,7 @@
  * +-------+---------+
  */
 
-#define KBD_ROWS 4
+#define KBD_ROWS 5
 #define KBD_COLS 6
 
 // #define BUTTON_WIDTH 20
@@ -34,20 +34,20 @@ struct KB_Data
 
 
 static KB_Data keyb_data[] = {
-    {KB_Data("7", 0, 3,        1, 1, TFT_WHITE, TFT_DARKGREY)},
-    {KB_Data("8", 0, 4,        1, 1, TFT_WHITE, TFT_DARKGREY)},
-    {KB_Data("9", 0, 5,        1, 1, TFT_WHITE, TFT_DARKGREY)},
-    {KB_Data("4", 1, 3,        1, 1, TFT_WHITE, TFT_DARKGREY)},
-    {KB_Data("5", 1, 4,        1, 1, TFT_WHITE, TFT_DARKGREY)},
-    {KB_Data("6", 1, 5,        1, 1, TFT_WHITE, TFT_DARKGREY)},
-    {KB_Data("1", 2, 3,        1, 1, TFT_WHITE, TFT_DARKGREY)},
-    {KB_Data("2", 2, 4,        1, 1, TFT_WHITE, TFT_DARKGREY)},
-    {KB_Data("3", 2, 5,        1, 1, TFT_WHITE, TFT_DARKGREY)},
-    {KB_Data(".", 3, 3,        1, 1, TFT_WHITE, TFT_DARKGREY)},
-    {KB_Data("0", 3, 4,        1, 1, TFT_WHITE, TFT_DARKGREY)},
-    {KB_Data("BS", 3, 5,       1, 1, TFT_WHITE, TFT_DARKGREY)},
-    {KB_Data("CANCEL", 3, 0,   3, 1, TFT_WHITE, TFT_RED)},
-    {KB_Data("ENTER", 2, 0,    3, 1, TFT_WHITE, TFT_DARKGREEN)}
+    {KB_Data("7",      1, 3, 1, 1, TFT_WHITE, TFT_DARKGREY)},
+    {KB_Data("8",      1, 4, 1, 1, TFT_WHITE, TFT_DARKGREY)},
+    {KB_Data("9",      1, 5, 1, 1, TFT_WHITE, TFT_DARKGREY)},
+    {KB_Data("4",      2, 3, 1, 1, TFT_WHITE, TFT_DARKGREY)},
+    {KB_Data("5",      2, 4, 1, 1, TFT_WHITE, TFT_DARKGREY)},
+    {KB_Data("6",      2, 5, 1, 1, TFT_WHITE, TFT_DARKGREY)},
+    {KB_Data("1",      3, 3, 1, 1, TFT_WHITE, TFT_DARKGREY)},
+    {KB_Data("2",      3, 4, 1, 1, TFT_WHITE, TFT_DARKGREY)},
+    {KB_Data("3",      3, 5, 1, 1, TFT_WHITE, TFT_DARKGREY)},
+    {KB_Data(".",      4, 3, 1, 1, TFT_WHITE, TFT_DARKGREY)},
+    {KB_Data("0",      4, 4, 1, 1, TFT_WHITE, TFT_DARKGREY)},
+    {KB_Data("BS",     4, 5, 1, 1, TFT_WHITE, TFT_DARKGREY)},
+    {KB_Data("ENTER",  3, 0, 3, 1, TFT_WHITE, TFT_DARKGREEN)},
+    {KB_Data("CANCEL", 4, 0, 3, 1, TFT_WHITE, TFT_RED)},
 };
 #define NUM_BUTTONS (sizeof(keyb_data)/sizeof(keyb_data[0]))
 
@@ -65,12 +65,13 @@ void KbdDialog::make_buttons(void)
 {
     for (unsigned b = 0; b < NUM_BUTTONS; ++b)
     {
+        // Cell widths are a multiple of cell size;
+        // cell size is dialog width/num_cols, dilaog height/num_rows
         uint16_t w = m_rect.w/KBD_COLS*keyb_data[b].width;
         uint16_t h = m_rect.h/KBD_ROWS*keyb_data[b].height;
+#ifdef DEBUG_KBD
         {
             char buff[65];
-            // Cell widths are a multiple of cell size;
-            // cell size is dialog width/num_cols, dilaog height/num_rows
             sprintf(buff, "kbd_dialog making button %s at %u, %u, %u, %u",
                     keyb_data[b].label,
                     keyb_data[b].row,
@@ -78,7 +79,7 @@ void KbdDialog::make_buttons(void)
                     w, h);
             Serial.println(buff);
         }
-
+#endif
         m_buttons.add_button(
                 ButtonData(
                     keyb_data[b].label,
@@ -94,22 +95,27 @@ void KbdDialog::make_buttons(void)
 bool KbdDialog::check_touch(uint16_t x, uint16_t y, bool pressed)
 {
     int button_touched = this->GridDialog::check_touch(x, y, pressed)?1:0;
-    // Serial.print("KbdDialog::check_touch(): ");
-    // Serial.println(button_touched);
+#ifdef DEBUG_KBD
+    Serial.print("KbdDialog::check_touch(): ");
+    Serial.println(button_touched);
+#endif
     return button_touched?true:false;
 }
 
 void KbdDialog::show(void)
 {
+#ifdef DEBUG_KBD
     Serial.print("KbdDialog::show() calling GridDialog::show");
+#endif
     this->GridDialog::show();
+#ifdef DEBUG_KBD
     Serial.print("back from  calling GridDialog::show()");
+#endif
 }
 
 void KbdDialog::kbd_menu_callback(const char *label, bool pressed)
 {
     char buff[65];
-
     sprintf(buff,
             "kbd_menu_callback got \"%s\" %s",
             label, pressed?"pressed":"released");
