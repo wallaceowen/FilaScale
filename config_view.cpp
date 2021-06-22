@@ -149,7 +149,7 @@ void ConfigView::set_state(ConfigState cs)
     }
 }
 
-#define DEBUG_MENU_CALLBACK
+// #define DEBUG_MENU_CALLBACK
 
 // Callback that is invoked as a side-effect of either the Menu or Buttons class
 // being asked to check_touch().
@@ -191,6 +191,12 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                 {
                     set_state(COS_Network);
                 }
+                else
+                {
+                    Serial.print("ConfigView::MenuCallback got ");
+                    Serial.print(label);
+                    Serial.println(" in state COS_Offer");
+                }
                 this->show();
                 break;
             }
@@ -204,7 +210,14 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                     // Tell control to go back to state view
                     m_change_cb("CANCEL", m_change_data);
                 }
+                else
+                {
+                    Serial.print("ConfigView::MenuCallback got ");
+                    Serial.print(label);
+                    Serial.println(" in state COS_Thresholds");
+                }
                 Serial.println("Add code to handle Thresh selections");
+                this->show();
                 break;
 
             case  COS_Network:
@@ -216,7 +229,14 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                     // Tell control to go back to state view
                     m_change_cb("CANCEL", m_change_data);
                 }
+                else
+                {
+                    Serial.print("ConfigView::MenuCallback got ");
+                    Serial.print(label);
+                    Serial.println(" in state COS_Network");
+                }
                 Serial.println("Add code to handle Network selections");
+                this->show();
                 break;
 
             default:

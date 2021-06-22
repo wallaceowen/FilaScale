@@ -7,7 +7,8 @@
 struct Point
 {
     Point(uint16_t px, uint16_t py) : x(px), y(py) { }
-    uint16_t x, y
+    uint16_t x;
+    uint16_t y;
 };
 
 #endif

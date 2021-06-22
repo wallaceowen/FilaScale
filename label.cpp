@@ -4,43 +4,87 @@
 
 #include "label.h"
 
-#ifdef DEBUG
+#define DEBUG_NEWLABEL_DRAW
+
+#if defined(DEBUG_NEWLABEL_DRAW)
 static char dbg_buffer[72];
 #endif
 
 LabelData::LabelData(const char *l, uint16_t pfg, uint16_t pbg, uint8_t f, bool c)
-    : label(l), bg(pbg), fg(pfg), font(f), center(c)
+    : fg(pfg), bg(pbg), font(f), center(c)
 {
+    memset(label, 0, LABEL_MAX);
+    strncpy(label, l, strlen(l) < LABEL_MAX-1?strlen(l):LABEL_MAX-1);
 }
 
 Label::Label(const LabelData &d, const Rect &r) :
     m_labeldata(d),
     m_rect(r)
 {
-#ifdef DEBUG
-    sprintf(dbg_buffer, "label \"%s\" created at x %d, y %d, w %d, h %d",
-            m_labeldata.label, m_rect.x, m_rect.y, m_rect.w, m_rect.h);
+#define DEBUG_LABEL_CTOR
+#ifdef DEBUG_LABEL_CTOR
+    // int16_t t_width = tft.textWidth(m_labeldata.label, m_labeldata.font);
+    // int16_t height = tft.fontHeight(m_labeldata.font);
+    // sprintf(dbg_buffer, "label \"%s\" created at x %d, y %d, w %d, h %d",
+            // m_labeldata.label, m_rect.x, m_rect.y, width, height);
+    sprintf(dbg_buffer, "new label \"%s\" created at x %u, y %u",
+            m_labeldata.label, m_rect.x, m_rect.y);
     Serial.println(dbg_buffer);
 #endif
 }
 
-bool Label::draw(Display &d)
+void Label::draw(Display &d)
 {
     TFT_eSPI &tft = d.get_tft();
     this->draw(tft);
 }
 
-bool Label::draw(TFT_eSPI &tft)
+void Label::set_label(const char *txt)
 {
-    int16_t height = tft.fontHeight(m_labeldata.font);
-    tft.setTextColor(m_labeldata.fg, m_labeldata.bg);
-    int16_t t_width = tft.textWidth(m_labeldata.label, m_labeldata.font);
-    tft.drawString(m_labeldata.label, m_rect.x, m_rect.y, m_labeldata.font);
+    // m_labeldata.label = txt;
+    memset(m_labeldata.label, 0, LABEL_MAX);
+    strncpy(m_labeldata.label, txt, strlen(txt) < LABEL_MAX-1?strlen(txt):LABEL_MAX-1);
+}
 
-#ifdef DEBUG
+void Label::draw(TFT_eSPI &tft)
+{
+    tft.setTextColor(m_labeldata.fg, m_labeldata.bg);
+    int16_t t_height = tft.fontHeight(m_labeldata.font);
+    int16_t t_width = tft.textWidth(m_labeldata.label, m_labeldata.font);
+    if (m_labeldata.center)
     {
-        sprintf(dbg_buffer, "drawing label \"%s\" at %d, %d", m_labeldata.label, m_rect.x, m_rect.y);
-        Serial.println(dbg_buffer);
+        tft.setTextDatum(TC_DATUM);
+        tft.drawString(m_labeldata.label,
+                m_rect.x+m_rect.w/2-t_width/2,
+                m_rect.y+m_rect.h/2-t_height/2,
+                m_labeldata.font);
+#ifdef DEBUG_NEWLABEL_DRAW
+        {
+            sprintf(dbg_buffer, "drawing new label \"%s\" centered at %d, %d", m_labeldata.label,
+                    m_rect.x+m_rect.w/2-t_width/2,
+                    m_rect.y+m_rect.h/2-t_height/2
+                    );
+            Serial.println(dbg_buffer);
+        }
+#endif
+        tft.setTextDatum(TL_DATUM);
     }
+    else
+    {
+        tft.setTextDatum(TL_DATUM);
+        tft.drawString(m_labeldata.label, m_rect.x, m_rect.y, m_labeldata.font);
+#ifdef DEBUG_NEWLABEL_DRAW
+        {
+            sprintf(dbg_buffer, "drawing new label \"%s\" at %d, %d", m_labeldata.label, m_rect.x, m_rect.y);
+            Serial.println(dbg_buffer);
+        }
+#endif
+    }
+
+#ifdef DEBUG_NEWLABEL_DRAW
+    // {
+        // sprintf(dbg_buffer, "drawing new label \"%s\" at %d, %d", m_labeldata.label, m_rect.x, m_rect.y);
+        // Serial.println(dbg_buffer);
+    // }
 #endif
 }

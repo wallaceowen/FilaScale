@@ -66,7 +66,7 @@ void Buttons::show()
 }
 
 
-void Buttons::set_callback(ButtonCB m, void *u)
+void Buttons::set_callback(PressEventCB m, void *u)
 {
     bcb = m;
     user_data = u;

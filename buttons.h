@@ -16,7 +16,7 @@ public:
     // array of pointers to buttons
     Buttons(Display &d, const Rect &w, uint16_t r, uint16_t c);
     bool add_button(const ButtonData &bd, uint16_t r,  uint16_t c);
-    void set_callback(ButtonCB m, void *user_data);
+    void set_callback(PressEventCB m, void *user_data);
     bool check_touch(uint16_t x, uint16_t y, bool pressed);
     void show();
 
@@ -26,7 +26,7 @@ private:
     uint16_t    rows;
     uint16_t    columns;
     Button     **buttons;
-    ButtonCB    bcb;
+    PressEventCB    bcb;
     void       *user_data;
 };
 

@@ -48,9 +48,9 @@ private:
 
     Display     &m_display;
     CalibState   m_state;
-    Dialog       m_ask_dialog;
-    Dialog       m_zero_dialog;
-    Dialog       m_gain_dialog;
+    MenuDialog   m_ask_dialog;
+    MenuDialog   m_zero_dialog;
+    MenuDialog   m_gain_dialog;
     DialogBase  *m_current_dialog;
     Scale       &m_scale;
 };

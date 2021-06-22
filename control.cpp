@@ -44,8 +44,8 @@ Control::Control(Scale &scale, Display &display, BME280_IF &bme280, Protocol &pr
 
 void Control::calib_cb(const char *result)
 {
-    // Serial.print("Control::calib_cb got ");
-    // Serial.println(result);
+    Serial.print("Control::calib_cb got ");
+    Serial.println(result);
     // Not currently doing anything differently, but we might
     // want to let them know they cancelled calibration and the
     // ramifications
@@ -57,11 +57,8 @@ void Control::calib_cb(const char *result)
 
 void Control::config_cb(const char *result)
 {
-    // Serial.print("Control::config_cb got ");
-    // Serial.println(result);
-    // Not currently doing anything differently, but we might
-    // want to let them know they cancelled calibration and the
-    // ramifications
+    Serial.print("Control::config_cb got ");
+    Serial.println(result);
     if ((!strcmp(result, "CANCEL")) || (!strcmp(result, "DONE")))
     {
         this->change_view("STATE");

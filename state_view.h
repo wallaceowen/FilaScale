@@ -36,7 +36,7 @@ private:
     static void state_menu_callback_func(const char *label, bool pressed, void *user_data);
     void state_menu_callback(const char *label, bool pressed);
 
-    void draw_state();
+    void draw_state(void);
 
     Display &m_display;
     Scale &m_scale;

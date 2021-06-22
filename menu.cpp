@@ -86,7 +86,7 @@ Menu::Menu(Display &d,
     }
 }
 
-void Menu::set_callback(ButtonCB m, void *user_data)
+void Menu::set_callback(PressEventCB m, void *user_data)
 {
     m_bcb = m;
     m_user_data = user_data;

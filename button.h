@@ -4,12 +4,13 @@
 #include <stdint.h>
 
 #include "display.h"
+#include "events.h"
 #include "rect.h"
 
 #define BUTTON_FONT 4
 #define BUTTON_RADIUS 10
 
-typedef void (*ButtonCB)(const char *label, bool pressed, void *user_data);
+// typedef void (*PressEventCB)(const char *label, bool pressed, void *user_data);
 
 struct ButtonData
 {

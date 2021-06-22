@@ -27,8 +27,6 @@ public:
     Adjuster(
             Display &d,
             const Rect &rect,
-            const char *t,
-            const char *p,
             const char *v,
             uint16_t min,
             uint16_t max);
@@ -36,7 +34,6 @@ public:
     void loop(void);
     void show(void);
     bool check_touch(uint16_t x, uint16_t y, bool pressed);
-    // uint16_t get_value(void) { return value; }
     uint16_t get_value(void) const;
 
 private:
@@ -46,19 +43,17 @@ private:
     Display        &m_display;
     TFT_eSPI       &m_tft;
     const Rect      m_rect;
-    Label           m_current_l;
-    Button          m_less_button;
     Slider          m_slider;
+    Button          m_less_button;
+    Label           m_varname_l;
+    Label           m_current_l;
     Button          m_more_button;
-    const char     *m_title;
-    const char     *m_prompt;
     const char     *m_varname;
     const ValMapper m_inmap;
     const ValMapper m_outmap;
     const uint16_t  m_inmin;
     const uint16_t  m_inmax;
-
-    uint16_t        value;
+    uint16_t        m_value;
 };
 
 #endif

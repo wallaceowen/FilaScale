@@ -27,12 +27,12 @@ public:
 
     void show();
     bool check_touch(uint16_t x, uint16_t y, bool pressed);
-    void set_callback(ButtonCB m, void *user_data);
+    void set_callback(PressEventCB m, void *user_data);
 
 private:
     Display    &m_display;
     uint16_t    num_buttons;
-    ButtonCB    m_bcb;
+    PressEventCB    m_bcb;
     void       *m_user_data;
     Button    **m_buttons;
 };
