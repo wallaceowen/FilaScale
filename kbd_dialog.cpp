@@ -58,6 +58,7 @@ KbdDialog::KbdDialog(Display &d, const Rect &rect) :
     memset(value, 0, sizeof(value));
 
     this->make_buttons();
+    this->set_callback(kbd_menu_callback_func, this);
 }
 
 void KbdDialog::make_buttons(void)
@@ -92,10 +93,10 @@ void KbdDialog::make_buttons(void)
 
 bool KbdDialog::check_touch(uint16_t x, uint16_t y, bool pressed)
 {
-    bool button_touched = this->GridDialog::check_touch(x, y, pressed)?1:0;
+    int button_touched = this->GridDialog::check_touch(x, y, pressed)?1:0;
     // Serial.print("KbdDialog::check_touch(): ");
-    // Serial.println(r?1:0);
-    return button_touched;
+    // Serial.println(button_touched);
+    return button_touched?true:false;
 }
 
 void KbdDialog::show(void)
@@ -103,4 +104,20 @@ void KbdDialog::show(void)
     Serial.print("KbdDialog::show() calling GridDialog::show");
     this->GridDialog::show();
     Serial.print("back from  calling GridDialog::show()");
+}
+
+void KbdDialog::kbd_menu_callback(const char *label, bool pressed)
+{
+    char buff[65];
+
+    sprintf(buff,
+            "kbd_menu_callback got \"%s\" %s",
+            label, pressed?"pressed":"released");
+    Serial.println(buff);
+}
+
+void KbdDialog::kbd_menu_callback_func(const char *label, bool pressed, void *user_data)
+{
+    KbdDialog *kd = reinterpret_cast<KbdDialog*>(user_data);
+    kd->kbd_menu_callback(label, pressed);
 }

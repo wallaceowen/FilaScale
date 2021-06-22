@@ -131,7 +131,6 @@ void ConfigView::touch_callback(uint16_t x, uint16_t y, bool pressed)
 #endif
 
     m_current_dialog->check_touch(x, y, pressed);
-
 }
 
 void ConfigView::set_state(ConfigState cs)
@@ -263,7 +262,7 @@ void ConfigView::menu_callback_func(const char *label, bool pressed, void *user_
 void ConfigView::show()
 {
     Serial.println("ConfigView::show()");
-    TFT_eSPI &tft = m_display.get_tft();
+    // TFT_eSPI &tft = m_display.get_tft();
 
     // Show the initial dialog
     m_current_dialog->show();

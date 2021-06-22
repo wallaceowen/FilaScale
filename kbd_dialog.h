@@ -14,9 +14,12 @@ public:
     void show(void);
     const char *get_value(void) const { return value; }
 private:
+    void kbd_menu_callback(const char *label, bool pressed);
+    static void kbd_menu_callback_func(const char *label, bool pressed, void *user_data);
     void make_buttons(void);
     char value[MAX_VAL_LEN];
 };
+
 
 
 #endif
