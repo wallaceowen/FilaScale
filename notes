@@ -1,0 +1,5 @@
+
+Add a cal_offer view that offers calibration of the screen or the weight,
+add calibration of the screen view
+add thresholds view, move thresholds dialog to it
+

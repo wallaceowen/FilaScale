@@ -10,6 +10,7 @@
 #include "scale.h"
 #include "state_view.h"
 #include "calib_view.h"
+#include "screencal_view.h"
 #include "config_view.h"
 
 class Control

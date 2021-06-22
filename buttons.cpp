@@ -44,6 +44,34 @@ bool Buttons::add_button(const ButtonData &bd, uint16_t row, uint16_t col)
     return false;
 }
 
+bool Buttons::add_button(
+        const ButtonData &bd,
+        uint16_t row, uint16_t col,
+        uint16_t width, uint16_t height)
+{
+    if ((row < rows) && (col < columns))
+    {
+        // uint16_t width = where.w/columns;
+        // uint16_t height = where.h/rows;
+        uint16_t x = where.x+width*col;
+        uint16_t y = where.y+height*row;
+
+        Button *b = new Button(bd, Rect(x, y, width, height));
+
+        buttons[(row*columns)+col] = b;
+
+        return true;
+    }
+    return false;
+}
+
+Button *Buttons::get_button(uint16_t row, uint16_t col)
+{
+    if (row < rows && col < columns)
+        return buttons[row*columns+col];
+    return 0;
+}
+
 void Buttons::show()
 {
     for (unsigned column = 0; column < columns; ++column)

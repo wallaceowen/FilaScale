@@ -63,7 +63,7 @@ public:
     virtual void loop(void);
     virtual void show(void);
 
-    void set_callback(PressEventCB, void*);
+    virtual void set_callback(PressEventCB, void*);
     virtual bool check_touch(uint16_t x, uint16_t y, bool pressed);
     bool add_button(const ButtonData &bd, uint16_t row, uint16_t col);
 

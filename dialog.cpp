@@ -59,7 +59,6 @@ MenuDialog::MenuDialog(Display &d,
     Serial.println(dbuf);
 #endif
 
-    // m_menu.set_callback(d_menu_cb, this);
     this->show();
 }
 

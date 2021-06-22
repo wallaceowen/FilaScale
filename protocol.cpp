@@ -8,8 +8,10 @@
 #define MSGLEN 16
 
 static bool report_weight = false;
+#ifdef KEEP_UNNEEDED
 static int32_t scale_offset = 0;
 static double scale_gain = 1.0;
+#endif
 
 // If there's nothing waiting, return 0
 // if there's something to read
@@ -62,11 +64,13 @@ static char *get_tok(char *buffer, size_t &offset)
 // of show_commands.
 static void show_commands();
 
+#ifdef KEEP_UNNEEDED
 // Send the calibrated weight message to the interface
 static double calibrated_weight(int32_t w)
 {
     return (w-scale_offset)*scale_gain;
 }
+#endif
 
 // Send the values to the interface
 static void show_weight(int32_t val)
