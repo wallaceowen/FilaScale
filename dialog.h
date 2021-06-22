@@ -67,9 +67,9 @@ public:
     virtual bool check_touch(uint16_t x, uint16_t y, bool pressed);
     bool add_button(const ButtonData &bd, uint16_t row, uint16_t col);
 
-
-private:
+protected:
     Buttons      m_buttons;
+
 };
 
 #include "adjuster.h"

@@ -51,16 +51,28 @@ bool Buttons::add_button(
 {
     if ((row < rows) && (col < columns))
     {
-        // uint16_t width = where.w/columns;
-        // uint16_t height = where.h/rows;
         uint16_t x = where.x+width*col;
         uint16_t y = where.y+height*row;
+
+        {
+            char buff[65];
+            sprintf(buff, "Adding button %s at %u %u %u %u",
+                    bd.label, x, y, width, height);
+            Serial.println(buff);
+        }
 
         Button *b = new Button(bd, Rect(x, y, width, height));
 
         buttons[(row*columns)+col] = b;
 
         return true;
+    }
+    else
+    {
+        char buff[65];
+        sprintf(buff, "%s wanted r %u c %u but only %u rows %u cols",
+                bd.label, row, col, rows, columns);
+        Serial.println(buff);
     }
     return false;
 }

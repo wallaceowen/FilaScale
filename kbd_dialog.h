@@ -14,6 +14,7 @@ public:
     void show(void);
     const char *get_value(void) const { return value; }
 private:
+    void make_buttons(void);
     char value[MAX_VAL_LEN];
 };
 

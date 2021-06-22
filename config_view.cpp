@@ -20,6 +20,8 @@
 
 #define SCREEN_BG TFT_BLACK
 
+// #define DEBUG_MENU_CALLBACK
+
 static ButtonData config_offer_bd[] = {
     ButtonData("THRESH", TFT_BLUE, TFT_WHITE, TFT_BLUE),
     ButtonData("NET", TFT_GREEN, TFT_WHITE, TFT_GREEN),
@@ -48,7 +50,9 @@ static ButtonData network_bd[] = {
 #define NUM_NET_BUTTONS (sizeof(network_bd)/sizeof(network_bd[0]))
 
 
+#ifdef DEBUG_MENU_CALLBACK
 static const char *state_names[] = { "COS_Offer", "COS_Thresholds", "COS_Network", "COS_NUmStates" };
+#endif
 
 
 void ConfigView::add_threshold_buttons()
@@ -87,6 +91,8 @@ ConfigView::ConfigView(Display &d, ViewChangeCallback ccb, void *change_user_dat
             "Press OK or CANCEL",
             network_bd, NUM_NET_BUTTONS,
             Menu::O_Vert),
+    m_keypad_dialog(d, Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT)),
+
     m_current_dialog(&m_offer_config_dialog)
 {
     add_threshold_buttons();
@@ -140,7 +146,9 @@ void ConfigView::set_state(ConfigState cs)
             m_current_dialog = &m_thresh_config_dialog;
            break;
         case COS_Network:
-            m_current_dialog = &m_network_config_dialog;
+            // m_current_dialog = &m_network_config_dialog;
+            m_current_dialog = &m_keypad_dialog;
+            Serial.println("keypad dialog selected");
             break;
         default:
             m_state = COS_Offer;
@@ -148,8 +156,6 @@ void ConfigView::set_state(ConfigState cs)
            break;
     }
 }
-
-// #define DEBUG_MENU_CALLBACK
 
 // Callback that is invoked as a side-effect of either the Menu or Buttons class
 // being asked to check_touch().
@@ -256,11 +262,12 @@ void ConfigView::menu_callback_func(const char *label, bool pressed, void *user_
 // Show the static part of the view
 void ConfigView::show()
 {
-    // Serial.println("ConfigView::show()");
-    // TFT_eSPI &tft = m_display.get_tft();
+    Serial.println("ConfigView::show()");
+    TFT_eSPI &tft = m_display.get_tft();
 
     // Show the initial dialog
     m_current_dialog->show();
+    Serial.println("ConfigView::show() done.");
 }
 
 bool ConfigView::update()

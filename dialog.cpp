@@ -12,8 +12,9 @@ DialogBase::DialogBase(Display &d, const Rect &rect, const char *title, const ch
 {
 #ifdef DEBUG_DIALOG_BASE
     char msg[56];
-    sprintf(msg, "%s dlg_base rect: [%u, %u, %u, %u]",
-            m_title, rect.x, rect.y, rect.w, rect.h);
+    if (m_title)
+        sprintf(msg, "%s dlg_base rect: [%u, %u, %u, %u]",
+                m_title, rect.x, rect.y, rect.w, rect.h);
     Serial.println(msg);
 #endif
 }
@@ -30,12 +31,18 @@ void DialogBase::show(void)
     tft.setTextColor(TFT_BLACK);
 
     // Show the title at the top, center justified
-    tft.setTextDatum(TC_DATUM);
-    tft.drawString(m_title, m_rect.x+(m_rect.w/2), m_rect.y, TITLE_FONT);
+    if (m_title)
+    {
+        tft.setTextDatum(TC_DATUM);
+        tft.drawString(m_title, m_rect.x+(m_rect.w/2), m_rect.y, TITLE_FONT);
+    }
 
     // Show the prompt just below it, in dialog font, left justification
-    tft.setTextDatum(TL_DATUM);
-    tft.drawString(m_prompt, m_rect.x+PROMPT_X, m_rect.y+tft.fontHeight(TITLE_FONT), DIALOG_FONT);
+    if (m_prompt)
+    {
+        tft.setTextDatum(TL_DATUM);
+        tft.drawString(m_prompt, m_rect.x+PROMPT_X, m_rect.y+tft.fontHeight(TITLE_FONT), DIALOG_FONT);
+    }
 }
 
 MenuDialog::MenuDialog(Display &d,
@@ -116,7 +123,7 @@ GridDialog::GridDialog(Display &d,
         const char *prompt,
         uint16_t rows, uint16_t columns) :
     DialogBase(d, rect, title, prompt),
-    m_buttons(d, Rect(rect.x, BUTTONS_Y, rect.w, rect.h-BUTTONS_Y), rows, columns)
+    m_buttons(d, Rect(rect.x, rect.y, rect.w, rect.h-rect.y), rows, columns)
 {
     // this->show();
 }
@@ -137,10 +144,14 @@ bool GridDialog::check_touch(uint16_t x, uint16_t y, bool pressed)
 
 void GridDialog::show(void)
 {
+    Serial.print("GridDialog::show() calling base show");
     this->DialogBase::show();
+    Serial.print("back from GridDialog::show() calling base show");
 
     // Show the buttons
+    Serial.print("GridDialog::show() checking buttons");
     m_buttons.show();
+    Serial.print("back from GridDialog::show() checking buttons");
 }
 
 // Returns true when dialog anwsered, false while dialog still running

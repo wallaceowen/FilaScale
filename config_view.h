@@ -8,6 +8,7 @@
 #include "view.h"
 #include "menu.h"
 #include "dialog.h"
+#include "kbd_dialog.h"
 
 class ConfigView: public View
 {
@@ -47,6 +48,7 @@ private:
     MenuDialog      m_offer_config_dialog;
     ThreshDialog    m_thresh_config_dialog;
     MenuDialog      m_network_config_dialog;
+    KbdDialog       m_keypad_dialog;
     DialogBase     *m_current_dialog;
 };
 
