@@ -44,10 +44,10 @@ void show_x_y_line(const char *what, int x, int y, int line)
 #endif
 
 ButtonData state_menu_button_data[] = {
-    ButtonData("CFG", TFT_PURPLE, TFT_WHITE, TFT_PURPLE),
-    ButtonData("CAL", TFT_GREEN, TFT_BLACK, TFT_GREEN),
-    ButtonData("NET", TFT_ORANGE, TFT_WHITE, TFT_ORANGE),
-    ButtonData("STOP", TFT_RED, TFT_WHITE, TFT_RED)
+    ButtonData("CFG", TFT_WHITE, TFT_PURPLE),
+    ButtonData("CAL", TFT_BLACK, TFT_GREEN),
+    ButtonData("NET", TFT_WHITE, TFT_ORANGE),
+    ButtonData("STOP", TFT_WHITE, TFT_RED)
 };
 #define NUM_STATE_BUTTONS (sizeof(state_menu_button_data)/sizeof(state_menu_button_data[0]))
 

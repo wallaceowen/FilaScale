@@ -31,8 +31,7 @@ Control::Control(Scale &scale, Display &display, BME280_IF &bme280, Protocol &pr
     m_bme280(bme280),
     m_display(display),
     m_state_view(new(state_buff) StateView(m_display, change_view_func, this, m_scale, m_bme280)),
-    m_calib_view(new(calib_buff) CalibView(m_display, calib_cb_func, this, m_scale)),
-    // m_config_view(new(config_buff) ConfigView(m_display, config_cb_func, this)),
+    // m_calib_view(new(calib_buff) CalibView(m_display, calib_cb_func, this, m_scale)),
     m_config_view(new(config_buff) ConfigView(m_display, change_view_func, this)),
     m_view(m_state_view),
     m_protocol(protocol)
@@ -77,11 +76,17 @@ void Control::change_view(const char *view_name)
     Serial.print("Control::change_view got ");
     Serial.println(view_name);
 
+#ifdef OLD_WAY
     if (!strcmp(view_name, "CAL"))
     {
         m_view = m_calib_view;
         m_mode = M_Show;
     }
+#else
+    if (0)
+    {
+    }
+#endif
     else if (!strcmp(view_name, "CFG"))
     {
         m_view = m_config_view;
@@ -99,10 +104,12 @@ void Control::change_view(const char *view_name)
         m_mode = M_Show;
     }
 
-    m_view->show();
-
     TFT_eSPI &tft = m_display.get_tft();
     tft.fillScreen(TFT_BLACK);
+
+    m_view->show();
+
+    Serial.println("Control::change_view back from show()");
 }
 
 void Control::change_view_func(const char *viewname, void *user)

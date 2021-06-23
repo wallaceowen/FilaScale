@@ -6,8 +6,8 @@
 
 static char dbg_buffer[72];
 
-ButtonData::ButtonData(const char *l, uint16_t pc, uint16_t pfg, uint16_t pbg)
-    : label(l), color(pc), fg(pfg), bg(pbg)
+ButtonData::ButtonData(const char *l, uint16_t pfg, uint16_t pbg)
+    : label(l), fg(pfg), bg(pbg)
 {
 }
 
@@ -32,7 +32,7 @@ void Button::draw(Display &d)
 void Button::draw(TFT_eSPI &tft)
 {
     int16_t height = tft.fontHeight(BUTTON_FONT);
-    tft.fillRect(rect.x, rect.y, rect.w, rect.h, b_d.color);
+    tft.fillRect(rect.x, rect.y, rect.w, rect.h, b_d.bg);
     tft.setTextColor(b_d.fg, b_d.bg);
     tft.setTextDatum(TL_DATUM);
     int16_t t_width = tft.textWidth(b_d.label, BUTTON_FONT);

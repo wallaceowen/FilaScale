@@ -111,7 +111,6 @@ void KbdDialog::make_buttons(void)
         m_buttons.add_button(
                 ButtonData(
                     keyb_data[b].label,
-                    keyb_data[b].bg,
                     keyb_data[b].fg,
                     keyb_data[b].bg),
                 keyb_data[b].row,

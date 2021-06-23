@@ -193,7 +193,7 @@ bool GridDialog::add_grid_button(const GridButtonData &gbd, uint16_t rows, uint1
     uint16_t h = m_rect.h/rows*gbd.height;
 
     return m_buttons.add_button(
-            ButtonData(gbd.label, gbd.bg, gbd.fg, gbd.bg),
+            ButtonData(gbd.label, gbd.fg, gbd.bg),
             gbd.row, gbd.col, w, h);
 }
 

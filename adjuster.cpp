@@ -33,8 +33,8 @@
 #define CURRENT_LABEL_FONT 4
 #define ADJUSTER_BG TFT_BLACK
 
-ButtonData less_button_data("-", TFT_DARKGREEN, TFT_WHITE, TFT_DARKGREEN);
-ButtonData more_button_data("+", TFT_DARKGREEN, TFT_WHITE, TFT_DARKGREEN);
+ButtonData less_button_data("-", TFT_WHITE, TFT_DARKGREEN);
+ButtonData more_button_data("+", TFT_WHITE, TFT_DARKGREEN);
 LabelData varname_label_data("", TFT_BLACK, TFT_WHITE, CURRENT_LABEL_FONT, false);
 LabelData current_label_data("", TFT_BLACK, TFT_WHITE, CURRENT_LABEL_FONT, false);
 

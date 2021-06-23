@@ -14,9 +14,8 @@
 
 struct ButtonData
 {
-    ButtonData(const char *label, uint16_t color, uint16_t fg, uint16_t bg);
+    ButtonData(const char *label, uint16_t fg, uint16_t bg);
     const char *label;
-    uint16_t color;
     uint16_t fg;
     uint16_t bg;
 };

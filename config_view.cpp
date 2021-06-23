@@ -23,29 +23,31 @@
 #define DEBUG_MENU_CALLBACK
 
 static ButtonData config_offer_bd[] = {
-    ButtonData("THRESH", TFT_BLUE, TFT_WHITE, TFT_BLUE),
-    ButtonData("NET", TFT_GREEN, TFT_WHITE, TFT_GREEN),
-    ButtonData("CANCEL", TFT_RED, TFT_WHITE, TFT_RED),
+    ButtonData("FIL", TFT_WHITE, TFT_BLUE),
+    ButtonData("SCALE", TFT_WHITE, TFT_GREEN),
+    ButtonData("SCREEN", TFT_WHITE, TFT_GREEN),
+    ButtonData("NET", TFT_WHITE, TFT_GREEN),
+    ButtonData("CANCEL", TFT_WHITE, TFT_RED),
 };
 #define NUM_CO_BUTTONS (sizeof(config_offer_bd)/sizeof(config_offer_bd[0]))
 
 #define THRESH_ROWS 2
 #define  THRESH_COLS 3
 static ButtonData thresh_bd[] = {
-    ButtonData("WEIGHT", TFT_NAVY, TFT_WHITE, TFT_NAVY),
-    ButtonData("PLA", TFT_DARKGREEN, TFT_WHITE, TFT_DARKGREEN),
-    ButtonData("ABS", TFT_DARKCYAN, TFT_WHITE, TFT_DARKCYAN),
-    ButtonData("Nylon", TFT_MAROON, TFT_WHITE, TFT_MAROON),
-    ButtonData("PETG", TFT_DARKGREY, TFT_WHITE, TFT_DARKGREY),
-    ButtonData("CANCEL", TFT_RED, TFT_WHITE, TFT_RED),
+    ButtonData("PLA", TFT_BLACK, TFT_YELLOW),
+    ButtonData("ABS", TFT_WHITE, TFT_DARKCYAN),
+    ButtonData("ASA", TFT_WHITE, TFT_DARKCYAN),
+    ButtonData("Nylon", TFT_WHITE, TFT_MAROON),
+    ButtonData("PETG", TFT_WHITE, TFT_DARKGREY),
+    ButtonData("CANCEL", TFT_WHITE, TFT_RED),
 };
 #define NUM_THRESH_BUTTONS (sizeof(thresh_bd)/sizeof(thresh_bd[0]))
 
 static ButtonData network_bd[] = {
-    ButtonData("IP", TFT_BLUE, TFT_WHITE, TFT_BLUE),
-    ButtonData("NETMASK", TFT_GREEN, TFT_WHITE, TFT_GREEN),
-    ButtonData("GATEWAY", TFT_BLUE, TFT_WHITE, TFT_BLUE),
-    ButtonData("CANCEL", TFT_RED, TFT_WHITE, TFT_RED),
+    ButtonData("IP", TFT_WHITE, TFT_BLUE),
+    ButtonData("NETMASK", TFT_WHITE, TFT_GREEN),
+    ButtonData("GATEWAY", TFT_WHITE, TFT_BLUE),
+    ButtonData("CANCEL", TFT_WHITE, TFT_RED),
 };
 #define NUM_NET_BUTTONS (sizeof(network_bd)/sizeof(network_bd[0]))
 
@@ -192,10 +194,12 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                 else if (!strcmp(label, "THRESH"))
                 {
                     set_state(COS_Thresholds);
+                    this->show();
                 }
                 else if (!strcmp(label, "NET"))
                 {
                     set_state(COS_Network);
+                    this->show();
                 }
                 else
                 {
@@ -203,7 +207,6 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                     Serial.print(label);
                     Serial.println(" in state COS_Offer");
                 }
-                this->show();
                 break;
             }
 
@@ -221,9 +224,9 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                     Serial.print("ConfigView::MenuCallback got ");
                     Serial.print(label);
                     Serial.println(" in state COS_Thresholds");
+                    Serial.println("Add code to handle Thresh selections");
+                    this->show();
                 }
-                Serial.println("Add code to handle Thresh selections");
-                this->show();
                 break;
 
             case  COS_Network:
@@ -237,18 +240,20 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                 }
                 if (!strcmp(label, "ENTER"))
                 {
-                    Serial.println("Add code to handle Network selections");
+                    Serial.println("Network dialog returned ENTER");
 
                     // Reset state to offer
                     set_state(COS_Offer);
+                    this->show();
                 }
                 else
                 {
+                    Serial.println("Add code to handle Network selections");
                     Serial.print("ConfigView::MenuCallback got ");
                     Serial.print(label);
                     Serial.println(" in state COS_Network");
+                    this->show();
                 }
-                this->show();
                 break;
 
             default:

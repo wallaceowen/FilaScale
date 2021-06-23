@@ -78,10 +78,7 @@ Menu::Menu(Display &d,
                 break;
         }
 
-        // Make a new Button ctor that accepts ButtonData passed by ref
-        Button *b = new Button(
-                bdata[i], Rect(button_x, button_y, button_w, button_h));
-
+        Button *b = new Button(bdata[i], Rect(button_x, button_y, button_w, button_h));
         m_buttons[i] = b;
     }
 }
