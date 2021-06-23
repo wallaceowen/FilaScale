@@ -1,8 +1,9 @@
 #ifndef __dialog_h
 #define __dialog_h
 
-#include "menu.h"
-#include "buttons.h"
+#include "display.h"
+#include "events.h"
+#include "rect.h"
 
 class Dialog
 {

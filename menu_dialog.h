@@ -2,6 +2,7 @@
 #define __menu_dialog_h
 
 #include "dialog.h"
+#include "menu.h"
 #include "buttons.h"
 
 class MenuDialog: public Dialog

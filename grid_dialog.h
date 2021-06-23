@@ -2,6 +2,7 @@
 #define __grid_dialog_h
 
 #include "dialog.h"
+#include "buttons.h"
 
 class GridDialog: public Dialog
 {
