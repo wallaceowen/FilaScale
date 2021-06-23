@@ -240,7 +240,9 @@ void StateView::draw_state()
     bar_y = y+tft.fontHeight(STATE_FONT);
 
     plot_bar(m_display, Rect(x, bar_y, width, PLOT_THICKNESS),
-            m_weight, 0, 200, TFT_ORANGE, TFT_BLUE);
+            m_weight, 0,
+            static_cast<uint16_t>(CAL_WEIGHT_GRAMS),
+            TFT_ORANGE, TFT_BLUE);
     if (m_weight >= 1000.0)
         sprintf(value_buffer, "%4.3f Kg    ", m_weight/1000.0);
     else

@@ -7,9 +7,6 @@
 #include "Averager.h"
 #include "config.h"
 
-// This is in config.h now
-// #define CAL_WEIGHT_GRAMS 200.0
-
 class Scale
 {
 public:
