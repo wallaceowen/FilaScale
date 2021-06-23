@@ -5,16 +5,18 @@
 #include "stock_buttons.h"
 #include "calib_view.h"
 
-#define CALIB_Y 10
+#ifdef SMALL_DIALOG
 #define DLG_X 18
 #define DLG_Y 18
 #define DLG_HEIGHT 160
 #define DLG_WIDTH 270
+#else
+#define DLG_X 0
+#define DLG_Y 0
+#define DLG_HEIGHT 240
+#define DLG_WIDTH 320
+#endif
 
-#define WIDTH 320
-#define HEIGHT 240
-#define VALUES_X 148
-#define CALIB_FONT 4
 #define BORDER_THICKNESS 5
 #define MARGIN BORDER_THICKNESS+2
 
@@ -50,10 +52,6 @@ CalibView::CalibView(Display &d, ViewChangeCallback ccb, void *change_user_data,
     m_ask_dialog.set_callback(menu_callback_func, this);
     m_zero_dialog.set_callback(menu_callback_func, this);
     m_gain_dialog.set_callback(menu_callback_func, this);
-
-    // Clear the display
-    TFT_eSPI &tft = m_display.get_tft();
-    tft.fillRect(0, 0, WIDTH, HEIGHT, SCREEN_BG);
 }
 
 void CalibView::calib_dialog_callback(const char *label, bool pressed)
@@ -169,7 +167,6 @@ void CalibView::menu_callback_func(const char *label, bool pressed, void *user_d
 void CalibView::show()
 {
     Serial.println("CalibView::show()");
-    // TFT_eSPI &tft = m_display.get_tft();
 
     // Show the initial dialog
     m_current_dialog->show();

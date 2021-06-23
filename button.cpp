@@ -41,8 +41,8 @@ void Button::draw(TFT_eSPI &tft)
     tft.drawString(b_d.label, label_x, label_y, BUTTON_FONT);
 
     {
-        sprintf(dbg_buffer, "button \"%s\" drawn at %u, %u width %d",
-                b_d.label, label_x, label_y, t_width);
+        sprintf(dbg_buffer, "button \"%s\" drawn at %u, %u width %hd height %hd",
+                b_d.label, label_x, label_y, t_width, height);
         Serial.println(dbg_buffer);
     }
 

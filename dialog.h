@@ -7,7 +7,13 @@
 class DialogBase
 {
 public:
-    DialogBase(Display&, const Rect &rect, const char *title, const char *prompt);
+    DialogBase(
+            Display&d,
+            const Rect &rect,
+            const char *title,
+            const char *prompt,
+            uint16_t fg = TFT_WHITE,
+            uint16_t bg = TFT_BLACK);
 
     virtual void show(void);
 
@@ -20,6 +26,8 @@ protected:
     const Rect   m_rect;
     const char  *m_title;
     const char  *m_prompt;
+    uint16_t     m_fg;
+    uint16_t     m_bg;
 };
 
 class MenuDialog: public DialogBase
@@ -55,9 +63,11 @@ public:
             const Rect &rect,
             const char *title,
             const char *prompt,
+            uint16_t fg,
+            uint16_t bg,
             uint16_t rows,
-            uint16_t cols
-            );
+            uint16_t cols,
+            uint16_t button_start);
 
     // Returns true when dialog anwsered, false while dialog still running
     virtual void loop(void);
@@ -66,9 +76,11 @@ public:
     virtual void set_callback(PressEventCB, void*);
     virtual bool check_touch(uint16_t x, uint16_t y, bool pressed);
     bool add_button(const ButtonData &bd, uint16_t row, uint16_t col);
+    bool add_grid_button(const GridButtonData &gbd, uint16_t rows, uint16_t cols);
 
 protected:
-    Buttons      m_buttons;
+    uint16_t m_button_start;
+    Buttons  m_buttons;
 
 };
 
@@ -82,8 +94,7 @@ public:
             const char *title,
             const char *prompt,
             uint16_t rows,
-            uint16_t cols
-            );
+            uint16_t cols);
     bool check_touch(uint16_t x, uint16_t y, bool pressed);
     void show(void);
 private:

@@ -3,32 +3,45 @@
 #include "config.h"
 
 #define ADJ_OFFSET 50
+#define DEBUG_DIALOG_BASE
 
-DialogBase::DialogBase(Display &d, const Rect &rect, const char *title, const char *prompt) :
+DialogBase::DialogBase(
+        Display &d,
+        const Rect &rect,
+        const char *title,
+        const char *prompt,
+        uint16_t fg,
+        uint16_t bg) :
     m_display(d),
     m_rect(rect),
     m_title(title),
-    m_prompt(prompt)
+    m_prompt(prompt),
+    m_fg(fg),
+    m_bg(bg)
 {
 #ifdef DEBUG_DIALOG_BASE
-    char msg[56];
+    static char msg[76];
     if (m_title)
+    {
         sprintf(msg, "%s dlg_base rect: [%u, %u, %u, %u]",
                 m_title, rect.x, rect.y, rect.w, rect.h);
-    Serial.println(msg);
+        Serial.println(msg);
+    }
+    else
+        Serial.println("Dialog got no title!!");
 #endif
 }
 
 
 void DialogBase::show(void)
 {
-    // Serial.println("DialogBase::show()");
+    Serial.println("DialogBase::show()");
     TFT_eSPI &tft = m_display.get_tft();
     tft.fillRect(
             m_rect.x, m_rect.y,
             m_rect.w, m_rect.h,
-            TFT_BLACK);
-    tft.setTextColor(TFT_BLACK);
+            m_bg);
+    tft.setTextColor(m_fg);
 
     // Show the title at the top, center justified
     if (m_title)
@@ -104,8 +117,11 @@ bool MenuDialog::check_touch(uint16_t x, uint16_t y, bool pressed)
 
 void MenuDialog::show(void)
 {
+    Serial.println("MenuDialog::show()");
+
     this->DialogBase::show();
 
+    Serial.println("MenuDialog::show() showing menu");
     // Show the menu
     m_menu.show();
 }
@@ -116,14 +132,18 @@ void MenuDialog::loop(void)
     Serial.println("MenuDialog::loop()");
 }
 
-#define BUTTONS_Y 180
 GridDialog::GridDialog(Display &d,
         const Rect &rect,
         const char *title,
         const char *prompt,
-        uint16_t rows, uint16_t columns) :
-    DialogBase(d, rect, title, prompt),
-    m_buttons(d, Rect(rect.x, rect.y, rect.w, rect.h-rect.y), rows, columns)
+        uint16_t fg,
+        uint16_t bg,
+        uint16_t rows,
+        uint16_t columns,
+        uint16_t bs) :
+    DialogBase(d, rect, title, prompt, fg, bg),
+    m_button_start(bs),
+    m_buttons(d, Rect(rect.x, rect.y+m_button_start, rect.w, rect.h-m_button_start), rows, columns)
 {
     // this->show();
 }
@@ -144,14 +164,14 @@ bool GridDialog::check_touch(uint16_t x, uint16_t y, bool pressed)
 
 void GridDialog::show(void)
 {
-    Serial.print("GridDialog::show() calling base show");
+    // Serial.println("GridDialog::show() calling base show");
     this->DialogBase::show();
-    Serial.print("back from GridDialog::show() calling base show");
+    // Serial.print("back from GridDialog::show() calling base show");
 
     // Show the buttons
-    Serial.print("GridDialog::show() checking buttons");
+    // Serial.println("GridDialog::show() checking buttons");
     m_buttons.show();
-    Serial.print("back from GridDialog::show() checking buttons");
+    // Serial.print("back from GridDialog::show() checking buttons");
 }
 
 // Returns true when dialog anwsered, false while dialog still running
@@ -165,12 +185,26 @@ bool GridDialog::add_button(const ButtonData &bd, uint16_t row, uint16_t col)
     return m_buttons.add_button(bd, row, col);
 }
 
+bool GridDialog::add_grid_button(const GridButtonData &gbd, uint16_t rows, uint16_t cols)
+{
+    // Cell widths are a multiple of cell size;
+    // cell size is dialog width/num_cols, dilaog height/num_rows
+    uint16_t w = m_rect.w/cols*gbd.width;
+    uint16_t h = m_rect.h/rows*gbd.height;
+
+    return m_buttons.add_button(
+            ButtonData(gbd.label, gbd.bg, gbd.fg, gbd.bg),
+            gbd.row, gbd.col, w, h);
+}
+
+
+
 ThreshDialog::ThreshDialog(Display &d,
         const Rect &rect,
         const char *title,
         const char *prompt,
         uint16_t rows, uint16_t columns) :
-    GridDialog(d, rect, title, prompt, rows, columns),
+    GridDialog(d, rect, title, prompt, TFT_WHITE, TFT_BLACK, rows, columns, 180),
     m_adj(d, Rect(rect.x, rect.y+ADJ_OFFSET, rect.w, 40), "VARNAME", 20, 500)
 {
     // m_adj.show();

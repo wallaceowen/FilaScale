@@ -91,7 +91,7 @@ ConfigView::ConfigView(Display &d, ViewChangeCallback ccb, void *change_user_dat
             "Press OK or CANCEL",
             network_bd, NUM_NET_BUTTONS,
             Menu::O_Vert),
-    m_keypad_dialog(d, Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT)),
+    m_keypad_dialog(d, Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT), ""),
 
     m_current_dialog(&m_offer_config_dialog)
 {
@@ -235,13 +235,19 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                     // Tell control to go back to state view
                     m_change_cb("STATE", m_change_data);
                 }
+                if (!strcmp(label, "ENTER"))
+                {
+                    Serial.println("Add code to handle Network selections");
+
+                    // Reset state to offer
+                    set_state(COS_Offer);
+                }
                 else
                 {
                     Serial.print("ConfigView::MenuCallback got ");
                     Serial.print(label);
                     Serial.println(" in state COS_Network");
                 }
-                Serial.println("Add code to handle Network selections");
                 this->show();
                 break;
 

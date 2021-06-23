@@ -9,7 +9,7 @@
 class KbdDialog: public GridDialog
 {
 public:
-    KbdDialog(Display&d, const Rect &rect);
+    KbdDialog(Display&d, const Rect &rect, const char *title);
     bool check_touch(uint16_t x, uint16_t y, bool pressed);
     void show(void);
     const char *get_value(void) const { return value; }

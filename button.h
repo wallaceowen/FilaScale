@@ -21,6 +21,19 @@ struct ButtonData
     uint16_t bg;
 };
 
+struct GridButtonData
+{
+    GridButtonData(const char *l, uint16_t r, uint16_t c, uint16_t w, uint16_t h, uint16_t f, uint16_t b)
+        : row(r), col(c), width(w), height(h), fg(f), bg(b)
+    {
+        strcpy(label, l);
+    }
+    char label[8];
+    unsigned row, col;
+    uint16_t width, height;
+    uint16_t fg, bg;
+};
+
 class Button
 {
 public:
