@@ -1,8 +1,8 @@
 #ifndef __kbd_dialog_h
 #define __kbd_dialog_h
 
-#include "menu.h"
-#include "dialog.h"
+// #include "menu.h"
+#include "grid_dialog.h"
 
 #define MAX_VAL_LEN 25
 

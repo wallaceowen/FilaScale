@@ -6,8 +6,9 @@
 #include "display.h"
 #include "button.h"
 #include "view.h"
-#include "menu.h"
-#include "dialog.h"
+// #include "menu.h"
+#include "menu_dialog.h"
+#include "grid_dialog.h"
 #include "kbd_dialog.h"
 
 class ConfigView: public View
@@ -49,7 +50,7 @@ private:
     ThreshDialog    m_thresh_config_dialog;
     MenuDialog      m_network_config_dialog;
     KbdDialog       m_keypad_dialog;
-    DialogBase     *m_current_dialog;
+    Dialog     *m_current_dialog;
 };
 
 #endif

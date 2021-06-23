@@ -7,8 +7,8 @@
 #include "button.h"
 #include "scale.h"
 #include "view.h"
-#include "menu.h"
-#include "dialog.h"
+// #include "menu.h"
+#include "menu_dialog.h"
 #include "bme280_if.h"
 
 #define NUM_BUTTONS 3
@@ -51,7 +51,7 @@ private:
     MenuDialog   m_ask_dialog;
     MenuDialog   m_zero_dialog;
     MenuDialog   m_gain_dialog;
-    DialogBase  *m_current_dialog;
+    Dialog  *m_current_dialog;
     Scale       &m_scale;
 };
 

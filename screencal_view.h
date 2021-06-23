@@ -6,8 +6,8 @@
 #include "display.h"
 #include "button.h"
 #include "view.h"
-#include "menu.h"
-#include "dialog.h"
+// #include "menu.h"
+#include "menu_dialog.h"
 #include "bme280_if.h"
 
 #define NUM_BUTTONS 3
