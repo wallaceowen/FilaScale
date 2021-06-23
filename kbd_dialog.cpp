@@ -1,6 +1,8 @@
 
 #include "kbd_dialog.h"
 
+#include <string.h>
+
 /*
  * +-------+---------+
  * |value  | 7  8  9 |
@@ -18,6 +20,14 @@
 
 #define KB_BG TFT_DARKGRAY
 #define KB_FG TFT_WHITE
+
+#define VALUE_FONT 4
+#define VALUE_MARGIN_X 6
+#define VALUE_MARGIN_Y 6
+#define VALUE_WIDTH 200
+#define VALUE_BOX_COLOR TFT_YELLOW
+#define VALUE_COLOR_FG TFT_GREEN
+#define VALUE_COLOR_BG TFT_BLACK
 
 struct KB_Data
 {
@@ -52,13 +62,33 @@ static KB_Data keyb_data[] = {
 #define NUM_BUTTONS (sizeof(keyb_data)/sizeof(keyb_data[0]))
 
 KbdDialog::KbdDialog(Display &d, const Rect &rect) :
-    GridDialog(d, rect, 0, 0, KBD_ROWS, KBD_COLS)
+    GridDialog(d, rect, 0, 0, KBD_ROWS, KBD_COLS),
+    m_cb(0),
+    m_user_data(0)
 {
     // Clear the value
     memset(value, 0, sizeof(value));
 
+    // TFT_eSPI &tft = m_display.get_tft();
+
     this->make_buttons();
-    this->set_callback(kbd_menu_callback_func, this);
+    // this->set_callback(kbd_button_callback_func, this);
+    m_buttons.set_callback(kbd_button_callback_func, this);
+}
+
+// void KbdDialog::menu_callback_func(const char *label, bool pressed, void *user_data)
+// {
+    // KbdDialog *kd = reinterpret_cast<KbdDialog*>(user_data);
+    // kd->menu_callback(label, pressed);
+// }
+
+// This will save the func in the client.  We're installing KbdDialog::menu_callback_func
+// to be invoked by the buttons instance, and our func wiil in turn fire off the callback
+// we stash here.
+void KbdDialog::set_callback(PressEventCB cb, void*user_data)
+{
+    m_cb = cb;
+    m_user_data = user_data;
 }
 
 void KbdDialog::make_buttons(void)
@@ -92,6 +122,19 @@ void KbdDialog::make_buttons(void)
     }
 }
 
+void KbdDialog::draw_value()
+{
+    TFT_eSPI &tft = m_display.get_tft();
+
+    tft.setTextColor(VALUE_COLOR_FG, VALUE_COLOR_BG);
+    char buffer[40];
+    sprintf(buffer, "%s   ", value);
+    tft.drawString(buffer, m_rect.x+VALUE_MARGIN_X, m_rect.y+VALUE_MARGIN_Y, VALUE_FONT);
+
+    // Draw the value frame
+    tft.drawRect(m_rect.x, m_rect.y, VALUE_WIDTH, tft.fontHeight(VALUE_FONT)+4, VALUE_BOX_COLOR);
+}
+
 bool KbdDialog::check_touch(uint16_t x, uint16_t y, bool pressed)
 {
     int button_touched = this->GridDialog::check_touch(x, y, pressed)?1:0;
@@ -108,22 +151,52 @@ void KbdDialog::show(void)
     Serial.print("KbdDialog::show() calling GridDialog::show");
 #endif
     this->GridDialog::show();
+    // draw_value();
 #ifdef DEBUG_KBD
     Serial.print("back from  calling GridDialog::show()");
 #endif
 }
 
-void KbdDialog::kbd_menu_callback(const char *label, bool pressed)
+void KbdDialog::kbd_button_callback(const char *label, bool pressed)
 {
-    char buff[65];
-    sprintf(buff,
-            "kbd_menu_callback got \"%s\" %s",
-            label, pressed?"pressed":"released");
-    Serial.println(buff);
+    {
+        char buff[65];
+        sprintf(buff,
+                "kbd_button_callback got \"%s\" %s",
+                label, pressed?"pressed":"released");
+        Serial.println(buff);
+    }
+    if ((isdigit(*label) || *label == '.') && !pressed)
+    {
+        strcat(value, label);
+        draw_value();
+        delay(200);
+    }
+    else if (!strcmp(label, "BS") && !pressed)
+    {
+        unsigned len = strlen(value);
+        if (len)
+        {
+            value[len-1] = '\0';
+            draw_value();
+            delay(200);
+        }
+    }
+    else if (!strcmp(label, "CANCEL") && !pressed)
+    {
+        if (m_cb)
+            m_cb("STATE", pressed, m_user_data);
+    }
+    else if (!strcmp(label, "ENTER") && !pressed)
+    {
+        if (m_cb)
+            m_cb("STATE", pressed, m_user_data);
+    }
+    
 }
 
-void KbdDialog::kbd_menu_callback_func(const char *label, bool pressed, void *user_data)
+void KbdDialog::kbd_button_callback_func(const char *label, bool pressed, void *user_data)
 {
     KbdDialog *kd = reinterpret_cast<KbdDialog*>(user_data);
-    kd->kbd_menu_callback(label, pressed);
+    kd->kbd_button_callback(label, pressed);
 }

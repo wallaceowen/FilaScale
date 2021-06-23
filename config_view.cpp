@@ -20,7 +20,7 @@
 
 #define SCREEN_BG TFT_BLACK
 
-// #define DEBUG_MENU_CALLBACK
+#define DEBUG_MENU_CALLBACK
 
 static ButtonData config_offer_bd[] = {
     ButtonData("THRESH", TFT_BLUE, TFT_WHITE, TFT_BLUE),
@@ -100,6 +100,7 @@ ConfigView::ConfigView(Display &d, ViewChangeCallback ccb, void *change_user_dat
     m_offer_config_dialog.set_callback(menu_callback_func, this);
     m_thresh_config_dialog.set_callback(menu_callback_func, this);
     m_network_config_dialog.set_callback(menu_callback_func, this);
+    m_keypad_dialog.set_callback(menu_callback_func, this);
 
     // Clear the display
     TFT_eSPI &tft = m_display.get_tft();
@@ -186,7 +187,7 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                     set_state(COS_Offer);
 
                     // Tell control to go back to state view
-                    m_change_cb("CANCEL", m_change_data);
+                    m_change_cb("STATE", m_change_data);
                 }
                 else if (!strcmp(label, "THRESH"))
                 {
@@ -213,7 +214,7 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                     set_state(COS_Offer);
 
                     // Tell control to go back to state view
-                    m_change_cb("CANCEL", m_change_data);
+                    m_change_cb("STATE", m_change_data);
                 }
                 else
                 {
@@ -232,7 +233,7 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                     set_state(COS_Offer);
 
                     // Tell control to go back to state view
-                    m_change_cb("CANCEL", m_change_data);
+                    m_change_cb("STATE", m_change_data);
                 }
                 else
                 {

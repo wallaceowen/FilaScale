@@ -32,7 +32,8 @@ Control::Control(Scale &scale, Display &display, BME280_IF &bme280, Protocol &pr
     m_display(display),
     m_state_view(new(state_buff) StateView(m_display, change_view_func, this, m_scale, m_bme280)),
     m_calib_view(new(calib_buff) CalibView(m_display, calib_cb_func, this, m_scale)),
-    m_config_view(new(config_buff) ConfigView(m_display, config_cb_func, this)),
+    // m_config_view(new(config_buff) ConfigView(m_display, config_cb_func, this)),
+    m_config_view(new(config_buff) ConfigView(m_display, change_view_func, this)),
     m_view(m_state_view),
     m_protocol(protocol)
 {
@@ -73,8 +74,8 @@ void Control::config_cb_func(const char *viewname, void *user)
 
 void Control::change_view(const char *view_name)
 {
-    // Serial.print("Control::change_view got ");
-    // Serial.println(view_name);
+    Serial.print("Control::change_view got ");
+    Serial.println(view_name);
 
     if (!strcmp(view_name, "CAL"))
     {
