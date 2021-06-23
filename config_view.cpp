@@ -24,10 +24,10 @@
 
 static ButtonData config_offer_bd[] = {
     ButtonData("FIL", TFT_WHITE, TFT_BLUE),
-    ButtonData("SCALE", TFT_WHITE, TFT_GREEN),
-    ButtonData("SCREEN", TFT_WHITE, TFT_GREEN),
+    ButtonData("SCAL", TFT_WHITE, TFT_GREEN),
+    ButtonData("SCR", TFT_WHITE, TFT_BLUE),
     ButtonData("NET", TFT_WHITE, TFT_GREEN),
-    ButtonData("CANCEL", TFT_WHITE, TFT_RED),
+    ButtonData("CANC", TFT_WHITE, TFT_RED),
 };
 #define NUM_CO_BUTTONS (sizeof(config_offer_bd)/sizeof(config_offer_bd[0]))
 
@@ -191,12 +191,17 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                     // Tell control to go back to state view
                     m_change_cb("STATE", m_change_data);
                 }
-                else if (!strcmp(label, "THRESH"))
+                else if (!strcmp(label, "FIL"))
                 {
                     set_state(COS_Thresholds);
                     this->show();
                 }
                 else if (!strcmp(label, "NET"))
+                {
+                    set_state(COS_Network);
+                    this->show();
+                }
+                else if (!strcmp(label, "SCR"))
                 {
                     set_state(COS_Network);
                     this->show();
