@@ -22,14 +22,29 @@
 
 #define DEBUG_MENU_CALLBACK
 
+#ifdef CONF_IS_MENU
 static ButtonData config_offer_bd[] = {
-    ButtonData("FIL", TFT_WHITE, TFT_BLUE),
-    ButtonData("SCAL", TFT_WHITE, TFT_GREEN),
-    ButtonData("SCR", TFT_WHITE, TFT_BLUE),
+    ButtonData("FILAMENT", TFT_WHITE, TFT_BLUE),
+    ButtonData("SCALE", TFT_WHITE, TFT_GREEN),
+    ButtonData("SCREEN", TFT_WHITE, TFT_BLUE),
     ButtonData("NET", TFT_WHITE, TFT_GREEN),
-    ButtonData("CANC", TFT_WHITE, TFT_RED),
+    ButtonData("CANCEL", TFT_WHITE, TFT_RED),
 };
 #define NUM_CO_BUTTONS (sizeof(config_offer_bd)/sizeof(config_offer_bd[0]))
+#else
+#define CONF_OFFER_ROWS 5
+#define CONF_OFFER_COLS 2
+
+static GridButtonData config_offer_gbd[] = {
+    {GridButtonData("FILAMENT", 0, 0, 1, 1, TFT_WHITE, TFT_BROWN)},
+    {GridButtonData("SCALE",    1, 0, 1, 1, TFT_WHITE, TFT_GREEN)},
+    {GridButtonData("SCREEN",   2, 0, 1, 1, TFT_WHITE, TFT_ORANGE)},
+    {GridButtonData("NETWORK",  3, 0, 1, 1, TFT_WHITE, TFT_PURPLE)},
+    {GridButtonData("CANCEL",   4, 0, 1, 1, TFT_WHITE, TFT_RED)},
+};
+#define NUM_CO_BUTTONS (sizeof(config_offer_gbd)/sizeof(config_offer_gbd[0]))
+
+#endif
 
 #define THRESH_ROWS 2
 #define  THRESH_COLS 3
@@ -65,7 +80,12 @@ void ConfigView::add_threshold_buttons()
         uint16_t column = i%THRESH_COLS;
         m_thresh_config_dialog.add_button(thresh_bd[i], row, column);
     }
+}
 
+void ConfigView::add_offer_buttons()
+{
+    for (int i = 0; i < NUM_CO_BUTTONS; ++i)
+        m_offer_config_dialog.add_grid_button(config_offer_gbd[i]);
 }
 
 // Here is where we configure our filament temperature and humidity thresholds, for each of
@@ -74,12 +94,21 @@ ConfigView::ConfigView(Display &d, ViewChangeCallback ccb, void *change_user_dat
     View(d, ccb, change_user_data),
     m_display(d),
     m_state(COS_Offer),
+#ifdef CONF_IS_MENU
     m_offer_config_dialog(
             d,
             Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT),
             "CONFIG",
             "Choose an option",
             config_offer_bd, NUM_CO_BUTTONS),
+#else
+    m_offer_config_dialog(
+            d,
+            Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT),
+            "Configure menu", "Configure?",
+            TFT_LIGHTGREY, TFT_BLACK,
+            CONF_OFFER_ROWS, CONF_OFFER_COLS, 60),
+#endif
     m_thresh_config_dialog(
             d,
             Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT),
@@ -98,6 +127,10 @@ ConfigView::ConfigView(Display &d, ViewChangeCallback ccb, void *change_user_dat
     m_current_dialog(&m_offer_config_dialog)
 {
     add_threshold_buttons();
+
+#ifndef CONF_IS_MENU
+    add_offer_buttons();
+#endif
 
     m_offer_config_dialog.set_callback(menu_callback_func, this);
     m_thresh_config_dialog.set_callback(menu_callback_func, this);

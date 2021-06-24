@@ -28,20 +28,7 @@
 #define VALUE_COLOR_FG TFT_GREEN
 #define VALUE_COLOR_BG TFT_BLACK
 
-#ifdef BOZO
-struct GridButtonData
-{
-    GridButtonData(const char *l, uint16_t r, uint16_t c, uint16_t w, uint16_t h, uint16_t f, uint16_t b)
-        : row(r), col(c), width(w), height(h), fg(f), bg(b)
-    {
-        strcpy(label, l);
-    }
-    char label[8];
-    unsigned row, col;
-    uint16_t width, height;
-    uint16_t fg, bg;
-};
-#endif
+// #define DEBUG_KBD
 
 static GridButtonData keyb_data[] = {
     {GridButtonData("7",      1, 3, 1, 1, KB_FG, KB_BG)},
@@ -72,7 +59,6 @@ KbdDialog::KbdDialog(Display &d, const Rect &rect, const char *title) :
     // TFT_eSPI &tft = m_display.get_tft();
 
     this->make_buttons();
-    // this->set_callback(kbd_button_callback_func, this);
     m_buttons.set_callback(kbd_button_callback_func, this);
 }
 
@@ -97,11 +83,12 @@ void KbdDialog::make_buttons(void)
                     keyb_data[b].label,
                     keyb_data[b].row,
                     keyb_data[b].col,
-                    w, h);
+                    KBD_ROWS, KBD_COLS);
             Serial.println(buff);
         }
 #endif
-        this->add_grid_button(keyb_data[b], KBD_ROWS, KBD_COLS);
+        // this->add_grid_button(keyb_data[b], KBD_ROWS, KBD_COLS);
+        this->add_grid_button(keyb_data[b]);
 
 #ifdef BOZO
         // Cell widths are a multiple of cell size;

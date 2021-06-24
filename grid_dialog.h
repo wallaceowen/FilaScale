@@ -4,6 +4,22 @@
 #include "dialog.h"
 #include "buttons.h"
 
+#define MAX_GRIDBUTTON_LABEL_LEN 32
+
+struct GridButtonData
+{
+    GridButtonData(const char *l, uint16_t r, uint16_t c, uint16_t w, uint16_t h, uint16_t f, uint16_t b)
+        : row(r), col(c), column_span(w), row_span(h), fg(f), bg(b)
+    {
+        if (strlen(label) < MAX_GRIDBUTTON_LABEL_LEN)
+            strcpy(label, l);
+    }
+    char label[MAX_GRIDBUTTON_LABEL_LEN];
+    unsigned row, col;
+    uint16_t column_span, row_span;
+    uint16_t fg, bg;
+};
+
 class GridDialog: public Dialog
 {
 public:
@@ -26,30 +42,15 @@ public:
     virtual void set_callback(PressEventCB, void*);
     virtual bool check_touch(uint16_t x, uint16_t y, bool pressed);
     bool add_button(const ButtonData &bd, uint16_t row, uint16_t col);
-    bool add_grid_button(const GridButtonData &gbd, uint16_t rows, uint16_t cols);
+    // bool add_grid_button(const GridButtonData &gbd, uint16_t rows, uint16_t cols);
+    bool add_grid_button(const GridButtonData &gbd);
 
 protected:
     uint16_t m_button_start;
     Buttons  m_buttons;
+    uint16_t m_rows;
+    uint16_t m_cols;
 
 };
-
-#include "adjuster.h"
-
-class ThreshDialog: public GridDialog
-{
-public:
-    ThreshDialog(Display&d,
-            const Rect &rect,
-            const char *title,
-            const char *prompt,
-            uint16_t rows,
-            uint16_t cols);
-    bool check_touch(uint16_t x, uint16_t y, bool pressed);
-    void show(void);
-private:
-    Adjuster m_adj;
-};
-
 
 #endif

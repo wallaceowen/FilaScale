@@ -9,6 +9,7 @@
 // #include "menu.h"
 #include "menu_dialog.h"
 #include "grid_dialog.h"
+#include "thresh_dialog.h"
 #include "kbd_dialog.h"
 
 class ConfigView: public View
@@ -38,7 +39,7 @@ protected:
 private:
 
     void set_state(ConfigState cs);
-
+    void add_offer_buttons();
     void add_threshold_buttons();
 
     static void config_dialog_callback_func(const char *label, bool pressed, void *user_data);
@@ -46,7 +47,11 @@ private:
 
     Display        &m_display;
     ConfigState     m_state;
+#ifdef CONF_IS_MENU
     MenuDialog      m_offer_config_dialog;
+#else
+    GridDialog      m_offer_config_dialog;
+#endif
     ThreshDialog    m_thresh_config_dialog;
     MenuDialog      m_network_config_dialog;
     KbdDialog       m_keypad_dialog;

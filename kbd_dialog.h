@@ -20,8 +20,9 @@ private:
     void kbd_button_callback(const char *label, bool pressed);
     static void kbd_button_callback_func(const char *label, bool pressed, void *user_data);
     void make_buttons(void);
+
     PressEventCB m_cb;
-    void    *m_user_data;
+    void *m_user_data;
     char value[MAX_VAL_LEN];
 };
 

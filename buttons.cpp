@@ -4,7 +4,7 @@
 
 Buttons::Buttons(Display &d, const Rect &w, uint16_t r, uint16_t c) :
     tft(d.get_tft()),
-    where(w),
+    m_rect(w),
     rows(r),
     columns(c),
     bcb(0),
@@ -21,45 +21,28 @@ Buttons::Buttons(Display &d, const Rect &w, uint16_t r, uint16_t c) :
     }
     else
     {
-        buttons = new BPTR[rows*columns];
-        memset(buttons, 0, (rows*columns)*sizeof(BPTR));
+        unsigned count = rows*columns;
+        // Serial.print("Allocing bytes for ");
+        // Serial.print(count);
+        // Serial.println(" buttons");
+        buttons = new BPTR[count];
+        if (buttons)
+            memset(buttons, 0, (count)*sizeof(BPTR));
+        else
+            Serial.println("CANT ALLOC BUTTONS");
     }
 }
 
 bool Buttons::add_button(const ButtonData &bd, uint16_t row, uint16_t col)
 {
+    return true;
+
     if ((row < rows) && (col < columns))
     {
-        uint16_t width = where.w/columns;
-        uint16_t height = where.h/rows;
-        uint16_t x = where.x+width*col;
-        uint16_t y = where.y+height*row;
-
-        Button *b = new Button(bd, Rect(x, y, width, height));
-
-        buttons[(row*columns)+col] = b;
-
-        return true;
-    }
-    return false;
-}
-
-bool Buttons::add_button(
-        const ButtonData &bd,
-        uint16_t row, uint16_t col,
-        uint16_t width, uint16_t height)
-{
-    if ((row < rows) && (col < columns))
-    {
-        uint16_t x = where.x+width*col;
-        uint16_t y = where.y+height*row;
-
-        {
-            char buff[65];
-            sprintf(buff, "Adding button %s at %u %u %u %u",
-                    bd.label, x, y, width, height);
-            Serial.println(buff);
-        }
+        uint16_t width = m_rect.w/columns;
+        uint16_t height = m_rect.h/rows;
+        uint16_t x = m_rect.x+width*col;
+        uint16_t y = m_rect.y+height*row;
 
         Button *b = new Button(bd, Rect(x, y, width, height));
 
@@ -69,8 +52,44 @@ bool Buttons::add_button(
     }
     else
     {
-        char buff[65];
-        sprintf(buff, "%s wanted r %u c %u but only %u rows %u cols",
+        Serial.println("CANT PLACE BUTTON");
+        return false;
+    }
+}
+
+bool Buttons::add_button(
+        const ButtonData &bd,
+        uint16_t row, uint16_t col,
+        uint16_t width, uint16_t height)
+{
+    // {
+        // static char buff[72];
+        // sprintf(buff, "Adding button at row %u col %u width %u height %u", row, col, width, height);
+        // Serial.println(buff);
+    // }
+
+    if ((row < rows) && (col < columns))
+    {
+        uint16_t x = m_rect.x+width*col;
+        uint16_t y = m_rect.y+height*row;
+
+        // {
+            // char buff[65];
+            // sprintf(buff, "Adding button %s at x:%u y:%u w:%u h:%u",
+                    // bd.label, x, y, width, height);
+            // Serial.println(buff);
+        // }
+
+        Button *b = new Button(bd, Rect(x, y, width, height));
+
+        buttons[(row*columns)+col] = b;
+
+        return true;
+    }
+    else
+    {
+        static char buff[75];
+        sprintf(buff, "ERROR: %s wanted r %u c %u but only %u rows %u height",
                 bd.label, row, col, rows, columns);
         Serial.println(buff);
     }

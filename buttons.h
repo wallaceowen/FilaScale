@@ -26,7 +26,7 @@ public:
 
 private:
     TFT_eSPI   &tft;
-    Rect        where;
+    Rect        m_rect;
     uint16_t    rows;
     uint16_t    columns;
     Button     **buttons;
