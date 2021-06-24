@@ -22,41 +22,8 @@
 
 #define DEBUG_MENU_CALLBACK
 
-#ifdef CONF_IS_MENU
-static ButtonData config_offer_bd[] = {
-    ButtonData("FILAMENT", TFT_WHITE, TFT_BLUE),
-    ButtonData("SCALE", TFT_WHITE, TFT_GREEN),
-    ButtonData("SCREEN", TFT_WHITE, TFT_BLUE),
-    ButtonData("NET", TFT_WHITE, TFT_GREEN),
-    ButtonData("CANCEL", TFT_WHITE, TFT_RED),
-};
-#define NUM_CO_BUTTONS (sizeof(config_offer_bd)/sizeof(config_offer_bd[0]))
-#else
 #define CONF_OFFER_ROWS 5
 #define CONF_OFFER_COLS 2
-
-static GridButtonData config_offer_gbd[] = {
-    {GridButtonData("FILAMENT", 0, 0, 1, 1, TFT_WHITE, TFT_BROWN)},
-    {GridButtonData("SCALE",    1, 0, 1, 1, TFT_WHITE, TFT_GREEN)},
-    {GridButtonData("SCREEN",   2, 0, 1, 1, TFT_WHITE, TFT_ORANGE)},
-    {GridButtonData("NETWORK",  3, 0, 1, 1, TFT_WHITE, TFT_PURPLE)},
-    {GridButtonData("CANCEL",   4, 0, 1, 1, TFT_WHITE, TFT_RED)},
-};
-#define NUM_CO_BUTTONS (sizeof(config_offer_gbd)/sizeof(config_offer_gbd[0]))
-
-#endif
-
-#define THRESH_ROWS 2
-#define  THRESH_COLS 3
-static ButtonData thresh_bd[] = {
-    ButtonData("PLA", TFT_BLACK, TFT_YELLOW),
-    ButtonData("ABS", TFT_WHITE, TFT_DARKCYAN),
-    ButtonData("ASA", TFT_WHITE, TFT_DARKCYAN),
-    ButtonData("Nylon", TFT_WHITE, TFT_MAROON),
-    ButtonData("PETG", TFT_WHITE, TFT_DARKGREY),
-    ButtonData("CANCEL", TFT_WHITE, TFT_RED),
-};
-#define NUM_THRESH_BUTTONS (sizeof(thresh_bd)/sizeof(thresh_bd[0]))
 
 static ButtonData network_bd[] = {
     ButtonData("IP", TFT_WHITE, TFT_BLUE),
@@ -66,27 +33,18 @@ static ButtonData network_bd[] = {
 };
 #define NUM_NET_BUTTONS (sizeof(network_bd)/sizeof(network_bd[0]))
 
+// static ButtonData screencal_bd[] = { };
 
 #ifdef DEBUG_MENU_CALLBACK
-static const char *state_names[] = { "COS_Offer", "COS_Thresholds", "COS_Network", "COS_NUmStates" };
+static const char *state_names[] = {
+    "COS_Offer",
+    "COS_Filament",
+    "COS_CalibrateScale",
+    "COS_Screen",
+    "COS_Network",
+    "COS_NUmStates"
+};
 #endif
-
-
-void ConfigView::add_threshold_buttons()
-{
-    for (int i = 0; i < NUM_THRESH_BUTTONS; ++i)
-    {
-        uint16_t row = i/THRESH_COLS;
-        uint16_t column = i%THRESH_COLS;
-        m_thresh_config_dialog.add_button(thresh_bd[i], row, column);
-    }
-}
-
-void ConfigView::add_offer_buttons()
-{
-    for (int i = 0; i < NUM_CO_BUTTONS; ++i)
-        m_offer_config_dialog.add_grid_button(config_offer_gbd[i]);
-}
 
 // Here is where we configure our filament temperature and humidity thresholds, for each of
 // the types of filament defined
@@ -94,27 +52,16 @@ ConfigView::ConfigView(Display &d, ViewChangeCallback ccb, void *change_user_dat
     View(d, ccb, change_user_data),
     m_display(d),
     m_state(COS_Offer),
-#ifdef CONF_IS_MENU
     m_offer_config_dialog(
             d,
-            Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT),
-            "CONFIG",
-            "Choose an option",
-            config_offer_bd, NUM_CO_BUTTONS),
-#else
-    m_offer_config_dialog(
+            Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT)),
+    m_filament_config_dialog(
             d,
-            Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT),
-            "Configure menu", "Configure?",
-            TFT_LIGHTGREY, TFT_BLACK,
-            CONF_OFFER_ROWS, CONF_OFFER_COLS, 60),
+            Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT)),
+#ifdef SCREENCAL_WORKING
+    m_screencal( d, Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT),
+            "screencal", "Press OK or CANCEL", screencal_bd, 0, Menu::O_Horiz),
 #endif
-    m_thresh_config_dialog(
-            d,
-            Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT),
-            "THRESHOLDS",
-            "Select a threshold to adjust",
-            THRESH_ROWS, THRESH_COLS),
     m_network_config_dialog(
             d,
             Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT),
@@ -126,16 +73,13 @@ ConfigView::ConfigView(Display &d, ViewChangeCallback ccb, void *change_user_dat
 
     m_current_dialog(&m_offer_config_dialog)
 {
-    add_threshold_buttons();
-
-#ifndef CONF_IS_MENU
-    add_offer_buttons();
-#endif
-
     m_offer_config_dialog.set_callback(menu_callback_func, this);
-    m_thresh_config_dialog.set_callback(menu_callback_func, this);
+    m_filament_config_dialog.set_callback(menu_callback_func, this);
     m_network_config_dialog.set_callback(menu_callback_func, this);
     m_keypad_dialog.set_callback(menu_callback_func, this);
+#ifdef SCREENCAL_WORKING
+    m_screencal.set_callback(menu_callback_func, this);
+#endif
 
     // Clear the display
     TFT_eSPI &tft = m_display.get_tft();
@@ -169,6 +113,7 @@ void ConfigView::touch_callback(uint16_t x, uint16_t y, bool pressed)
     m_current_dialog->check_touch(x, y, pressed);
 }
 
+// Deal with a state change (mostly by switching to a different dialog)
 void ConfigView::set_state(ConfigState cs)
 {
     m_state = cs;
@@ -177,13 +122,17 @@ void ConfigView::set_state(ConfigState cs)
         case COS_Offer:
             m_current_dialog = &m_offer_config_dialog;
             break;
-        case COS_Thresholds:
-            m_current_dialog = &m_thresh_config_dialog;
+#ifdef SCREENCAL_WORKING
+        case COS_CalibrateScale:
+            m_current_dialog = &m_screencal;
+           break;
+#endif
+        case COS_Filament:
+            m_current_dialog = &m_filament_config_dialog;
            break;
         case COS_Network:
             // m_current_dialog = &m_network_config_dialog;
             m_current_dialog = &m_keypad_dialog;
-            Serial.println("keypad dialog selected");
             break;
         default:
             m_state = COS_Offer;
@@ -224,19 +173,27 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                     // Tell control to go back to state view
                     m_change_cb("STATE", m_change_data);
                 }
-                else if (!strcmp(label, "FIL"))
+                else if (!strcmp(label, "FILAMENT"))
                 {
-                    set_state(COS_Thresholds);
+                    set_state(COS_Filament);
                     this->show();
                 }
-                else if (!strcmp(label, "NET"))
+                else if (!strcmp(label, "NETWORK"))
                 {
                     set_state(COS_Network);
                     this->show();
                 }
-                else if (!strcmp(label, "SCR"))
+                else if (!strcmp(label, "SCALE"))
                 {
-                    set_state(COS_Network);
+                    // Reset state to offer
+                    set_state(COS_Offer);
+
+                    // Tell control to make the SCALE view the current view
+                    m_change_cb("SCALE", m_change_data);
+                }
+                else if (!strcmp(label, "SCREEN"))
+                {
+                    set_state(COS_Screen);
                     this->show();
                 }
                 else
@@ -248,24 +205,47 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                 break;
             }
 
-            case  COS_Thresholds:
+            case  COS_CalibrateScale:
                 if (!strcmp(label, "CANCEL"))
                 {
                     // Reset state to offer
                     set_state(COS_Offer);
 
                     // Tell control to go back to state view
-                    m_change_cb("STATE", m_change_data);
+                    // m_change_cb("CONFIG", m_change_data);
+                    this->show();
                 }
                 else
                 {
                     Serial.print("ConfigView::MenuCallback got ");
                     Serial.print(label);
-                    Serial.println(" in state COS_Thresholds");
-                    Serial.println("Add code to handle Thresh selections");
+                    Serial.println(" in state COS_CalibrateScale");
+                    Serial.println("Add code t");
                     this->show();
                 }
                 break;
+
+            case  COS_Filament:
+                if (!strcmp(label, "CANCEL"))
+                {
+                    // Reset state to offer
+                    set_state(COS_Offer);
+
+                    // Tell control to go back to state view
+                    // m_change_cb("CONFIG", m_change_data);
+
+                    this->show();
+                }
+                else
+                {
+                    Serial.print("ConfigView::MenuCallback got ");
+                    Serial.print(label);
+                    Serial.println(" in state COS_CalibrateScale");
+                    Serial.println("Add code t");
+                    this->show();
+                }
+                break;
+
 
             case  COS_Network:
                 if (!strcmp(label, "CANCEL"))
@@ -273,8 +253,7 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                     // Reset state to offer
                     set_state(COS_Offer);
 
-                    // Tell control to go back to state view
-                    m_change_cb("STATE", m_change_data);
+                    this->show();
                 }
                 if (!strcmp(label, "ENTER"))
                 {
@@ -336,7 +315,7 @@ void ConfigView::loop()
         case COS_Offer:
             break;
 
-        case  COS_Thresholds:
+        case  COS_CalibrateScale:
             break;
 
         case  COS_Network:

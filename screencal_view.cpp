@@ -1,4 +1,6 @@
 // screencal_view.cpp
+//
+#if 0
 
 #include <stdio.h>
 
@@ -144,4 +146,4 @@ void ScreenCalView::loop()
 #endif
 }
 
-
+#endif

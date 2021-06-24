@@ -3,6 +3,8 @@
 #ifndef __screencal_view_h
 #define __screencal_view_h
 
+#if 0
+
 #include "display.h"
 #include "button.h"
 #include "view.h"
@@ -49,5 +51,7 @@ private:
     ScreenCalState   m_state;
     MenuDialog   m_ask_dialog;
 };
+
+#endif
 
 #endif

@@ -22,44 +22,36 @@
 
 #define SCREEN_BG TFT_BLACK
 
-ButtonData scale_screen_cancel[] = {
-    ButtonData("SCALE", TFT_WHITE, TFT_BROWN),
-    ButtonData("SCREEN", TFT_WHITE, TFT_BROWN),
-    ButtonData("CANCEL", TFT_WHITE, TFT_RED),
-};
-#define NUM_SSC_BUTTONS (sizeof(scale_screen_cancel)/sizeof(scale_screen_cancel[0]))
-
-static const char *state_names[] = { "CS_Ask", "CS_Scale", "CS_Screen", "CS_NUmStates" };
+static const char *state_names[] = { "CS_Ask", "CS_Zero", "CS_Gain", "CS_NUmStates" };
 
 CalibView::CalibView(Display &d, ViewChangeCallback ccb, void *change_user_data, Scale &s) :
     View(d, ccb, change_user_data),
     m_display(d),
     m_state(CS_Ask),
-    // Offer the choices SCALE, SCREEN and CANCEL
-    m_ask(
+    m_ask_dialog(
             d,
             Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT),
-            "Calibrate the scale or screen?",
-            "Choose",
+            "Calibrate scale?",
+            "Press OK or CANCEL",
             ok_cancel_bd, NUM_OK_BUTTONS),
-    m_scalecal(
+    m_zero_dialog(
             d,
             Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT),
             "Remove all from scale",
             "Press OK or CANCEL",
             ok_cancel_bd, NUM_OK_BUTTONS),
-    m_screencal(
+    m_gain_dialog(
             d,
             Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT),
             "Put cal wt. on scale",
             "Press OK or CANCEL",
             ok_cancel_bd, NUM_OK_BUTTONS),
-    m_current_dialog(&m_ask),
+    m_current_dialog(&m_ask_dialog),
     m_scale(s)
 {
-    m_ask.set_callback(menu_callback_func, this);
-    m_scalecal.set_callback(menu_callback_func, this);
-    m_screencal.set_callback(menu_callback_func, this);
+    m_ask_dialog.set_callback(menu_callback_func, this);
+    m_zero_dialog.set_callback(menu_callback_func, this);
+    m_gain_dialog.set_callback(menu_callback_func, this);
 }
 
 // void CalibView::calib_dialog_callback(const char *label, bool pressed)
@@ -96,17 +88,17 @@ void CalibView::set_state(CalibState cs)
     switch (m_state)
     {
         case CS_Ask:
-            m_current_dialog = &m_ask;
+            m_current_dialog = &m_ask_dialog;
             break;
-        case CS_Scale:
-            m_current_dialog = &m_scalecal;
+        case CS_Zero:
+            m_current_dialog = &m_zero_dialog;
            break;
-        case CS_Screen:
-            m_current_dialog = &m_screencal;
+        case CS_Gain:
+            m_current_dialog = &m_gain_dialog;
             break;
         default:
             m_state = CS_Ask;
-            m_current_dialog = &m_ask;
+            m_current_dialog = &m_ask_dialog;
            break;
     }
 }
@@ -139,16 +131,16 @@ void CalibView::menu_callback(const char *label, bool pressed)
             switch(m_state)
             {
                 case CS_Ask:
-                    set_state(CS_Scale);
+                    set_state(CS_Zero);
                     this->show();
                     break;
 
-                case  CS_Scale:
+                case  CS_Zero:
                     m_scale.set_offset();
-                    set_state(CS_Screen);
+                    set_state(CS_Gain);
                     this->show();
                     break;
-                case  CS_Screen:
+                case  CS_Gain:
                     m_scale.set_gain();
 
                     set_state(CS_Ask);
@@ -199,10 +191,10 @@ void CalibView::loop()
         case CS_Ask:
             break;
 
-        case  CS_Scale:
+        case  CS_Zero:
             break;
 
-        case  CS_Screen:
+        case  CS_Gain:
             break;
 
         default:
@@ -210,5 +202,4 @@ void CalibView::loop()
     }
 #endif
 }
-
 

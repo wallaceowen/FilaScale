@@ -8,8 +8,11 @@
 
 struct GridButtonData
 {
-    GridButtonData(const char *l, uint16_t r, uint16_t c, uint16_t w, uint16_t h, uint16_t f, uint16_t b)
-        : row(r), col(c), column_span(w), row_span(h), fg(f), bg(b)
+    GridButtonData(const char *l,
+            uint16_t r, uint16_t c,
+            uint16_t rs, uint16_t cs,
+            uint16_t f, uint16_t b)
+        : row(r), col(c), column_span(cs), row_span(rs), fg(f), bg(b)
     {
         if (strlen(label) < MAX_GRIDBUTTON_LABEL_LEN)
             strcpy(label, l);
@@ -41,8 +44,7 @@ public:
 
     virtual void set_callback(PressEventCB, void*);
     virtual bool check_touch(uint16_t x, uint16_t y, bool pressed);
-    bool add_button(const ButtonData &bd, uint16_t row, uint16_t col);
-    // bool add_grid_button(const GridButtonData &gbd, uint16_t rows, uint16_t cols);
+    // bool add_button(const ButtonData &bd, uint16_t row, uint16_t col);
     bool add_grid_button(const GridButtonData &gbd);
 
 protected:

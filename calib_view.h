@@ -7,6 +7,7 @@
 #include "button.h"
 #include "scale.h"
 #include "view.h"
+// #include "menu.h"
 #include "menu_dialog.h"
 #include "bme280_if.h"
 
@@ -16,7 +17,7 @@
 class CalibView: public View
 {
 public:
-    enum CalibState { CS_Ask, CS_Scale, CS_Screen, CS_NUmStates };
+    enum CalibState { CS_Ask, CS_Zero, CS_Gain, CS_NUmStates };
 
     CalibView(Display&, ViewChangeCallback ccb, void *change_user_data, Scale &s);
     // Call this often.  It drives the state machine.
@@ -47,11 +48,12 @@ private:
 
     Display     &m_display;
     CalibState   m_state;
-    MenuDialog   m_ask;
-    MenuDialog   m_scalecal;
-    MenuDialog   m_screencal;
-    Dialog  *m_current_dialog;
+    MenuDialog   m_ask_dialog;
+    MenuDialog   m_zero_dialog;
+    MenuDialog   m_gain_dialog;
+    Dialog      *m_current_dialog;
     Scale       &m_scale;
 };
 
 #endif
+

@@ -3,20 +3,19 @@
 
 #include <string.h>
 
-/*
- * +-------+---------+
- * |value  | 7  8  9 |
+/* +-----------------+
+ * |       |value.dd |
+ * |       +---------+
+ * |       | 7  8  9 |
  * +-------+ 4  5  6 |
- * | CANCL | 1  2  3 |
- * | ENTER | .  0 BS |
+ * | ENTER | 1  2  3 |
+ * |CANCEL | .  0 BS |
  * +-------+---------+
  */
 
+
 #define KBD_ROWS 5
 #define KBD_COLS 6
-
-// #define BUTTON_WIDTH 20
-// #define BUTTON_HEIGHT 20
 
 #define KB_FG TFT_WHITE
 #define KB_BG TFT_DARKGREY
@@ -43,8 +42,8 @@ static GridButtonData keyb_data[] = {
     {GridButtonData(".",      4, 3, 1, 1, KB_FG, KB_BG)},
     {GridButtonData("0",      4, 4, 1, 1, KB_FG, KB_BG)},
     {GridButtonData("BS",     4, 5, 1, 1, KB_FG, KB_BG)},
-    {GridButtonData("ENTER",  3, 0, 3, 1, KB_FG, TFT_DARKGREEN)},
-    {GridButtonData("CANCEL", 4, 0, 3, 1, KB_FG, TFT_RED)},
+    {GridButtonData("ENTER",  3, 0, 1, 3, KB_FG, TFT_DARKGREEN)},
+    {GridButtonData("CANCEL", 4, 0, 1, 3, KB_FG, TFT_RED)},
 };
 #define NUM_BUTTONS (sizeof(keyb_data)/sizeof(keyb_data[0]))
 
@@ -75,36 +74,7 @@ void KbdDialog::set_callback(PressEventCB cb, void*user_data)
 void KbdDialog::make_buttons(void)
 {
     for (unsigned b = 0; b < NUM_BUTTONS; ++b)
-    {
-#ifdef DEBUG_KBD
-        {
-            char buff[65];
-            sprintf(buff, "kbd_dialog making button %s at %u, %u, %u, %u",
-                    keyb_data[b].label,
-                    keyb_data[b].row,
-                    keyb_data[b].col,
-                    KBD_ROWS, KBD_COLS);
-            Serial.println(buff);
-        }
-#endif
-        // this->add_grid_button(keyb_data[b], KBD_ROWS, KBD_COLS);
         this->add_grid_button(keyb_data[b]);
-
-#ifdef BOZO
-        // Cell widths are a multiple of cell size;
-        // cell size is dialog width/num_cols, dilaog height/num_rows
-        uint16_t w = m_rect.w/KBD_COLS*keyb_data[b].width;
-        uint16_t h = m_rect.h/KBD_ROWS*keyb_data[b].height;
-        m_buttons.add_button(
-                ButtonData(
-                    keyb_data[b].label,
-                    keyb_data[b].fg,
-                    keyb_data[b].bg),
-                keyb_data[b].row,
-                keyb_data[b].col,
-                w, h);
-#endif
-    }
 }
 
 void KbdDialog::draw_value()

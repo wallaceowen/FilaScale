@@ -12,6 +12,8 @@
 
 // typedef Button *BPTR;
 
+// #define DEBUG
+
 int widest_button(TFT_eSPI &tft, const ButtonData bdata[], uint16_t num)
 {
     int widest = 0;

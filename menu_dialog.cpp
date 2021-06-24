@@ -63,11 +63,11 @@ bool MenuDialog::check_touch(uint16_t x, uint16_t y, bool pressed)
 
 void MenuDialog::show(void)
 {
-    Serial.println("MenuDialog::show()");
+    // Serial.println("MenuDialog::show()");
 
     this->Dialog::show();
 
-    Serial.println("MenuDialog::show() showing menu");
+    // Serial.println("MenuDialog::show() showing menu");
     // Show the menu
     m_menu.show();
 }

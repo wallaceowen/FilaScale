@@ -34,10 +34,13 @@ void Button::draw(TFT_eSPI &tft)
     int16_t height = tft.fontHeight(BUTTON_FONT);
     tft.fillRect(rect.x, rect.y, rect.w, rect.h, b_d.bg);
     tft.setTextColor(b_d.fg, b_d.bg);
+    // tft.setTextDatum(TC_DATUM);
     tft.setTextDatum(TL_DATUM);
+    // int16_t t_width = tft.textWidth(b_d.label, BUTTON_FONT);
     int16_t t_width = tft.textWidth(b_d.label, BUTTON_FONT);
-    int32_t label_x = rect.x+(rect.w/2)-(t_width/2);
-    int32_t label_y = rect.y+(rect.h/2)-height/2;
+    // int32_t label_x = rect.x+(rect.w/2)-(t_width/2);
+    int32_t label_x = rect.x;
+    int32_t label_y = rect.y;
     tft.drawString(b_d.label, label_x, label_y, BUTTON_FONT);
 
     {

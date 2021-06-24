@@ -6,18 +6,21 @@
 #include "display.h"
 #include "button.h"
 #include "view.h"
-// #include "menu.h"
 #include "menu_dialog.h"
 #include "grid_dialog.h"
-#include "thresh_dialog.h"
+#include "config_dialog.h"
+#include "filament_dialog.h"
 #include "kbd_dialog.h"
+
+// #define SCREENCAL_WORKING
 
 class ConfigView: public View
 {
 public:
-    enum ConfigState { COS_Offer, COS_Thresholds, COS_Network, COS_NUmStates };
+    enum ConfigState { COS_Offer, COS_Filament, COS_CalibrateScale, COS_Screen, COS_Network, COS_NUmStates };
 
     ConfigView(Display&, ViewChangeCallback ccb, void *change_user_data);
+
     // Call this often.  It drives the state machine.
     // or does it??
     void loop();
@@ -39,23 +42,20 @@ protected:
 private:
 
     void set_state(ConfigState cs);
-    void add_offer_buttons();
-    void add_threshold_buttons();
 
     static void config_dialog_callback_func(const char *label, bool pressed, void *user_data);
     void config_dialog_callback(const char *label, bool pressed);
 
     Display        &m_display;
     ConfigState     m_state;
-#ifdef CONF_IS_MENU
-    MenuDialog      m_offer_config_dialog;
-#else
-    GridDialog      m_offer_config_dialog;
+    ConfigDialog    m_offer_config_dialog;
+    FilamentDialog  m_filament_config_dialog;
+#ifdef SCREENCAL_WORKING
+    MenuDialog      m_screencal;
 #endif
-    ThreshDialog    m_thresh_config_dialog;
     MenuDialog      m_network_config_dialog;
     KbdDialog       m_keypad_dialog;
-    Dialog     *m_current_dialog;
+    Dialog         *m_current_dialog;
 };
 
 #endif
