@@ -14,10 +14,11 @@
 
 struct ButtonData
 {
-    ButtonData(const char *label, uint16_t fg, uint16_t bg);
+    ButtonData(const char *label, uint16_t fg, uint16_t bg, uint16_t txt_datum = TL_DATUM);
     const char *label;
     uint16_t fg;
     uint16_t bg;
+    uint16_t datum;
 };
 
 class Button

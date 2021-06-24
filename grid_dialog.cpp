@@ -80,7 +80,7 @@ bool GridDialog::add_grid_button(const GridButtonData &gbd)
     // cell size is dialog width/column_span, dialog column_span/row_span
 
     return m_buttons.add_grid_button(
-            ButtonData(gbd.label, gbd.fg, gbd.bg),
+            ButtonData(gbd.label, gbd.fg, gbd.bg, TL_DATUM),
             gbd.row, gbd.col, gbd.row_span, gbd.column_span);
     return true;
 }

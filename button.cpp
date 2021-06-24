@@ -6,8 +6,8 @@
 
 static char dbg_buffer[72];
 
-ButtonData::ButtonData(const char *l, uint16_t pfg, uint16_t pbg)
-    : label(l), fg(pfg), bg(pbg)
+ButtonData::ButtonData(const char *l, uint16_t pfg, uint16_t pbg, uint16_t txt_datum)
+    : label(l), fg(pfg), bg(pbg), datum(txt_datum)
 {
 }
 
@@ -29,34 +29,42 @@ void Button::draw(Display &d)
     this->draw(tft);
 }
 
+#define DEBUG_BUTTON_DRAW
 void Button::draw(TFT_eSPI &tft)
 {
-    int16_t height = tft.fontHeight(BUTTON_FONT);
     tft.fillRect(rect.x, rect.y, rect.w, rect.h, b_d.bg);
     tft.setTextColor(b_d.fg, b_d.bg);
-    // tft.setTextDatum(TC_DATUM);
-    tft.setTextDatum(TL_DATUM);
-    // int16_t t_width = tft.textWidth(b_d.label, BUTTON_FONT);
+    int16_t label_x =  0;
+    int16_t label_y =  0;
     int16_t t_width = tft.textWidth(b_d.label, BUTTON_FONT);
-    // int32_t label_x = rect.x+(rect.w/2)-(t_width/2);
-    int32_t label_x = rect.x;
-    int32_t label_y = rect.y;
-    tft.drawString(b_d.label, label_x, label_y, BUTTON_FONT);
-
-    {
-        sprintf(dbg_buffer, "button \"%s\" drawn at %u, %u width %hd height %hd",
-                b_d.label, label_x, label_y, t_width, height);
-        Serial.println(dbg_buffer);
-    }
-
-// #define DEBUG_BUTTON_DRAW
+    int16_t t_height = tft.fontHeight(BUTTON_FONT);
 #ifdef DEBUG_BUTTON_DRAW
     {
-        char dbg_buff[60];
-        sprintf(dbg_buff, "drawing button \"%s\" at %d, %d", b_d.label, label_x, label_y);
-        Serial.println(dbg_buff);
+        sprintf(dbg_buffer, "but \"%s\" at %u, %u rectw %u recth %u width %hd height %hd",
+                b_d.label, label_x, label_y, rect.w, rect.h, t_width, t_height);
+        Serial.println(dbg_buffer);
     }
 #endif
+    if (b_d.datum == TC_DATUM)
+    {
+        label_x = rect.x+(rect.w/2)-(t_width/2);
+        label_y = rect.y+(rect.h/2)-(t_height/2);
+    }
+    else
+    {
+        label_x = rect.x;
+        label_y = rect.y;
+    }
+    tft.setTextDatum(b_d.datum);
+    tft.drawString(b_d.label, label_x, label_y, BUTTON_FONT);
+#ifdef DEBUG_BUTTON_DRAW
+    {
+        sprintf(dbg_buffer, "button \"%s\" drawn at %u, %u",
+                b_d.label, label_x, label_y);
+        Serial.println(dbg_buffer);
+    }
+#endif
+
 }
 
 bool Button::within(uint16_t x, uint16_t y)

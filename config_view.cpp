@@ -5,7 +5,6 @@
 #include "config_view.h"
 #include "stock_buttons.h"
 
-#define CALIB_Y 10
 #define DLG_X 0
 #define DLG_Y 0
 #define DLG_HEIGHT 240
@@ -26,20 +25,17 @@
 #define CONF_OFFER_COLS 2
 
 static ButtonData network_bd[] = {
-    ButtonData("IP", TFT_WHITE, TFT_BLUE),
-    ButtonData("NETMASK", TFT_WHITE, TFT_GREEN),
-    ButtonData("GATEWAY", TFT_WHITE, TFT_BLUE),
-    ButtonData("CANCEL", TFT_WHITE, TFT_RED),
+    ButtonData("IP", TFT_WHITE, TFT_BLUE, TL_DATUM),
+    ButtonData("NETMASK", TFT_WHITE, TFT_GREEN, TL_DATUM),
+    ButtonData("GATEWAY", TFT_WHITE, TFT_BLUE, TL_DATUM),
+    ButtonData("CANCEL", TFT_WHITE, TFT_RED, TL_DATUM),
 };
 #define NUM_NET_BUTTONS (sizeof(network_bd)/sizeof(network_bd[0]))
-
-// static ButtonData screencal_bd[] = { };
 
 #ifdef DEBUG_MENU_CALLBACK
 static const char *state_names[] = {
     "COS_Offer",
     "COS_Filament",
-    "COS_CalibrateScale",
     "COS_Screen",
     "COS_Network",
     "COS_NUmStates"
@@ -58,10 +54,9 @@ ConfigView::ConfigView(Display &d, ViewChangeCallback ccb, void *change_user_dat
     m_filament_config_dialog(
             d,
             Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT)),
-#ifdef SCREENCAL_WORKING
-    m_screencal( d, Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT),
-            "screencal", "Press OK or CANCEL", screencal_bd, 0, Menu::O_Horiz),
-#endif
+#ifdef NETCONF_IS_KBD_DIALOG
+    m_keypad_dialog(d, Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT), ""),
+#else
     m_network_config_dialog(
             d,
             Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT),
@@ -69,23 +64,24 @@ ConfigView::ConfigView(Display &d, ViewChangeCallback ccb, void *change_user_dat
             "Press OK or CANCEL",
             network_bd, NUM_NET_BUTTONS,
             Menu::O_Vert),
-    m_keypad_dialog(d, Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT), ""),
+#endif
 
     m_current_dialog(&m_offer_config_dialog)
 {
     m_offer_config_dialog.set_callback(menu_callback_func, this);
     m_filament_config_dialog.set_callback(menu_callback_func, this);
-    m_network_config_dialog.set_callback(menu_callback_func, this);
+#ifdef NETCONF_IS_KBD_DIALOG
     m_keypad_dialog.set_callback(menu_callback_func, this);
-#ifdef SCREENCAL_WORKING
-    m_screencal.set_callback(menu_callback_func, this);
+#else
+    m_network_config_dialog.set_callback(menu_callback_func, this);
 #endif
 
     // Clear the display
     TFT_eSPI &tft = m_display.get_tft();
-    tft.fillRect(0, 0, WIDTH, HEIGHT, SCREEN_BG);
+    tft.fillRect(0, 0, tft.width(), tft.height(), SCREEN_BG);
 }
 
+#ifdef CONF_DILAOG_CB_NEEDED
 void ConfigView::config_dialog_callback(const char *label, bool pressed)
 {
     Serial.print("Config dialog callback got \"");
@@ -99,6 +95,7 @@ void ConfigView::config_dialog_callback_func(const char *label, bool pressed, vo
     ConfigView *cv = reinterpret_cast<ConfigView*>(user_data);
     cv->config_dialog_callback(label, pressed);
 }
+#endif
 
 void ConfigView::touch_callback(uint16_t x, uint16_t y, bool pressed)
 {
@@ -122,17 +119,15 @@ void ConfigView::set_state(ConfigState cs)
         case COS_Offer:
             m_current_dialog = &m_offer_config_dialog;
             break;
-#ifdef SCREENCAL_WORKING
-        case COS_CalibrateScale:
-            m_current_dialog = &m_screencal;
-           break;
-#endif
         case COS_Filament:
             m_current_dialog = &m_filament_config_dialog;
            break;
         case COS_Network:
-            // m_current_dialog = &m_network_config_dialog;
+#ifdef NETCONF_IS_KBD_DIALOG
             m_current_dialog = &m_keypad_dialog;
+#else
+            m_current_dialog = &m_network_config_dialog;
+#endif
             break;
         default:
             m_state = COS_Offer;
@@ -205,49 +200,28 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                 break;
             }
 
-            case  COS_CalibrateScale:
-                if (!strcmp(label, "CANCEL"))
-                {
-                    // Reset state to offer
-                    set_state(COS_Offer);
-
-                    // Tell control to go back to state view
-                    // m_change_cb("CONFIG", m_change_data);
-                    this->show();
-                }
-                else
-                {
-                    Serial.print("ConfigView::MenuCallback got ");
-                    Serial.print(label);
-                    Serial.println(" in state COS_CalibrateScale");
-                    Serial.println("Add code t");
-                    this->show();
-                }
-                break;
-
             case  COS_Filament:
                 if (!strcmp(label, "CANCEL"))
                 {
                     // Reset state to offer
                     set_state(COS_Offer);
 
-                    // Tell control to go back to state view
-                    // m_change_cb("CONFIG", m_change_data);
-
                     this->show();
                 }
                 else
                 {
-                    Serial.print("ConfigView::MenuCallback got ");
-                    Serial.print(label);
-                    Serial.println(" in state COS_CalibrateScale");
-                    Serial.println("Add code t");
+                    Serial.println("Do something with this filament config request");
+                    // this->handle_filament_cfg_request(label);
+
+                    // Reset state to offer
+                    set_state(COS_Offer);
                     this->show();
                 }
                 break;
 
 
             case  COS_Network:
+
                 if (!strcmp(label, "CANCEL"))
                 {
                     // Reset state to offer
@@ -255,20 +229,13 @@ void ConfigView::menu_callback(const char *label, bool pressed)
 
                     this->show();
                 }
-                if (!strcmp(label, "ENTER"))
+                else
                 {
-                    Serial.println("Network dialog returned ENTER");
+                    Serial.println("Do something with this network config request");
+                    // this->handle_network_cfg_request(label);
 
                     // Reset state to offer
                     set_state(COS_Offer);
-                    this->show();
-                }
-                else
-                {
-                    Serial.println("Add code to handle Network selections");
-                    Serial.print("ConfigView::MenuCallback got ");
-                    Serial.print(label);
-                    Serial.println(" in state COS_Network");
                     this->show();
                 }
                 break;
@@ -314,13 +281,8 @@ void ConfigView::loop()
     {
         case COS_Offer:
             break;
-
-        case  COS_CalibrateScale:
-            break;
-
         case  COS_Network:
             break;
-
         default:
             break;
     }

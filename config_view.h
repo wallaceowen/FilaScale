@@ -12,12 +12,18 @@
 #include "filament_dialog.h"
 #include "kbd_dialog.h"
 
-// #define SCREENCAL_WORKING
+#define CONF_DILAOG_CB_NEEDED
 
 class ConfigView: public View
 {
 public:
-    enum ConfigState { COS_Offer, COS_Filament, COS_CalibrateScale, COS_Screen, COS_Network, COS_NUmStates };
+    enum ConfigState {
+        COS_Offer,
+        COS_Filament,
+        COS_Screen,
+        COS_Network,
+        COS_NUmStates
+    };
 
     ConfigView(Display&, ViewChangeCallback ccb, void *change_user_data);
 
@@ -43,18 +49,20 @@ private:
 
     void set_state(ConfigState cs);
 
+#ifdef CONF_DILAOG_CB_NEEDED
     static void config_dialog_callback_func(const char *label, bool pressed, void *user_data);
     void config_dialog_callback(const char *label, bool pressed);
+#endif
 
     Display        &m_display;
     ConfigState     m_state;
     ConfigDialog    m_offer_config_dialog;
     FilamentDialog  m_filament_config_dialog;
-#ifdef SCREENCAL_WORKING
-    MenuDialog      m_screencal;
-#endif
-    MenuDialog      m_network_config_dialog;
+#ifdef NETCONF_IS_KBD_DIALOG
     KbdDialog       m_keypad_dialog;
+#else
+    MenuDialog      m_network_config_dialog;
+#endif
     Dialog         *m_current_dialog;
 };
 
