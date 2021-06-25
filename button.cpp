@@ -32,7 +32,8 @@ void Button::draw(Display &d)
 #define DEBUG_BUTTON_DRAW
 void Button::draw(TFT_eSPI &tft)
 {
-    tft.fillRect(rect.x, rect.y, rect.w, rect.h, b_d.bg);
+    // tft.fillRect(rect.x, rect.y, rect.w, rect.h, b_d.bg);
+    tft.fillRoundRect(rect.x, rect.y, rect.w, rect.h, rect.h/3, b_d.bg);
     tft.setTextColor(b_d.fg, b_d.bg);
     int16_t label_x =  0;
     int16_t label_y =  0;
