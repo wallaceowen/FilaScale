@@ -4,6 +4,8 @@
 #define ADJ_OFFSET 50
 #define DEBUG_DIALOG_BASE
 
+#define TITLE_MARGIN 50
+
 MenuDialog::MenuDialog(Display &d,
         const Rect &rect,
         const char *title,
@@ -36,9 +38,9 @@ Rect MenuDialog::computeMenuRect(const Rect &in, uint16_t num_buttons, Menu::Ori
     {
         Rect r(
                 in.x,
-                in.y,
+                in.y+TITLE_MARGIN,
                 in.w,
-                in.h);
+                in.h-TITLE_MARGIN);
         return r;
     }
     else
@@ -46,7 +48,8 @@ Rect MenuDialog::computeMenuRect(const Rect &in, uint16_t num_buttons, Menu::Ori
         Rect r(
                 in.x,
                 in.y+in.h-tft.fontHeight(BUTTON_FONT),
-            in.w/num_buttons, tft.fontHeight(BUTTON_FONT));
+                in.w,
+                tft.fontHeight(BUTTON_FONT));
         return r;
     }
 }

@@ -4,15 +4,7 @@
 
 #include "menu.h"
 
-// #define BUTTON_GAP 2
-// #define BUTTONS_START 4
-// #define BUTTONS_Y 190
-// #define BUTTONS_HEIGHT 40
-// #define BUTTONS_START 4
-
-// typedef Button *BPTR;
-
-// #define DEBUG
+// #define DEBUG_MENU
 
 int widest_button(TFT_eSPI &tft, const ButtonData bdata[], uint16_t num)
 {
@@ -41,7 +33,7 @@ Menu::Menu(Display &d,
     TFT_eSPI &tft = d.get_tft();
 
     int widest = widest_button(tft, bdata, num);
-#ifdef DEBUG
+#ifdef DEBUG_MENU
     Serial.print("--> menu widest = ");
     Serial.println(widest);
 #endif
@@ -55,13 +47,13 @@ Menu::Menu(Display &d,
         {
             case O_Vert:
             {
-#ifdef DEBUG
+#ifdef DEBUG_MENU
                 Serial.print("--------------------- reect.h "); Serial.println(rect.h);
                 Serial.print("--------------------- num buttons "); Serial.println(num_buttons);
 #endif
                 button_w = widest;
                 button_h = rect.h/num_buttons;
-#ifdef DEBUG
+#ifdef DEBUG_MENU
                 Serial.print("--------------------- button h "); Serial.println(button_h);
 #endif
                 button_x = rect.x;
@@ -70,7 +62,7 @@ Menu::Menu(Display &d,
             }
             case O_Horiz:
             {
-                button_w = rect.w;
+                button_w = rect.w/num_buttons;
                 button_h = rect.h;
                 button_x = rect.x+button_w*i;
                 button_y = rect.y;
@@ -95,7 +87,7 @@ void Menu::show()
 {
     for (unsigned i = 0; i < num_buttons; ++i)
     {
-#ifdef DEBUG
+#ifdef DEBUG_MENU
         Serial.print("Showing button ");
         Serial.println(m_buttons[i]->label());
 #endif

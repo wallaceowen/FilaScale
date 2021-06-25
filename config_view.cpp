@@ -9,6 +9,7 @@
 #define DLG_Y 0
 #define DLG_HEIGHT 240
 #define DLG_WIDTH 320
+#define NET_MENU_Y 50
 
 #define WIDTH 320
 #define HEIGHT 240
@@ -25,10 +26,10 @@
 #define CONF_OFFER_COLS 2
 
 static ButtonData network_bd[] = {
-    ButtonData("IP", TFT_WHITE, TFT_BLUE, TL_DATUM),
-    ButtonData("NETMASK", TFT_WHITE, TFT_GREEN, TL_DATUM),
-    ButtonData("GATEWAY", TFT_WHITE, TFT_BLUE, TL_DATUM),
-    ButtonData("CANCEL", TFT_WHITE, TFT_RED, TL_DATUM),
+    ButtonData("IP", TFT_WHITE, TFT_BLUE, CC_DATUM),
+    ButtonData("NETMASK", TFT_WHITE, TFT_GREEN, CC_DATUM),
+    ButtonData("GATEWAY", TFT_WHITE, TFT_BLUE, CC_DATUM),
+    ButtonData("CANCEL", TFT_WHITE, TFT_RED, CC_DATUM),
 };
 #define NUM_NET_BUTTONS (sizeof(network_bd)/sizeof(network_bd[0]))
 
@@ -60,8 +61,8 @@ ConfigView::ConfigView(Display &d, ViewChangeCallback ccb, void *change_user_dat
     m_network_config_dialog(
             d,
             Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT),
-            "Config Network",
-            "Press OK or CANCEL",
+            "Network Settings",
+            "",
             network_bd, NUM_NET_BUTTONS,
             Menu::O_Vert),
 #endif
@@ -168,17 +169,17 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                     // Tell control to go back to state view
                     m_change_cb("STATE", m_change_data);
                 }
-                else if (!strcmp(label, "FILAMENT"))
+                else if (!strcmp(label, "FILAMENT drying"))
                 {
                     set_state(COS_Filament);
                     this->show();
                 }
-                else if (!strcmp(label, "NETWORK"))
+                else if (!strcmp(label, "NETWORK settings"))
                 {
                     set_state(COS_Network);
                     this->show();
                 }
-                else if (!strcmp(label, "SCALE"))
+                else if (!strcmp(label, "SCALE calibration"))
                 {
                     // Reset state to offer
                     set_state(COS_Offer);
@@ -186,7 +187,7 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                     // Tell control to make the SCALE view the current view
                     m_change_cb("SCALE", m_change_data);
                 }
-                else if (!strcmp(label, "SCREEN"))
+                else if (!strcmp(label, "SCREEN calibration"))
                 {
                     set_state(COS_Screen);
                     this->show();

@@ -11,7 +11,8 @@
 #define UPDATE_INTERVAL 500
 #define VALUES_X 148
 #define LABELS_X VALUES_X
-#define VALUES_Y 40
+#define VALUES_Y 50
+#define LABELS_Y VALUES_Y+16
 
 #define MENU_X 0
 #define MENU_HEIGHT 36
@@ -33,6 +34,7 @@
 #define VALUE_FG TFT_WHITE
 
 // #define DEBUG_TOUCH
+#define DEBUG_MENU
 
 #ifdef DEBUG
 void show_x_y_line(const char *what, int x, int y, int line)
@@ -44,10 +46,10 @@ void show_x_y_line(const char *what, int x, int y, int line)
 #endif
 
 ButtonData state_menu_button_data[] = {
-    ButtonData("CFG", TFT_WHITE, TFT_PURPLE),
-    ButtonData("CAL", TFT_BLACK, TFT_GREEN),
-    ButtonData("NET", TFT_WHITE, TFT_ORANGE),
-    ButtonData("STOP", TFT_WHITE, TFT_RED)
+    ButtonData("SETTINGS", TFT_WHITE, TFT_BLUE, CC_DATUM),
+    // ButtonData("CAL", TFT_BLACK, TFT_GREEN, CC_DATUM),
+    // ButtonData("NET", TFT_WHITE, TFT_ORANGE, CC_DATUM),
+    ButtonData("STOP", TFT_WHITE, TFT_RED, CC_DATUM)
 };
 #define NUM_STATE_BUTTONS (sizeof(state_menu_button_data)/sizeof(state_menu_button_data[0]))
 
@@ -63,7 +65,8 @@ StateView::StateView(Display &d,
     m_bme(b),
     m_menu(
             d,
-            Rect(MENU_X, MENU_Y, MENU_WIDTH, MENU_HEIGHT),
+            // Rect(MENU_X, MENU_Y, MENU_WIDTH, MENU_HEIGHT),
+            Rect(MENU_X, MENU_Y, d.get_tft().width(), MENU_HEIGHT),
             state_menu_button_data, NUM_STATE_BUTTONS, STATE_MENU_ORIENT),
     m_temp(0.0),
     m_humid(0.0),
@@ -114,13 +117,12 @@ void StateView::show()
 
     tft.setTextSize(1);
     tft.setTextColor(TFT_YELLOW, TFT_BLACK);
-    tft.setTextDatum(TR_DATUM);
-
+    tft.setTextDatum(CR_DATUM);
     int field_spacing = (MENU_Y-VALUES_Y)/NUM_STATE_LINES;
     int line = 0;
     int x = VALUES_X-VALUES_GAP;
-    // int y = VALUES_Y+(tft.fontHeight(STATE_FONT)/2);
-    int y = m_title_height+(tft.fontHeight(STATE_FONT)/2);
+    int y = LABELS_Y+(tft.fontHeight(STATE_FONT)/2);
+    // int y = m_title_height+(tft.fontHeight(STATE_FONT)/2);
     tft.drawString("TEMP", x, y, STATE_FONT);
 #ifdef DEBUG
     show_x_y_line("show", x, y, line);
@@ -218,34 +220,38 @@ void StateView::draw_state()
 
     int line = 0;
     int x = VALUES_X;
-    int y = m_title_height+(tft.fontHeight(STATE_FONT)/2);
-    int bar_y = y+tft.fontHeight(STATE_FONT);
+    // int y = m_title_height+(tft.fontHeight(STATE_FONT)/2);
+    tft.setTextDatum(TL_DATUM);
+    // int y = VALUES_Y+(tft.fontHeight(STATE_FONT)/2);
+    int y = VALUES_Y;
 
-    plot_bar(m_display, Rect(x, bar_y, width, PLOT_THICKNESS),
-            m_temp, 0, 50, TFT_ORANGE, TFT_BLUE);
     sprintf(value_buffer, "%3.1f °C  ", m_temp);
     tft.drawString(value_buffer, x, y, STATE_FONT);
-    ++line;
 
-    y += field_spacing;
-    bar_y = y+tft.fontHeight(STATE_FONT);
-
+    int bar_y = y+tft.fontHeight(STATE_FONT);
     plot_bar(m_display, Rect(x, bar_y, width, PLOT_THICKNESS),
-            m_humid, 0, 95, TFT_ORANGE, TFT_BLUE);
+            m_temp, 0, 50, TFT_ORANGE, TFT_BLUE);
+    ++line;
+    y += field_spacing;
+
     sprintf(value_buffer, "%4.2f %%RH  ", m_humid);
     tft.drawString(value_buffer, x, y, STATE_FONT);
-    ++line;
 
-    y += field_spacing;
     bar_y = y+tft.fontHeight(STATE_FONT);
-
     plot_bar(m_display, Rect(x, bar_y, width, PLOT_THICKNESS),
-            m_weight, 0,
-            static_cast<uint16_t>(CAL_WEIGHT_GRAMS),
-            TFT_ORANGE, TFT_BLUE);
+            m_humid, 0, 95, TFT_ORANGE, TFT_BLUE);
+
+    ++line;
+    y += field_spacing;
     if (m_weight >= 1000.0)
         sprintf(value_buffer, "%4.3f Kg    ", m_weight/1000.0);
     else
         sprintf(value_buffer, "%4.3f g     ", m_weight);
     tft.drawString(value_buffer, x, y, STATE_FONT);
+
+    bar_y = y+tft.fontHeight(STATE_FONT);
+    plot_bar(m_display, Rect(x, bar_y, width, PLOT_THICKNESS),
+            m_weight, 0,
+            static_cast<uint16_t>(CAL_WEIGHT_GRAMS),
+            TFT_ORANGE, TFT_BLUE);
 }

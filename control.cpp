@@ -47,7 +47,7 @@ void Control::change_view(const char *view_name)
     Serial.print("Control::change_view got ");
     Serial.println(view_name);
 
-    if (!strcmp(view_name, "CFG"))
+    if (!strcmp(view_name, "SETTINGS"))
     {
         m_view = m_config_view;
         m_mode = M_Show;

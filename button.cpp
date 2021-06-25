@@ -45,10 +45,10 @@ void Button::draw(TFT_eSPI &tft)
         Serial.println(dbg_buffer);
     }
 #endif
-    if (b_d.datum == TC_DATUM)
+    if (b_d.datum == CC_DATUM)
     {
-        label_x = rect.x+(rect.w/2)-(t_width/2);
-        label_y = rect.y+(rect.h/2)-(t_height/2);
+        label_x = rect.x+(rect.w/2);
+        label_y = rect.y+(rect.h/2);
     }
     else
     {

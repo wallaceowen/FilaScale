@@ -37,6 +37,9 @@ public:
     // Set the label
     void label(const char *l) { b_d.label = l; }
 
+    // Get the datum
+    uint16_t datum(void) const { return b_d.datum; }
+
 private:
     ButtonData b_d;
     Rect rect;
