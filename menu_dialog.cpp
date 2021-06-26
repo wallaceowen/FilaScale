@@ -2,7 +2,6 @@
 #include "menu_dialog.h"
 
 #define ADJ_OFFSET 50
-#define DEBUG_DIALOG_BASE
 
 #define TITLE_MARGIN 50
 
@@ -16,17 +15,6 @@ MenuDialog::MenuDialog(Display &d,
     m_menu(d, computeMenuRect(rect, num_buttons, o),
             button_data, num_buttons, o)
 {
-#ifdef DEBUG
-    char dbuf[65];
-    sprintf(dbuf, "dialog \"%s\" rect: %u %u %u %u",
-            m_title,
-            m_rect.x,
-            m_rect.y,
-            m_rect.w,
-            m_rect.h);
-    Serial.println(dbuf);
-#endif
-
     this->show();
 }
 
@@ -66,12 +54,7 @@ bool MenuDialog::check_touch(uint16_t x, uint16_t y, bool pressed)
 
 void MenuDialog::show(void)
 {
-    // Serial.println("MenuDialog::show()");
-
     this->Dialog::show();
-
-    // Serial.println("MenuDialog::show() showing menu");
-    // Show the menu
     m_menu.show();
 }
 

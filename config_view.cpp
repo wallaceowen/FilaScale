@@ -20,28 +20,16 @@
 
 #define SCREEN_BG TFT_BLACK
 
-#define DEBUG_MENU_CALLBACK
-
 #define CONF_OFFER_ROWS 5
 #define CONF_OFFER_COLS 2
 
 static ButtonData network_bd[] = {
     ButtonData("IP", TFT_WHITE, TFT_BLUE, CC_DATUM),
-    ButtonData("NETMASK", TFT_WHITE, TFT_GREEN, CC_DATUM),
-    ButtonData("GATEWAY", TFT_WHITE, TFT_BLUE, CC_DATUM),
+    ButtonData("NETMASK", TFT_WHITE, TFT_BROWN, CC_DATUM),
+    ButtonData("GATEWAY", TFT_BLACK, TFT_YELLOW, CC_DATUM),
     ButtonData("CANCEL", TFT_WHITE, TFT_RED, CC_DATUM),
 };
 #define NUM_NET_BUTTONS (sizeof(network_bd)/sizeof(network_bd[0]))
-
-#ifdef DEBUG_MENU_CALLBACK
-static const char *state_names[] = {
-    "COS_Offer",
-    "COS_Filament",
-    "COS_Screen",
-    "COS_Network",
-    "COS_NUmStates"
-};
-#endif
 
 // Here is where we configure our filament temperature and humidity thresholds, for each of
 // the types of filament defined
@@ -141,15 +129,6 @@ void ConfigView::set_state(ConfigState cs)
 // being asked to check_touch().
 void ConfigView::menu_callback(const char *label, bool pressed)
 {
-#ifdef DEBUG_MENU_CALLBACK
-    Serial.print("Config menu callback got \"");
-    Serial.print(label),
-    Serial.print("\" state = ");
-    Serial.print(state_names[m_state]),
-    Serial.print(" pressed = ");
-    Serial.println(pressed?"PRESSED":"RELEASED");
-#endif
-
     // Only check the state when button released
     if (!pressed)
     {
@@ -212,7 +191,6 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                 else
                 {
                     Serial.println("Do something with this filament config request");
-                    // this->handle_filament_cfg_request(label);
 
                     // Reset state to offer
                     set_state(COS_Offer);
@@ -258,36 +236,18 @@ void ConfigView::menu_callback_func(const char *label, bool pressed, void *user_
 // Show the static part of the view
 void ConfigView::show()
 {
-    Serial.println("ConfigView::show()");
-    // TFT_eSPI &tft = m_display.get_tft();
-
     // Show the initial dialog
     m_current_dialog->show();
-    Serial.println("ConfigView::show() done.");
 }
 
 bool ConfigView::update()
 {
-    // Serial.println("ConfigView::update()");
     return false;
 }
 
 #define CONFIG_UPDATE_INTERVAL 500
 void ConfigView::loop()
 {
-#ifdef CALIBVIEW_LOOP_HAS_A_JOB
-    Serial.println("ConfigView::loop()");
-    // TFT_eSPI &tft = m_display.get_tft();
-    switch(m_state)
-    {
-        case COS_Offer:
-            break;
-        case  COS_Network:
-            break;
-        default:
-            break;
-    }
-#endif
     static auto scheduled = millis()+CONFIG_UPDATE_INTERVAL;
 
     auto now = millis();

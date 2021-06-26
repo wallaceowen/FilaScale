@@ -94,10 +94,6 @@ void KbdDialog::draw_value()
 bool KbdDialog::check_touch(uint16_t x, uint16_t y, bool pressed)
 {
     int button_touched = this->GridDialog::check_touch(x, y, pressed)?1:0;
-#ifdef DEBUG_KBD
-    Serial.print("KbdDialog::check_touch(): ");
-    Serial.println(button_touched);
-#endif
     return button_touched?true:false;
 }
 
@@ -105,9 +101,6 @@ void KbdDialog::show(void)
 {
     TFT_eSPI &tft = m_display.get_tft();
 
-#ifdef DEBUG_KBD
-    Serial.print("KbdDialog::show() calling GridDialog::show");
-#endif
     this->GridDialog::show();
 
     // Clear the value
@@ -116,21 +109,10 @@ void KbdDialog::show(void)
     // Draw the value frame
     uint16_t value_offset = (m_rect.w/KBD_COLS)*3;
     tft.drawRect(m_rect.x+value_offset, m_rect.y, value_offset, tft.fontHeight(VALUE_FONT)+4, VALUE_BOX_COLOR);
-
-#ifdef DEBUG_KBD
-    Serial.print("back from  calling GridDialog::show()");
-#endif
 }
 
 void KbdDialog::kbd_button_callback(const char *label, bool pressed)
 {
-    {
-        char buff[65];
-        sprintf(buff,
-                "kbd_button_callback got \"%s\" %s",
-                label, pressed?"pressed":"released");
-        Serial.println(buff);
-    }
     if ((isdigit(*label) || *label == '.') && !pressed)
     {
         strcat(value, label);

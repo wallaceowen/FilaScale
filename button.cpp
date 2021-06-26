@@ -4,6 +4,10 @@
 
 #include "button.h"
 
+// #define DEBUG_BUTTON_CTOR
+// #define DEBUG_BUTTON_DRAW
+// #define DEBUG_WITHIN
+
 static char dbg_buffer[72];
 
 ButtonData::ButtonData(const char *l, uint16_t pfg, uint16_t pbg, uint16_t txt_datum)
@@ -15,7 +19,6 @@ Button::Button(const ButtonData &d, const Rect &r) :
     b_d(d),
     rect(r)
 {
-// #define DEBUG_BUTTON_CTOR
 #ifdef DEBUG_BUTTON_CTOR
     sprintf(dbg_buffer, "button \"%s\" created at x %d, y %d, w %d, h %d",
             b_d.label, rect.x, rect.y, rect.w, rect.h);
@@ -29,7 +32,6 @@ void Button::draw(Display &d)
     this->draw(tft);
 }
 
-#define DEBUG_BUTTON_DRAW
 void Button::draw(TFT_eSPI &tft)
 {
     // tft.fillRect(rect.x, rect.y, rect.w, rect.h, b_d.bg);
@@ -70,7 +72,6 @@ void Button::draw(TFT_eSPI &tft)
 
 bool Button::within(uint16_t x, uint16_t y)
 {
-// #define DEBUG_WITHIN
 #ifdef DEBUG_WITHIN
     sprintf(dbg_buffer, "\"%s\".within %d, %d vs %d, %d, %d, %d",
             b_d.label, x, y, rect.x, rect.y, rect.x+rect.w, rect.y+rect.h);
