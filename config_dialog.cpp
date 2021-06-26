@@ -6,7 +6,7 @@
 static GridButtonData config_offer_gbd[] = {
     {GridButtonData("FILAMENT drying",      0, 0, 1, 1, TFT_WHITE, TFT_BROWN)},
     {GridButtonData("SCALE calibration",    1, 0, 1, 1, TFT_WHITE, TFT_BLUE)},
-    {GridButtonData("SCREEN calibration",   2, 0, 1, 1, TFT_WHITE, TFT_ORANGE)},
+    {GridButtonData("SCREEN calibration",   2, 0, 1, 1, TFT_WHITE, TFT_DARKGREEN)},
     {GridButtonData("NETWORK settings",     3, 0, 1, 1, TFT_WHITE, TFT_PURPLE)},
     {GridButtonData("CANCEL",               4, 0, 1, 1, TFT_WHITE, TFT_RED)},
 };
