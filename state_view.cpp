@@ -29,26 +29,11 @@
 #define PLOT_THICKNESS 10
 #define VALUES_GAP 10
 
-// #define SCREEN_BG TFT_BLACK
 #define VALUE_BG TFT_BLACK
 #define VALUE_FG TFT_WHITE
 
-// #define DEBUG_TOUCH
-#define DEBUG_MENU
-
-#ifdef DEBUG
-void show_x_y_line(const char *what, int x, int y, int line)
-{
-    char buffer[60];
-    sprintf(buffer, "%s line: %d x: %d y: %d", what, line, x, y);
-    Serial.println(buffer);
-}
-#endif
-
 ButtonData state_menu_button_data[] = {
     ButtonData("SETTINGS", TFT_WHITE, TFT_BLUE, CC_DATUM),
-    // ButtonData("CAL", TFT_BLACK, TFT_GREEN, CC_DATUM),
-    // ButtonData("NET", TFT_WHITE, TFT_ORANGE, CC_DATUM),
     ButtonData("STOP", TFT_WHITE, TFT_RED, CC_DATUM)
 };
 #define NUM_STATE_BUTTONS (sizeof(state_menu_button_data)/sizeof(state_menu_button_data[0]))
@@ -65,7 +50,6 @@ StateView::StateView(Display &d,
     m_bme(b),
     m_menu(
             d,
-            // Rect(MENU_X, MENU_Y, MENU_WIDTH, MENU_HEIGHT),
             Rect(MENU_X, MENU_Y, d.get_tft().width(), MENU_HEIGHT),
             state_menu_button_data, NUM_STATE_BUTTONS, STATE_MENU_ORIENT),
     m_temp(0.0),
@@ -84,10 +68,6 @@ StateView::StateView(Display &d,
 // differently here, doing something other than telling control to change the view.
 void StateView::state_menu_callback(const char *label, bool pressed)
 {
-    // Serial.print("State menu callback got \"");
-    // Serial.print(label),
-    // Serial.print("\" ");
-    // Serial.println(pressed?"PRESSED":"RELEASED");
     // Signal to the control module that a new view is requested
     if (m_change_cb && !pressed)
         m_change_cb(label, m_change_data);
@@ -122,23 +102,13 @@ void StateView::show()
     int line = 0;
     int x = VALUES_X-VALUES_GAP;
     int y = LABELS_Y+(tft.fontHeight(STATE_FONT)/2);
-    // int y = m_title_height+(tft.fontHeight(STATE_FONT)/2);
     tft.drawString("TEMP", x, y, STATE_FONT);
-#ifdef DEBUG
-    show_x_y_line("show", x, y, line);
-#endif
     ++line;
     y += field_spacing;
     tft.drawString("HUMIDITY", x, y, STATE_FONT);
-#ifdef DEBUG
-    show_x_y_line("show", x, y, line);
-#endif
     ++line;
     y += field_spacing;
     tft.drawString("WEIGHT", x, y, STATE_FONT);
-#ifdef DEBUG
-    show_x_y_line("show", x, y, line);
-#endif
 
     // Show the buttons
     m_menu.show();
@@ -186,14 +156,6 @@ void StateView::loop()
 
 void StateView::touch_callback(uint16_t x, uint16_t y, bool pressed)
 {
-#ifdef DEBUG_TOUCH
-    Serial.print("StateView got touch callback. x: ");
-    Serial.print(x);
-    Serial.print(", y: ");
-    Serial.println(y);
-    Serial.println("checking buttons");
-#endif
-
     m_menu.check_touch(x, y, pressed);
 }
 
@@ -208,21 +170,10 @@ void StateView::draw_state()
 
     int width = tft.width()-VALUES_X;
     int field_spacing = (MENU_Y-VALUES_Y)/NUM_STATE_LINES;
-#ifdef DEBUG_FIELD_SPACING
-    {
-        char buffer[70];
-        sprintf(buffer, "field_spacing %d = (MENU_Y %d- VALUES_Y %d)/ NUM_STATE_LINES %d",
-                (MENU_Y - VALUES_Y)/NUM_STATE_LINES,
-                MENU_Y, VALUES_Y, NUM_STATE_LINES);
-        Serial.println(buffer);
-    }
-#endif
 
     int line = 0;
     int x = VALUES_X;
-    // int y = m_title_height+(tft.fontHeight(STATE_FONT)/2);
     tft.setTextDatum(TL_DATUM);
-    // int y = VALUES_Y+(tft.fontHeight(STATE_FONT)/2);
     int y = VALUES_Y;
 
     sprintf(value_buffer, "%3.1f °C  ", m_temp);

@@ -1,9 +1,6 @@
 
 #include "filament_dialog.h"
 
-#define ADJ_OFFSET 50
-
-
 #define FILAMENT_ROWS 3
 #define FILAMENT_COLS 3
 

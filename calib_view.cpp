@@ -54,32 +54,9 @@ CalibView::CalibView(Display &d, ViewChangeCallback ccb, void *change_user_data,
     m_gain_dialog.set_callback(menu_callback_func, this);
 }
 
-// void CalibView::calib_dialog_callback(const char *label, bool pressed)
-// {
-    // Serial.print("Calib dialog callback got \"");
-    // Serial.print(label),
-    // Serial.print("\" ");
-    // Serial.println(pressed?"PRESSED":"RELEASED");
-// }
-
-// void CalibView::calib_dialog_callback_func(const char *label, bool pressed, void *user_data)
-// {
-    // CalibView *cv = reinterpret_cast<CalibView*>(user_data);
-    // cv->calib_dialog_callback(label, pressed);
-// }
-
 void CalibView::touch_callback(uint16_t x, uint16_t y, bool pressed)
 {
-#ifdef DEBUG_TOUCH
-    Serial.print("CalibView got touch callback. x: ");
-    Serial.print(x);
-    Serial.print(", y: ");
-    Serial.println(y);
-    Serial.println("checking buttons");
-#endif
-
     m_current_dialog->check_touch(x, y, pressed);
-
 }
 
 void CalibView::set_state(CalibState cs)
@@ -121,6 +98,7 @@ void CalibView::menu_callback(const char *label, bool pressed)
         {
             // Reset state to Ask
             set_state(CS_Ask);
+
             // Tell control to go back to state view
             if (m_change_cb)
                 m_change_cb(label, m_change_data);

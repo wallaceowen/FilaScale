@@ -26,7 +26,6 @@
 #define LABELS_Y BUTTONS_Y+LABELS_HEIGHT
 #define VARNAME_GAP 40
 
-// #define CURRENT_LABEL_X
 #define VARNAME_WIDTH 100
 #define CURRENT_WIDTH 60
 
@@ -61,15 +60,12 @@ Adjuster::Adjuster(
             Rect(
                 m_rect.x+BUTTON_WIDTH,
                 m_rect.y+BAR_Y+SLIDER_HEIGHT,
-                // VARNAME_WIDTH,
                 (m_rect.w-(BUTTON_WIDTH/2))/2,
                 LABELS_HEIGHT)),
     m_current_l(current_label_data,
             Rect(
                 m_rect.x+BUTTON_WIDTH+VARNAME_WIDTH+VARNAME_GAP,
-                // m_rect.y+BAR_Y+SLIDER_HEIGHT,
                 m_rect.y+BAR_Y+SLIDER_HEIGHT,
-                // CURRENT_WIDTH,
                 (m_rect.w-(BUTTON_WIDTH/2))/2,
                 LABELS_HEIGHT)),
     m_more_button(more_button_data,
@@ -86,14 +82,12 @@ Adjuster::Adjuster(
     m_inmax(max),
     m_value(0)
 {
-    // this->show();
 }
 
 bool Adjuster::check_touch(uint16_t x, uint16_t y, bool pressed)
 {
     if (m_less_button.within(x, y))
     {
-        // Serial.println("less button within");
         if (m_value > m_inmin)
             --m_value;
 
@@ -103,11 +97,9 @@ bool Adjuster::check_touch(uint16_t x, uint16_t y, bool pressed)
     }
     else if (m_more_button.within(x, y))
     {
-        // Serial.println("more button within");
         if (m_value < m_inmax)
             ++m_value;
 
-        // uint16_t mapped = m_inmap.map(m_value);
         update_bar(m_value);
         return 1;
     }
@@ -115,8 +107,6 @@ bool Adjuster::check_touch(uint16_t x, uint16_t y, bool pressed)
     else if (m_slider.within(x, y))
     {
         m_value = m_slider.value_at_x(x);
-        // Serial.print("slider touch set m_value to ");
-        // Serial.println(m_value);
         update_bar(m_value);
 
         return 1;
@@ -131,9 +121,6 @@ bool Adjuster::check_touch(uint16_t x, uint16_t y, bool pressed)
 }
 void Adjuster::update_bar(uint16_t plotval)
 {
-    // m_tft.fillRect(m_rect.x, m_rect.y, plotval, m_rect.h, incolor);
-    // m_tft.fillRect(m_rect.x+plotval, m_rect.y, m_rect.w-plotval, m_rect.h, outcolor);
-    // m_tft.drawRect(m_rect.x, m_rect.y, m_rect.w, m_rect.h-1, TFT_WHITE);
     m_slider.set(plotval);
     char plotlabel[16];
     sprintf(plotlabel, "%u    ", m_outmap.map(plotval));
@@ -160,10 +147,10 @@ void Adjuster::show(void)
             m_rect.w, m_rect.h,
             ADJUSTER_BG);
     m_varname_l.set_label(m_varname);
-    // Serial.println("Adjuster: drawing labels and buttons.");
     m_current_l.draw(m_tft);
     m_varname_l.draw(m_tft);
     m_less_button.draw(m_tft);
+
     // Show the slider
     m_slider.show();
     m_more_button.draw(m_tft);

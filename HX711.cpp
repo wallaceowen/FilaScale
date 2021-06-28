@@ -52,7 +52,6 @@ HX711::HX711(Gain gain) :
 // If DOUT is hi we're not ready
 bool HX711::is_ready() const
 {
-	// if (PD_DOUT_PORT & _BV(PD_DOUT_PIN))
 	if (digitalRead(PD_DOUT_PIN))
         return false;
     else
@@ -61,13 +60,11 @@ bool HX711::is_ready() const
 
 void HX711::ck_low() const
 {
-    // PD_SCK_PORT &= ~_BV(PD_SCK_PIN);
     digitalWrite(PD_SCK_PIN, 0);
 }
 
 void HX711::ck_hi() const
 {
-    // PD_SCK_PORT |= _BV(PD_SCK_PIN);
     digitalWrite(PD_SCK_PIN, 1);
 }
 

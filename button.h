@@ -10,8 +10,6 @@
 #define BUTTON_FONT 4
 #define BUTTON_RADIUS 10
 
-// typedef void (*PressEventCB)(const char *label, bool pressed, void *user_data);
-
 struct ButtonData
 {
     ButtonData(const char *label, uint16_t fg, uint16_t bg, uint16_t txt_datum = TL_DATUM);

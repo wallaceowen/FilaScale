@@ -23,7 +23,6 @@ public:
     virtual bool check_touch(uint16_t x, uint16_t y, bool pressed) = 0;
     uint16_t button_y(void) const
     {
-        // uint16_t by = m_prompt.last_pos().y;
         uint16_t by = m_prompt.last_y();
         Serial.print("Retrieving ");
         Serial.print(m_title);

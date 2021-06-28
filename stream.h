@@ -10,8 +10,7 @@ extern "C"
 {
 #endif
 
-// extern FILE loop_stdout;
-extern void init_stream();
+// extern void init_stream();
 
 #ifdef __cplusplus
 };

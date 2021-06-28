@@ -1,10 +1,6 @@
 
 #include "grid_dialog.h"
 
-#define ADJ_OFFSET 50
-
-static char dbg[98];
-
 GridDialog::GridDialog(Display &d,
         const Rect &rect,
         const char *title,

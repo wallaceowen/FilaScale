@@ -5,7 +5,6 @@
 #define TEXT_DAILOG_FONT 4
 
 #define ADJ_OFFSET 50
-#define DEBUG_DIALOG_BASE
 
 Dialog::Dialog(
         Display &d,
@@ -29,27 +28,6 @@ Dialog::Dialog(
     m_fg(3),
     m_bg(3)
 {
-#ifdef DEBUG_DIALOG_BASE
-    static char msg[176];
-    if (m_title)
-    {
-        sprintf(msg, "%s dialog ctor:  rect: [%u, %u, %u, %u]",
-                m_title, rect.x, rect.y, rect.w, rect.h);
-        Serial.println(msg);
-    }
-    else
-        Serial.println("Dialog got no title!!");
-    {
-        sprintf(msg, "%s dialog ctor:  prompt: \"%s\"",
-                m_title, m_prompt.buffer());
-        Serial.println(msg);
-    }
-    {
-        sprintf(msg, "%s dialog ctor:  last_y: %u",
-                m_title, m_prompt.last_y());
-        Serial.println(msg);
-    }
-#endif
 }
 
 

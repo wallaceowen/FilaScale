@@ -6,9 +6,6 @@
 
 static TFT_eSPI tft = TFT_eSPI();       // Invoke custom library
 
-// uint16_t cal_params[5] = { 469, 2616, 598, 1790, 7 };
-// uint16_t cal_params[5] = { 414, 3054, 602, 2863, 7 };
-// uint16_t cal_params[5] = { 473, 2953, 645, 2759, 7 };
 uint16_t cal_params[5] = { 310, 3269, 417, 3233, 7 };
 
 Display::Display(void) :
@@ -20,7 +17,7 @@ Display::Display(void) :
     tft.setRotation(ROTATION);
     tft.fillScreen(TFT_BLACK);
     tft.setTouch(cal_params);
-    // tft.setTextPadding(5);
+    tft.setTextPadding(5);
 }
 
 TFT_eSPI& Display::get_tft(void)
@@ -101,7 +98,5 @@ void Display::check_touch(void)
 
 void Display::loop(void)
 {
-    // Serial.println("Display::loop()");
     check_touch();
-    // calibrate();
 }

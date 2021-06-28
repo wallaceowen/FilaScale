@@ -43,9 +43,6 @@ ConfigView::ConfigView(Display &d, ViewChangeCallback ccb, void *change_user_dat
     m_filament_config_dialog(
             d,
             Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT)),
-#ifdef NETCONF_IS_KBD_DIALOG
-    m_keypad_dialog(d, Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT), ""),
-#else
     m_network_config_dialog(
             d,
             Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT),
@@ -53,7 +50,6 @@ ConfigView::ConfigView(Display &d, ViewChangeCallback ccb, void *change_user_dat
             "Select something to configure",
             network_bd, NUM_NET_BUTTONS,
             Menu::O_Vert),
-#endif
     m_screencal_dialog(
             d,
             Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT),
@@ -65,11 +61,7 @@ ConfigView::ConfigView(Display &d, ViewChangeCallback ccb, void *change_user_dat
 {
     m_offer_config_dialog.set_callback(menu_callback_func, this);
     m_filament_config_dialog.set_callback(menu_callback_func, this);
-#ifdef NETCONF_IS_KBD_DIALOG
-    m_keypad_dialog.set_callback(menu_callback_func, this);
-#else
     m_network_config_dialog.set_callback(menu_callback_func, this);
-#endif
     m_screencal_dialog.set_callback(menu_callback_func, this);
 
     // Clear the display
@@ -79,15 +71,6 @@ ConfigView::ConfigView(Display &d, ViewChangeCallback ccb, void *change_user_dat
 
 void ConfigView::touch_callback(uint16_t x, uint16_t y, bool pressed)
 {
-#define DEBUG_TOUCH
-#ifdef DEBUG_TOUCH
-    Serial.print("ConfigView got touch callback. x: ");
-    Serial.print(x);
-    Serial.print(", y: ");
-    Serial.println(y);
-    Serial.println("checking buttons");
-#endif
-
     m_current_dialog->check_touch(x, y, pressed);
 }
 
@@ -95,11 +78,6 @@ void ConfigView::touch_callback(uint16_t x, uint16_t y, bool pressed)
 // being asked to check_touch().
 void ConfigView::menu_callback(const char *label, bool pressed)
 {
-    Serial.print("Config view menu_callback got \"");
-    Serial.print(label),
-    Serial.print("\" ");
-    Serial.println(pressed?"PRESSED":"RELEASED");
-
     if (!pressed)
     {
         // Here we check m_state to see what state to switch to,
@@ -142,7 +120,6 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                 }
                 else if (!strcmp(label, "SCREEN calibration"))
                 {
-                    Serial.println("SCREEN CAL code in Config View!!");
                     set_state(COS_Screen);
                     m_current_dialog = &m_screencal_dialog;
                     this->show();

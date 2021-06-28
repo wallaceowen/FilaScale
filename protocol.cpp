@@ -8,10 +8,6 @@
 #define MSGLEN 16
 
 static bool report_weight = false;
-#ifdef KEEP_UNNEEDED
-static int32_t scale_offset = 0;
-static double scale_gain = 1.0;
-#endif
 
 // If there's nothing waiting, return 0
 // if there's something to read
@@ -63,14 +59,6 @@ static char *get_tok(char *buffer, size_t &offset)
 // over the elements of the commands array on behalf
 // of show_commands.
 static void show_commands();
-
-#ifdef KEEP_UNNEEDED
-// Send the calibrated weight message to the interface
-static double calibrated_weight(int32_t w)
-{
-    return (w-scale_offset)*scale_gain;
-}
-#endif
 
 // Send the values to the interface
 static void show_weight(int32_t val)
@@ -137,41 +125,6 @@ static void show_commands()
     Serial.println("*case is ignored.\r\n");
 }
 
-#if 0
-void Protocol::loop(void)
-{
-    size_t cmd_offset = 0;
-    static char cmd_buffer[MSGLEN];
-
-    int result = get_command(cmd_buffer, sizeof(cmd_buffer), cmd_offset);
-    if (result == -1)
-    {
-        Serial.print("bad command "); 
-        Serial.println(cmd_buffer); 
-        memset(cmd_buffer, 0, sizeof(cmd_buffer));
-        cmd_offset = 0;
-    }
-    else if (result == 1)
-    {
-        bool found = false;
-        for (size_t cnum = 0; cnum < NUM_CMDS; ++cnum)
-        {
-            size_t offset = 0;
-            char *tok = get_tok(cmd_buffer, offset);
-            if (!strcasecmp(commands[cnum].cmd, tok))
-            {
-                found = true;
-                commands[cnum].func(this, cmd_buffer, offset);
-                break;
-            }
-        }
-
-        if (!found)
-            Serial.println("Unknown command.");
-    }
-}
-#endif
-
 void Protocol::loop(void)
 {
     static size_t cmd_offset{0};
@@ -212,42 +165,4 @@ void Protocol::loop(void)
             Serial.println("Unknown command.");
     }
 }
-
-#if 0
-void Protocol::loop(void)
-{
-    size_t cmd_offset = 0;
-    char cmd_buffer[MSGLEN];
-
-    for (uint16_t count = 0; true; ++count)
-    {
-        int result = get_command(cmd_buffer, sizeof(cmd_buffer), cmd_offset);
-        if (result == -1)
-        {
-            Serial.print("bad command "); 
-            Serial.println(cmd_buffer); 
-            memset(cmd_buffer, 0, sizeof(cmd_buffer));
-            cmd_offset = 0;
-        }
-        else if (result == 1)
-        {
-            bool found = false;
-            for (size_t cnum = 0; cnum < NUM_CMDS; ++cnum)
-            {
-                size_t offset = 0;
-                char *tok = get_tok(cmd_buffer, offset);
-                if (!strcasecmp(commands[cnum].cmd, tok))
-                {
-                    found = true;
-                    commands[cnum].func(this, cmd_buffer, offset);
-                    break;
-                }
-            }
-
-            if (!found)
-                Serial.println("Unknown command.");
-        }
-    }
-}
-#endif
 

@@ -2,13 +2,6 @@
 
 #include "text_box.h"
 
-#ifdef DEBUG_WITH_CERR
-#include <iostream>
-using namespace std;
-#endif
-
-char dbg[90];
-
 TextBox::TextBox(Display &d, const Rect &r, uint16_t font, const char *txt) :
     m_tft(d.get_tft()),
     m_rect(r),
@@ -25,26 +18,9 @@ TextBox::TextBox(Display &d, const Rect &r, uint16_t font, const char *txt) :
     {
         strncpy(m_buffer, txt, TB_BUFFER_SIZE-1);
         m_buffer[TB_BUFFER_SIZE-1] = 0;
-#ifdef DEBUG_WITH_CERR
-        cerr << "TextBox::TextBox: buffer too small"
-            << endl;
-#endif
     }
 
-#ifdef DEBUG_WITH_CERR
-    cerr << "TextBox::TextBox now has "
-        << m_buffer
-        << endl;
-#endif
     reserve_space_for_text();
-
-    {
-        sprintf(dbg, "text_box ctor: \"%s\" at x:%hu y:%hu w:%hu h:%hu",
-                m_buffer, m_rect.x, m_rect.y, m_rect.w, m_rect.h);
-        Serial.println(dbg);
-        sprintf(dbg, "text_box ctor: \"%s\" last_y:%hu", m_buffer, m_last_y);
-        Serial.println(dbg);
-    }
 }
 
 char *terminate_next(char *txt)
@@ -236,6 +212,3 @@ void TextBox::reserve_space_for_text()
     m_last_y = y;
 }
 
-// Rect TextBox::bounds(void)
-// {
-// }

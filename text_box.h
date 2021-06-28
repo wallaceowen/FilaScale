@@ -17,14 +17,22 @@ public:
     // Provide a box into which we can render text.
     // wraps long lines.
     TextBox(Display &d, const Rect &w, uint16_t font, const char *txt);
+
+    // Render it
     void show();
+
+    // Get it's contents
     const char *buffer(void) const { return m_buffer; }
+
+    // Get the last position written to
     Point last_pos(void) const { return Point(m_last_x, m_last_y); }
     uint16_t last_y(void) const { return m_last_y; }
 
 private:
-    int reserve_space_for_word(char *word, uint16_t &x, uint16_t &y);
+    // Figure out how much room we need for the text
     void reserve_space_for_text();
+    // Helper for above
+    int reserve_space_for_word(char *word, uint16_t &x, uint16_t &y);
 
     // Returns -1 if no more room, 1 if we've wrapped and 0 if we haven't
     int render_word(char *word, uint16_t &x, uint16_t &y);

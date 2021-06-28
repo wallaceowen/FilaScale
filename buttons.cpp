@@ -2,7 +2,7 @@
 
 #include "buttons.h"
 
-static char debug_buff[75];
+static char buttons_debug_buff[75];
 Buttons::Buttons(Display &d, const Rect &w, uint16_t r, uint16_t c) :
     tft(d.get_tft()),
     m_rect(w),
@@ -23,9 +23,6 @@ Buttons::Buttons(Display &d, const Rect &w, uint16_t r, uint16_t c) :
     else
     {
         unsigned count = m_rows*m_columns;
-        // Serial.print("Allocing bytes for ");
-        // Serial.print(count);
-        // Serial.println(" buttons");
         buttons = new BPTR[count];
         if (buttons)
             memset(buttons, 0, (count)*sizeof(BPTR));
@@ -63,14 +60,6 @@ bool Buttons::add_button(
         uint16_t row, uint16_t col,
         uint16_t width, uint16_t height)
 {
-#ifdef DEBUG
-    {
-        sprintf(debug_buff, "Buttons::add_button() %s at row %u col %u width %u height %u",
-                bd.label, row, col, width, height);
-        Serial.println(debug_buff);
-    }
-#endif
-
     if ((row < m_rows) && (col < m_columns))
     {
         uint16_t x = m_rect.x+width*col;
@@ -84,9 +73,9 @@ bool Buttons::add_button(
     }
     else
     {
-        sprintf(debug_buff, "ERROR: %s wanted r %u c %u but only %u rows %u height",
+        sprintf(buttons_debug_buff, "ERROR: %s wanted r %u c %u but only %u rows %u height",
                 bd.label, row, col, m_rows, m_columns);
-        Serial.println(debug_buff);
+        Serial.println(buttons_debug_buff);
     }
     return false;
 }
@@ -96,21 +85,6 @@ bool Buttons::add_grid_button(
         uint16_t row, uint16_t col,
         uint16_t row_span, uint16_t column_span)
 {
-#ifdef DEBUG
-    {
-        sprintf(debug_buff, "Adding grid button \"%s\" at row %u col %u row_span %u column_span %u",
-                bd.label, row, col, row_span, column_span);
-        Serial.println(debug_buff);
-
-        sprintf(debug_buff, "Buttons::rect = x:%u y:%u w:%u h:%u",
-                m_rect.x, m_rect.y, m_rect.w, m_rect.h);
-        Serial.println(debug_buff);
-
-        sprintf(debug_buff, "rows:%u columns:%u", m_rows, m_columns);
-        Serial.println(debug_buff);
-    }
-#endif
-
     if ((row < m_rows) && (col < m_columns))
     {
         uint16_t cellwidth = (m_rect.w/m_columns)*column_span;
@@ -118,15 +92,6 @@ bool Buttons::add_grid_button(
 
         uint16_t x = m_rect.x+cellwidth*col;
         uint16_t y = m_rect.y+cellheight*row;
-
-#ifdef DEBUG
-        // if (0 && (strlen(bd.label) > 1))
-        {
-            sprintf(debug_buff, "Therefore adding grid button %s at x:%u y:%u cellw:%u cellh:%u",
-                    bd.label, x, y, cellwidth, cellheight);
-            Serial.println(debug_buff);
-        }
-#endif
 
         Button *b = new Button(bd, Rect(x, y, cellwidth, cellheight));
 
@@ -136,9 +101,9 @@ bool Buttons::add_grid_button(
     }
     else
     {
-        sprintf(debug_buff, "ERROR: %s wanted r %u c %u but only %u rows %u height",
+        sprintf(buttons_debug_buff, "ERROR: %s wanted r %u c %u but only %u rows %u height",
                 bd.label, row, col, m_rows, m_columns);
-        Serial.println(debug_buff);
+        Serial.println(buttons_debug_buff);
     }
     return false;
 }
@@ -158,12 +123,6 @@ void Buttons::show()
             Button *b = buttons[row*m_columns+column];
             if (b)
             {
-#ifdef DEBUG
-                Serial.print("showing button ");
-                Serial.print(row);
-                Serial.print(", ");
-                Serial.println(column);
-#endif
                 b->draw(tft);
             }
         }

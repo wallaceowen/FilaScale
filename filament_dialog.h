@@ -13,9 +13,6 @@ public:
     void show(void);
 private:
     void add_buttons(void);
-#ifdef FILAMENTS_HAS_ADJUSTER
-    Adjuster m_adj;
-#endif
 };
 
 

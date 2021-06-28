@@ -14,7 +14,6 @@ class View
 {
 public:
     View(Display&, ViewChangeCallback, void*);
-    // virtual ~View(void) = 0;
 
     // Only called if this is the active view
     virtual void loop(void) = 0;
