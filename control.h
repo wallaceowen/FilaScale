@@ -10,7 +10,6 @@
 #include "scale.h"
 #include "state_view.h"
 #include "calib_view.h"
-// #include "screencal_view.h"
 #include "config_view.h"
 
 class Control
@@ -34,7 +33,7 @@ private:
     BME280_IF &m_bme280;
     Display &m_display;
     StateView *m_state_view;
-    CalibView *m_calib_view;
+    CalibView *m_scale_calib_view;
     ConfigView *m_config_view;
 
     View *m_view;

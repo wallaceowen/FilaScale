@@ -101,6 +101,11 @@ bool Menu::check_touch(uint16_t x, uint16_t y, bool pressed)
     {
         if (m_buttons[i]->within(x, y))
         {
+            Serial.print("Menu::check_touch: button \"");
+            Serial.print(m_buttons[i]->label());
+            Serial.print("\" ");
+            Serial.println(pressed?"PRESSED":"RELEASED");
+
             if (m_bcb)
                 m_bcb(m_buttons[i]->label(), pressed, m_user_data);
             return true;

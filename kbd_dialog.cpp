@@ -48,7 +48,7 @@ static GridButtonData keyb_data[] = {
 #define NUM_BUTTONS (sizeof(keyb_data)/sizeof(keyb_data[0]))
 
 KbdDialog::KbdDialog(Display &d, const Rect &rect, const char *title) :
-    GridDialog(d, rect, title, "", TFT_LIGHTGREY, TFT_BLACK, KBD_ROWS, KBD_COLS, 0),
+    GridDialog(d, rect, title, "", TFT_LIGHTGREY, TFT_BLACK, KBD_ROWS, KBD_COLS),
     m_cb(0),
     m_user_data(0)
 {

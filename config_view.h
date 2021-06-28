@@ -12,8 +12,6 @@
 #include "filament_dialog.h"
 #include "kbd_dialog.h"
 
-#define CONF_DILAOG_CB_NEEDED
-
 class ConfigView: public View
 {
 public:
@@ -43,26 +41,19 @@ public:
 
 protected:
 
+    // Deal with a state change (mostly by switching to a different dialog)
+    void set_state(ConfigState cs) { m_state = cs; }
+
     bool update(void);
 
 private:
-
-    void set_state(ConfigState cs);
-
-#ifdef CONF_DILAOG_CB_NEEDED
-    static void config_dialog_callback_func(const char *label, bool pressed, void *user_data);
-    void config_dialog_callback(const char *label, bool pressed);
-#endif
 
     Display        &m_display;
     ConfigState     m_state;
     ConfigDialog    m_offer_config_dialog;
     FilamentDialog  m_filament_config_dialog;
-#ifdef NETCONF_IS_KBD_DIALOG
-    KbdDialog       m_keypad_dialog;
-#else
     MenuDialog      m_network_config_dialog;
-#endif
+    MenuDialog      m_screencal_dialog;
     Dialog         *m_current_dialog;
 };
 

@@ -35,13 +35,13 @@ void Button::draw(Display &d)
 void Button::draw(TFT_eSPI &tft)
 {
     // tft.fillRect(rect.x, rect.y, rect.w, rect.h, b_d.bg);
-    tft.fillRoundRect(rect.x, rect.y, rect.w, rect.h, rect.h/3, b_d.bg);
+    tft.fillRoundRect(rect.x, rect.y, rect.w, rect.h, rect.h/2, b_d.bg);
     tft.setTextColor(b_d.fg, b_d.bg);
     int16_t label_x =  0;
     int16_t label_y =  0;
+#ifdef DEBUG_BUTTON_DRAW
     int16_t t_width = tft.textWidth(b_d.label, BUTTON_FONT);
     int16_t t_height = tft.fontHeight(BUTTON_FONT);
-#ifdef DEBUG_BUTTON_DRAW
     {
         sprintf(dbg_buffer, "but \"%s\" at %u, %u rectw %u recth %u width %hd height %hd",
                 b_d.label, label_x, label_y, rect.w, rect.h, t_width, t_height);

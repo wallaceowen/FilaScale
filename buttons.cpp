@@ -63,22 +63,18 @@ bool Buttons::add_button(
         uint16_t row, uint16_t col,
         uint16_t width, uint16_t height)
 {
+#ifdef DEBUG
     {
         sprintf(debug_buff, "Buttons::add_button() %s at row %u col %u width %u height %u",
                 bd.label, row, col, width, height);
         Serial.println(debug_buff);
     }
+#endif
 
     if ((row < m_rows) && (col < m_columns))
     {
         uint16_t x = m_rect.x+width*col;
         uint16_t y = m_rect.y+height*row;
-
-        // {
-            // sprintf(debug_buff, "Adding button %s at x:%u y:%u w:%u h:%u",
-                    // bd.label, x, y, width, height);
-            // Serial.println(debug_buff);
-        // }
 
         Button *b = new Button(bd, Rect(x, y, width, height));
 
@@ -100,7 +96,7 @@ bool Buttons::add_grid_button(
         uint16_t row, uint16_t col,
         uint16_t row_span, uint16_t column_span)
 {
-    if (true)
+#ifdef DEBUG
     {
         sprintf(debug_buff, "Adding grid button \"%s\" at row %u col %u row_span %u column_span %u",
                 bd.label, row, col, row_span, column_span);
@@ -113,6 +109,7 @@ bool Buttons::add_grid_button(
         sprintf(debug_buff, "rows:%u columns:%u", m_rows, m_columns);
         Serial.println(debug_buff);
     }
+#endif
 
     if ((row < m_rows) && (col < m_columns))
     {
@@ -122,12 +119,14 @@ bool Buttons::add_grid_button(
         uint16_t x = m_rect.x+cellwidth*col;
         uint16_t y = m_rect.y+cellheight*row;
 
+#ifdef DEBUG
         // if (0 && (strlen(bd.label) > 1))
         {
             sprintf(debug_buff, "Therefore adding grid button %s at x:%u y:%u cellw:%u cellh:%u",
                     bd.label, x, y, cellwidth, cellheight);
             Serial.println(debug_buff);
         }
+#endif
 
         Button *b = new Button(bd, Rect(x, y, cellwidth, cellheight));
 
@@ -154,7 +153,6 @@ Button *Buttons::get_button(uint16_t row, uint16_t col)
 void Buttons::show()
 {
     for (unsigned column = 0; column < m_columns; ++column)
-    {
         for (unsigned row = 0; row < m_rows; ++row)
         {
             Button *b = buttons[row*m_columns+column];
@@ -169,7 +167,6 @@ void Buttons::show()
                 b->draw(tft);
             }
         }
-    }
 }
 
 
@@ -182,21 +179,17 @@ void Buttons::set_callback(PressEventCB m, void *u)
 bool Buttons::check_touch(uint16_t x, uint16_t y, bool pressed)
 {
     for (unsigned column = 0; column < m_columns; ++column)
-    {
         for (unsigned row = 0; row < m_rows; ++row)
         {
             Button *b = buttons[row*m_columns+column];
             if (b)
-            {
                 if (b->within(x, y))
                 {
                     if (bcb)
                         bcb(b->label(), pressed, user_data);
                     return true;
                 }
-            }
         }
-    }
     return false;
 }
 

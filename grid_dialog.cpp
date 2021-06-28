@@ -12,11 +12,9 @@ GridDialog::GridDialog(Display &d,
         uint16_t fg,
         uint16_t bg,
         uint16_t rows,
-        uint16_t columns,
-        uint16_t button_start) :
+        uint16_t columns) :
     Dialog(d, rect, title, prompt, fg, bg),
-    m_button_start(button_start),
-    m_buttons(d, Rect(rect.x, rect.y+m_button_start, rect.w, rect.h-m_button_start), rows, columns),
+    m_buttons(d, Rect(rect.x, rect.y+button_y(), rect.w, rect.h-button_y()), rows, columns),
     m_rows(rows),
     m_cols(columns)
 {

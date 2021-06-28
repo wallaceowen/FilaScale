@@ -24,9 +24,9 @@
 #define CONF_OFFER_COLS 2
 
 static ButtonData network_bd[] = {
-    ButtonData("IP", TFT_WHITE, TFT_BLUE, CC_DATUM),
-    ButtonData("NETMASK", TFT_WHITE, TFT_BROWN, CC_DATUM),
-    ButtonData("GATEWAY", TFT_BLACK, TFT_YELLOW, CC_DATUM),
+    ButtonData("IP", TFT_WHITE, TFT_DARKGREY, CC_DATUM),
+    ButtonData("NETMASK", TFT_WHITE, TFT_DARKGREY, CC_DATUM),
+    ButtonData("GATEWAY", TFT_WHITE, TFT_DARKGREY, CC_DATUM),
     ButtonData("CANCEL", TFT_WHITE, TFT_RED, CC_DATUM),
 };
 #define NUM_NET_BUTTONS (sizeof(network_bd)/sizeof(network_bd[0]))
@@ -50,10 +50,16 @@ ConfigView::ConfigView(Display &d, ViewChangeCallback ccb, void *change_user_dat
             d,
             Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT),
             "Network Settings",
-            "",
+            "Select something to configure",
             network_bd, NUM_NET_BUTTONS,
             Menu::O_Vert),
 #endif
+    m_screencal_dialog(
+            d,
+            Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT),
+            "Calibrate screen?",
+            "Press OK or CANCEL",
+            ok_cancel_bd, NUM_OK_BUTTONS),
 
     m_current_dialog(&m_offer_config_dialog)
 {
@@ -64,30 +70,16 @@ ConfigView::ConfigView(Display &d, ViewChangeCallback ccb, void *change_user_dat
 #else
     m_network_config_dialog.set_callback(menu_callback_func, this);
 #endif
+    m_screencal_dialog.set_callback(menu_callback_func, this);
 
     // Clear the display
     TFT_eSPI &tft = m_display.get_tft();
     tft.fillRect(0, 0, tft.width(), tft.height(), SCREEN_BG);
 }
 
-#ifdef CONF_DILAOG_CB_NEEDED
-void ConfigView::config_dialog_callback(const char *label, bool pressed)
-{
-    Serial.print("Config dialog callback got \"");
-    Serial.print(label),
-    Serial.print("\" ");
-    Serial.println(pressed?"PRESSED":"RELEASED");
-}
-
-void ConfigView::config_dialog_callback_func(const char *label, bool pressed, void *user_data)
-{
-    ConfigView *cv = reinterpret_cast<ConfigView*>(user_data);
-    cv->config_dialog_callback(label, pressed);
-}
-#endif
-
 void ConfigView::touch_callback(uint16_t x, uint16_t y, bool pressed)
 {
+#define DEBUG_TOUCH
 #ifdef DEBUG_TOUCH
     Serial.print("ConfigView got touch callback. x: ");
     Serial.print(x);
@@ -99,37 +91,15 @@ void ConfigView::touch_callback(uint16_t x, uint16_t y, bool pressed)
     m_current_dialog->check_touch(x, y, pressed);
 }
 
-// Deal with a state change (mostly by switching to a different dialog)
-void ConfigView::set_state(ConfigState cs)
-{
-    m_state = cs;
-    switch (m_state)
-    {
-        case COS_Offer:
-            m_current_dialog = &m_offer_config_dialog;
-            break;
-        case COS_Filament:
-            m_current_dialog = &m_filament_config_dialog;
-           break;
-        case COS_Network:
-#ifdef NETCONF_IS_KBD_DIALOG
-            m_current_dialog = &m_keypad_dialog;
-#else
-            m_current_dialog = &m_network_config_dialog;
-#endif
-            break;
-        default:
-            m_state = COS_Offer;
-            m_current_dialog = &m_offer_config_dialog;
-           break;
-    }
-}
-
 // Callback that is invoked as a side-effect of either the Menu or Buttons class
 // being asked to check_touch().
 void ConfigView::menu_callback(const char *label, bool pressed)
 {
-    // Only check the state when button released
+    Serial.print("Config view menu_callback got \"");
+    Serial.print(label),
+    Serial.print("\" ");
+    Serial.println(pressed?"PRESSED":"RELEASED");
+
     if (!pressed)
     {
         // Here we check m_state to see what state to switch to,
@@ -144,6 +114,7 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                 {
                     // Reset state to offer
                     set_state(COS_Offer);
+                    m_current_dialog = &m_offer_config_dialog;
 
                     // Tell control to go back to state view
                     m_change_cb("STATE", m_change_data);
@@ -151,24 +122,29 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                 else if (!strcmp(label, "FILAMENT drying"))
                 {
                     set_state(COS_Filament);
+                    m_current_dialog = &m_filament_config_dialog;
                     this->show();
                 }
                 else if (!strcmp(label, "NETWORK settings"))
                 {
                     set_state(COS_Network);
+                    m_current_dialog = &m_network_config_dialog;
                     this->show();
                 }
                 else if (!strcmp(label, "SCALE calibration"))
                 {
                     // Reset state to offer
                     set_state(COS_Offer);
+                    m_current_dialog = &m_offer_config_dialog;
 
                     // Tell control to make the SCALE view the current view
                     m_change_cb("SCALE", m_change_data);
                 }
                 else if (!strcmp(label, "SCREEN calibration"))
                 {
+                    Serial.println("SCREEN CAL code in Config View!!");
                     set_state(COS_Screen);
+                    m_current_dialog = &m_screencal_dialog;
                     this->show();
                 }
                 else
@@ -184,6 +160,7 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                 if (!strcmp(label, "CANCEL"))
                 {
                     // Reset state to offer
+                    m_current_dialog = &m_offer_config_dialog;
                     set_state(COS_Offer);
 
                     this->show();
@@ -194,10 +171,32 @@ void ConfigView::menu_callback(const char *label, bool pressed)
 
                     // Reset state to offer
                     set_state(COS_Offer);
+                    m_current_dialog = &m_offer_config_dialog;
                     this->show();
                 }
                 break;
 
+            case  COS_Screen:
+
+                if (!strcmp(label, "CANCEL"))
+                {
+                    // Reset state to offer
+                    set_state(COS_Offer);
+                    m_current_dialog = &m_offer_config_dialog;
+                    this->show();
+                }
+                else
+                {
+                    Serial.println("User said yes to SCREEN CAL");
+
+                    m_display.calibrate();
+
+                    // Reset state to offer
+                    set_state(COS_Offer);
+                    m_current_dialog = &m_offer_config_dialog;
+                    this->show();
+                }
+                break;
 
             case  COS_Network:
 
@@ -205,6 +204,7 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                 {
                     // Reset state to offer
                     set_state(COS_Offer);
+                    m_current_dialog = &m_offer_config_dialog;
 
                     this->show();
                 }
@@ -215,6 +215,7 @@ void ConfigView::menu_callback(const char *label, bool pressed)
 
                     // Reset state to offer
                     set_state(COS_Offer);
+                    m_current_dialog = &m_offer_config_dialog;
                     this->show();
                 }
                 break;

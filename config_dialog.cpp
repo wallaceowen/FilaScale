@@ -4,17 +4,17 @@
 
 // Top-level config choices
 static GridButtonData config_offer_gbd[] = {
-    {GridButtonData("FILAMENT drying",      0, 0, 1, 1, TFT_WHITE, TFT_BROWN)},
-    {GridButtonData("SCALE calibration",    1, 0, 1, 1, TFT_WHITE, TFT_BLUE)},
-    {GridButtonData("SCREEN calibration",   2, 0, 1, 1, TFT_WHITE, TFT_DARKGREEN)},
-    {GridButtonData("NETWORK settings",     3, 0, 1, 1, TFT_WHITE, TFT_PURPLE)},
+    {GridButtonData("FILAMENT drying",      0, 0, 1, 1, TFT_WHITE, TFT_DARKGREY)},
+    {GridButtonData("SCALE calibration",    1, 0, 1, 1, TFT_WHITE, TFT_DARKGREY)},
+    {GridButtonData("SCREEN calibration",   2, 0, 1, 1, TFT_WHITE, TFT_DARKGREY)},
+    {GridButtonData("NETWORK settings",     3, 0, 1, 1, TFT_WHITE, TFT_DARKGREY)},
     {GridButtonData("CANCEL",               4, 0, 1, 1, TFT_WHITE, TFT_RED)},
 };
 #define NUM_CO_BUTTONS (sizeof(config_offer_gbd)/sizeof(config_offer_gbd[0]))
 
 
 ConfigDialog::ConfigDialog(Display &d, const Rect &rect) :
-    GridDialog(d, rect, "Settings", "", TFT_LIGHTGREY, TFT_BLACK, NUM_CO_BUTTONS, 1, 60),
+    GridDialog(d, rect, "Settings", "", TFT_LIGHTGREY, TFT_BLACK, NUM_CO_BUTTONS, 1),
     m_cb(0),
     m_user_data(0)
 {

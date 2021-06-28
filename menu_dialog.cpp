@@ -3,7 +3,7 @@
 
 #define ADJ_OFFSET 50
 
-#define TITLE_MARGIN 50
+// #define TITLE_MARGIN 50
 
 MenuDialog::MenuDialog(Display &d,
         const Rect &rect,
@@ -26,9 +26,9 @@ Rect MenuDialog::computeMenuRect(const Rect &in, uint16_t num_buttons, Menu::Ori
     {
         Rect r(
                 in.x,
-                in.y+TITLE_MARGIN,
+                in.y+this->button_y(),
                 in.w,
-                in.h-TITLE_MARGIN);
+                in.h-this->button_y());
         return r;
     }
     else

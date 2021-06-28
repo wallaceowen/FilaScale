@@ -36,7 +36,7 @@ public:
     unsigned num_cb(void) { return m_callback_count; }
     TFT_eSPI& get_tft(void);
     void calibrate(void);
-
+    void set_calibration(uint16_t params[5]);
 
 private:
     void invoke_callbacks(uint16_t x, uint16_t y, bool pressed);

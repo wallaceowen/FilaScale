@@ -8,12 +8,12 @@
 #define FILAMENT_COLS 3
 
 static GridButtonData filament_bd[] = {
-    GridButtonData("PLA",    0, 0, 1, 1, TFT_BLACK, TFT_YELLOW),
-    GridButtonData("ABS",    0, 1, 1, 1, TFT_WHITE, TFT_DARKCYAN),
-    GridButtonData("ASA",    0, 2, 1, 1, TFT_WHITE, TFT_DARKCYAN),
-    GridButtonData("Nylon",  0, 3, 1, 1, TFT_WHITE, TFT_MAROON),
+    GridButtonData("PLA",    0, 0, 1, 1, TFT_WHITE, TFT_DARKGREY),
+    GridButtonData("ABS",    0, 1, 1, 1, TFT_WHITE, TFT_DARKGREY),
+    GridButtonData("ASA",    0, 2, 1, 1, TFT_WHITE, TFT_DARKGREY),
+    GridButtonData("Nylon",  0, 3, 1, 1, TFT_WHITE, TFT_DARKGREY),
     GridButtonData("PETG",   1, 0, 1, 1, TFT_WHITE, TFT_DARKGREY),
-    GridButtonData("TPU",    1, 1, 1, 1, TFT_BLACK, TFT_GREENYELLOW),
+    GridButtonData("TPU",    1, 1, 1, 1, TFT_WHITE, TFT_DARKGREY),
     GridButtonData("CANCEL", 2, 0, 1, 4, TFT_WHITE, TFT_RED),
 };
 #define NUM_FILAMENT_BUTTONS (sizeof(filament_bd)/sizeof(filament_bd[0]))
@@ -24,11 +24,7 @@ FilamentDialog::FilamentDialog(Display &d, const Rect &rect) :
             rect,
             "FILAMENTS",
             "Select filament type",
-            TFT_WHITE, TFT_BLACK, 3, 4, 60)
-#ifdef FILAMENTS_HAS_ADJUSTER
-    ,
-    m_adj(d, Rect(rect.x, rect.y+ADJ_OFFSET, rect.w, 40), "VARNAME", 20, 500)
-#endif
+            TFT_WHITE, TFT_BLACK, 3, 4)
 {
     this->add_buttons();
 }
