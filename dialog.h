@@ -21,15 +21,7 @@ public:
     virtual void loop(void) = 0;
     virtual void set_callback(PressEventCB, void*) = 0;
     virtual bool check_touch(uint16_t x, uint16_t y, bool pressed) = 0;
-    uint16_t button_y(void) const
-    {
-        uint16_t by = m_prompt.last_y();
-        Serial.print("Retrieving ");
-        Serial.print(m_title);
-        Serial.print(" button y = ");
-        Serial.println(by);
-        return by;
-    }
+    uint16_t button_y(void) const { return m_prompt.last_y(); }
 
 protected:
     Display &m_display;

@@ -25,8 +25,8 @@ Dialog::Dialog(
                 rect.h-PROMPT_Y),
             TEXT_DAILOG_FONT,
             prompt_txt),
-    m_fg(3),
-    m_bg(3)
+    m_fg(fg),
+    m_bg(bg)
 {
 }
 
@@ -40,12 +40,20 @@ void Dialog::show(void)
             m_rect.x, m_rect.y,
             m_rect.w, m_rect.h,
             m_bg);
-    tft.setTextColor(m_fg, m_bg);
 
     // Show the title at the top, center justified
     if (m_title)
     {
+        tft.setTextColor(m_fg, m_bg);
         tft.setTextDatum(TC_DATUM);
+
+        // {
+            // static char buff[90];
+            // sprintf(buff, "TITLE %s at %hu, %hu",
+                // m_title, m_rect.x+(m_rect.w/2), m_rect.y);
+            // Serial.println(buff);
+        // }
+
         tft.drawString(m_title, m_rect.x+(m_rect.w/2), m_rect.y, TITLE_FONT);
         tft.setTextDatum(TL_DATUM);
     }

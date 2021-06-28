@@ -35,7 +35,7 @@ private:
     int reserve_space_for_word(char *word, uint16_t &x, uint16_t &y);
 
     // Returns -1 if no more room, 1 if we've wrapped and 0 if we haven't
-    int render_word(char *word, uint16_t &x, uint16_t &y);
+    int render_word(char *word, uint16_t &x, uint16_t &y, bool actual);
     void render_text();
 
     TFT_eSPI &m_tft;

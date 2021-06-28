@@ -14,7 +14,7 @@ static GridButtonData config_offer_gbd[] = {
 
 
 ConfigDialog::ConfigDialog(Display &d, const Rect &rect) :
-    GridDialog(d, rect, "Settings", "", TFT_LIGHTGREY, TFT_BLACK, NUM_CO_BUTTONS, 1),
+    GridDialog(d, rect, "Settings", "Select from the list below", TFT_LIGHTGREY, TFT_BLACK, NUM_CO_BUTTONS, 1),
     m_cb(0),
     m_user_data(0)
 {
@@ -53,10 +53,10 @@ void ConfigDialog::show(void)
 // Deal with the buttons that get pressed.
 void ConfigDialog::config_button_callback(const char *label, bool pressed)
 {
-    Serial.print("ConfDialog::config_button_callback got \"");
-    Serial.print(label);
-    Serial.print("\", ");
-    Serial.println(pressed?"PRESSED":"RELEASED");
+    // Serial.print("ConfDialog::config_button_callback got \"");
+    // Serial.print(label);
+    // Serial.print("\", ");
+    // Serial.println(pressed?"PRESSED":"RELEASED");
     if (m_cb)
         m_cb(label, pressed, m_user_data);
 

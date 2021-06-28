@@ -24,11 +24,20 @@ Rect MenuDialog::computeMenuRect(const Rect &in, uint16_t num_buttons, Menu::Ori
 
     if (o == Menu::O_Vert)
     {
+
         Rect r(
                 in.x,
+                // this->button_y(),
                 in.y+this->button_y(),
                 in.w,
                 in.h-this->button_y());
+        {
+            static char buff[120];
+            sprintf(buff, "\"%s\" computeMenuRect produced [%hu, %hu, %hu, %hu]",
+                    m_title, r.x, r.y, r.w, r.h);
+            Serial.println(buff);
+        }
+
         return r;
     }
     else

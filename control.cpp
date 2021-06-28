@@ -44,8 +44,8 @@ Control::Control(Scale &scale, Display &display, BME280_IF &bme280, Protocol &pr
 
 void Control::change_view(const char *view_name)
 {
-    Serial.print("Control::change_view got ");
-    Serial.println(view_name);
+    // Serial.print("Control::change_view got ");
+    // Serial.println(view_name);
 
     if (!strcmp(view_name, "SETTINGS"))
     {
@@ -74,7 +74,7 @@ void Control::change_view(const char *view_name)
 
     m_view->show();
 
-    Serial.println("Control::change_view back from show()");
+    // Serial.println("Control::change_view back from show()");
 }
 
 void Control::change_view_func(const char *viewname, void *user)

@@ -27,19 +27,19 @@ void setup(void)
     while(!Serial) {} // Wait for serial port
 
     display = new(display_buff) Display();
-    Serial.println("display made");
+    // Serial.println("display made");
 
     scale = new(scale_buff) Scale();
-    Serial.println("scale made");
+    // Serial.println("scale made");
 
     bme280 = new(bme_buff) BME280_IF();
-    Serial.println("bme made");
+    // Serial.println("bme made");
 
     protocol = new(proto_buff) Protocol(*scale);
-    Serial.println("proto made");
+    // Serial.println("proto made");
 
     control = new(control_buff) Control(*scale, *display, *bme280, *protocol);
-    Serial.println("control made");
+    // Serial.println("control made");
 
     delay(500);
 }
