@@ -24,7 +24,7 @@ Dialog::Dialog(
                 rect.w-PROMPT_X,
                 rect.h-PROMPT_Y),
             TEXT_DAILOG_FONT,
-            prompt_txt),
+            prompt_txt, fg, bg),
     m_fg(fg),
     m_bg(bg)
 {

@@ -2,12 +2,14 @@
 
 #include "text_box.h"
 
-TextBox::TextBox(Display &d, const Rect &r, uint16_t font, const char *txt) :
+TextBox::TextBox(Display &d, const Rect &r, uint16_t font, const char *txt, uint16_t fg, uint16_t bg) :
     m_tft(d.get_tft()),
     m_rect(r),
     m_font(font),
     m_max_rows(m_rect.w/m_tft.fontHeight(m_font)),
-    m_len(strlen(txt)), m_last_x(0), m_last_y(0)
+    m_len(strlen(txt)), m_last_x(0), m_last_y(0),
+    m_fg(fg),
+    m_bg(bg)
 {
     memset(m_buffer, 0, TB_BUFFER_SIZE);
     if (m_len < TB_BUFFER_SIZE)
@@ -86,7 +88,7 @@ void TextBox::render_text()
     auto x = m_rect.x;
     auto y = m_rect.y;
 
-    m_tft.setTextColor(TFT_WHITE, TFT_BLUE);
+    m_tft.setTextColor(m_fg, m_bg);
 
     while (y < (m_rect.y+m_rect.h))
     {
