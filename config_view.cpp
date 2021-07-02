@@ -40,9 +40,6 @@ ConfigView::ConfigView(Display &d, ViewChangeCallback ccb, void *change_user_dat
     m_offer_config_dialog(
             d,
             Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT)),
-    // m_filament_config_dialog(
-            // d,
-            // Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT)),
     m_network_config_dialog(
             d,
             Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT),
@@ -60,7 +57,6 @@ ConfigView::ConfigView(Display &d, ViewChangeCallback ccb, void *change_user_dat
     m_current_dialog(&m_offer_config_dialog)
 {
     m_offer_config_dialog.set_callback(menu_callback_func, this);
-    // m_filament_config_dialog.set_callback(menu_callback_func, this);
     m_network_config_dialog.set_callback(menu_callback_func, this);
     m_screencal_dialog.set_callback(menu_callback_func, this);
 
@@ -106,10 +102,6 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                 }
                 else if (!strcmp(label, "FILAMENT drying"))
                 {
-                    // set_state(COS_Filament);
-                    // m_current_dialog = &m_filament_config_dialog;
-                    // this->show();
-
                     // Reset state to offer
                     set_state(COS_Offer);
                     m_current_dialog = &m_offer_config_dialog;
@@ -136,7 +128,7 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                 {
                     set_state(COS_Screen);
                     m_current_dialog = &m_screencal_dialog;
-                    // this->show();
+                    this->show();
                 }
                 else
                 {
@@ -147,26 +139,6 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                 break;
             }
 
-            case  COS_Filament:
-                if (!strcmp(label, "CANCEL"))
-                {
-                    // Reset state to offer
-                    m_current_dialog = &m_offer_config_dialog;
-                    set_state(COS_Offer);
-
-                    // this->show();
-                }
-                else
-                {
-                    Serial.println("Do something with this filament config request");
-
-                    // Reset state to offer
-                    set_state(COS_Offer);
-                    m_current_dialog = &m_offer_config_dialog;
-                    // this->show();
-                }
-                break;
-
             case  COS_Screen:
 
                 if (!strcmp(label, "CANCEL"))
@@ -174,7 +146,7 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                     // Reset state to offer
                     set_state(COS_Offer);
                     m_current_dialog = &m_offer_config_dialog;
-                    // this->show();
+                    this->show();
                 }
                 else
                 {
@@ -185,7 +157,7 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                     // Reset state to offer
                     set_state(COS_Offer);
                     m_current_dialog = &m_offer_config_dialog;
-                    // this->show();
+                    this->show();
                 }
                 break;
 
@@ -196,7 +168,6 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                     // Reset state to offer
                     set_state(COS_Offer);
                     m_current_dialog = &m_offer_config_dialog;
-
                     // this->show();
                 }
                 else
