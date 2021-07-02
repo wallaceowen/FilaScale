@@ -119,13 +119,9 @@ void TextBox::render_text()
                 *v = ' ';
                 cur = v+1;
 
-                // if there's room for the following space, send it
-                if (rw_result == 0)
-                {
-                    rw_result = render_word(const_cast<char*>(" "), x, y, true);
-                    if (rw_result == -1)
-                        break;
-                }
+                rw_result = render_word(const_cast<char*>(" "), x, y, true);
+                if (rw_result == -1)
+                    break;
             }
             else
                 break;
