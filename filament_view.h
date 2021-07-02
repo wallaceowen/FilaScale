@@ -47,7 +47,7 @@ private:
 
     Display         &m_display;
     FilamentState    m_state;
-    // MenuDialog       m_filintro_dialog;
+    MenuDialog       m_filintro_dialog;
     FilamentDialog   m_filament_dialog;
     // FilAdjustDialog  m_filadjust_dialog;
     Dialog          *m_current_dialog;

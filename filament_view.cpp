@@ -33,23 +33,24 @@ FilamentView::FilamentView(Display &d, ViewChangeCallback ccb, void *change_user
     View(d, ccb, change_user_data),
     m_display(d),
     // m_state(FS_Introduce),
-    m_state(FS_Offer),
-    // m_filintro_dialog(d, 
-            // Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT),
-            // filament_intro_title,
-            // filament_intro_body,
-            // ok_cancel_bd, NUM_OK_BUTTONS,
+    m_state(FS_Introduce),
+    m_filintro_dialog(d,
+            Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT),
+            filament_intro_title,
+            filament_intro_body,
+            ok_cancel_bd, NUM_OK_BUTTONS,
             // Menu::O_Horiz, FILINTRO_FONT),
+            Menu::O_Horiz),
     m_filament_dialog(
             d,
             Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT)),
     // m_filadjust_dialog(
             // d,
             // Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT), "PLA"),
-    // m_current_dialog(&m_filintro_dialog)
-    m_current_dialog(&m_filament_dialog)
+    m_current_dialog(&m_filintro_dialog)
+    // m_current_dialog(&m_filament_dialog)
 {
-    // m_filintro_dialog.set_callback(menu_callback_func, this);
+    m_filintro_dialog.set_callback(menu_callback_func, this);
     m_filament_dialog.set_callback(menu_callback_func, this);
     // m_filadjust_dialog.set_callback(menu_callback_func, this);
 }
@@ -65,8 +66,7 @@ void FilamentView::set_state(FilamentState cs)
     switch (m_state)
     {
         case FS_Introduce:
-            // m_current_dialog = &m_filintro_dialog;
-            m_current_dialog = &m_filament_dialog;
+            m_current_dialog = &m_filintro_dialog;
             break;
         case FS_Offer:
             m_current_dialog = &m_filament_dialog;
@@ -75,8 +75,8 @@ void FilamentView::set_state(FilamentState cs)
             // m_current_dialog = &m_filadjust_dialog;
            break;
         default:
-            m_state = FS_Offer;
-            // m_current_dialog = &m_filintro_dialog;
+            m_state = FS_Introduce;
+            m_current_dialog = &m_filintro_dialog;
            break;
     }
 }
@@ -111,19 +111,19 @@ void FilamentView::menu_callback(const char *label, bool pressed)
             {
                 case FS_Introduce:
                     set_state(FS_Offer);
-                    // this->show();
+                    this->show();
                     break;
 
                 // No-op - stay in this state
                 case FS_Offer:
                     set_state(FS_Adjust);
-                    // this->show();
+                    this->show();
                     break;
 
                 // OK on FS_Adjust means user is done adjusting
                 case  FS_Adjust:
                     set_state(FS_Offer);
-                    // this->show();
+                    this->show();
                     break;
 
                 // case  FS_Gain:
