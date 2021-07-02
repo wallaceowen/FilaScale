@@ -5,6 +5,7 @@
 #include "events.h"
 #include "rect.h"
 #include "text_box.h"
+#include "config.h"
 
 class Dialog
 {
@@ -15,7 +16,10 @@ public:
             const char *title,
             const char *prompt,
             uint16_t fg = TFT_WHITE,
-            uint16_t bg = TFT_BLACK);
+            uint16_t bg = TFT_BLACK,
+            uint16_t title_font = TITLE_FONT,
+            uint16_t prompt_font = PROMPT_FONT
+            );
 
     virtual void show(void);
     virtual void loop(void) = 0;
@@ -30,6 +34,7 @@ protected:
     TextBox      m_prompt;
     uint16_t     m_fg;
     uint16_t     m_bg;
+    uint16_t     m_title_font;
 };
 
 #endif

@@ -4,7 +4,9 @@
 #define __config_h
 
 #define TITLE_FONT 4
-#define DIALOG_FONT 4
+#define PROMPT_FONT 4
+#define STATE_FONT 4
+// #define DIALOG_FONT 4
 
 #define PROMPT_X 4
 #define PROMPT_Y 50

@@ -38,8 +38,9 @@ FilamentView::FilamentView(Display &d, ViewChangeCallback ccb, void *change_user
             filament_intro_title,
             filament_intro_body,
             ok_cancel_bd, NUM_OK_BUTTONS,
-            // Menu::O_Horiz, FILINTRO_FONT),
-            Menu::O_Horiz),
+            Menu::O_Horiz,
+            TFT_WHITE, TFT_BLACK, TITLE_FONT, PROMPT_FONT
+            ),
     m_filament_dialog(
             d,
             Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT)),

@@ -14,9 +14,17 @@ public:
             const Rect &rect,
             const char *title,
             const char *prompt,
+            // uint16_t fg, bg, title_font, prompt_font,
+
             const ButtonData *button_data,
             unsigned num_buttons,
-            Menu::Orient o=Menu::O_Horiz);
+            Menu::Orient o=Menu::O_Horiz,
+
+            uint16_t fg = TFT_WHITE,
+            uint16_t bg = TFT_BLACK,
+            uint16_t title_font = TITLE_FONT,
+            uint16_t prompt_font = PROMPT_FONT
+            );
 
     // Returns true when dialog anwsered, false while dialog still running
     void loop(void);

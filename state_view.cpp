@@ -17,15 +17,12 @@
 #define MENU_X 0
 #define MENU_HEIGHT 36
 #define MENU_Y SCREEN_H-MENU_HEIGHT
-#define MENU_WIDTH 80
-#define STATE_MENU_ORIENT Menu::O_Horiz
+// #define MENU_WIDTH 80
 
-#define R_MARGIN 10
+// #define R_MARGIN 10
 
-#define TITLE_FONT 4
-#define STATE_FONT 4
-#define BORDER_THICKNESS 5
-#define MARGIN BORDER_THICKNESS+2
+// #define BORDER_THICKNESS 5
+// #define MARGIN BORDER_THICKNESS+2
 #define PLOT_THICKNESS 10
 #define VALUES_GAP 10
 
@@ -51,7 +48,7 @@ StateView::StateView(Display &d,
     m_menu(
             d,
             Rect(MENU_X, MENU_Y, d.get_tft().width(), MENU_HEIGHT),
-            state_menu_button_data, NUM_STATE_BUTTONS, STATE_MENU_ORIENT),
+            state_menu_button_data, NUM_STATE_BUTTONS, Menu::O_Horiz),
     m_temp(0.0),
     m_humid(0.0),
     m_weight(0.0),
@@ -60,8 +57,8 @@ StateView::StateView(Display &d,
     m_menu.set_callback(state_menu_callback_func, this);
 
     TFT_eSPI &tft = m_display.get_tft();
-    tft.setTextSize(2);
-    m_title_height = tft.fontHeight(STATE_FONT);
+    // tft.setTextSize(2);
+    m_title_height = tft.fontHeight(TITLE_FONT);
 }
 
 // All the state menus are for views.  But a menu button could be handled
@@ -90,12 +87,12 @@ void StateView::show()
     tft.fillRect(0, 0, tft.width(), tft.height(), SCREEN_BG);
 
     // Show the view name and our field names
-    tft.setTextSize(2);
+    // tft.setTextSize(2);
     tft.setTextColor(TFT_WHITE);
     tft.setTextDatum(TC_DATUM);
     tft.drawString("FilaScale", tft.width()/2, 0, TITLE_FONT);
 
-    tft.setTextSize(1);
+    // tft.setTextSize(1);
     tft.setTextColor(TFT_YELLOW, TFT_BLACK);
     tft.setTextDatum(CR_DATUM);
     int field_spacing = (MENU_Y-VALUES_Y)/NUM_STATE_LINES;

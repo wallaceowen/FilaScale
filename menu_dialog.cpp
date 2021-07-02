@@ -10,10 +10,14 @@ MenuDialog::MenuDialog(Display &d,
         const char *title,
         const char *prompt,
         const ButtonData *button_data,
-        unsigned num_buttons, Menu::Orient o) :
-    Dialog(d, rect, title, prompt),
-    m_menu(d, computeMenuRect(rect, num_buttons, o),
-            button_data, num_buttons, o)
+        unsigned num_buttons,
+        Menu::Orient o,
+        uint16_t fg,
+        uint16_t bg,
+        uint16_t title_font,
+        uint16_t prompt_font) :
+    Dialog(d, rect, title, prompt, fg, bg, title_font, prompt_font),
+    m_menu(d, computeMenuRect(rect, num_buttons, o), button_data, num_buttons, o)
 {
     this->show();
 }

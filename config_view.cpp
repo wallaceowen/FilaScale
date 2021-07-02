@@ -46,7 +46,8 @@ ConfigView::ConfigView(Display &d, ViewChangeCallback ccb, void *change_user_dat
             "Network Settings",
             "Select something to configure",
             network_bd, NUM_NET_BUTTONS,
-            Menu::O_Vert),
+            Menu::O_Vert,
+            TFT_WHITE, TFT_BLACK, TITLE_FONT, 2),
     m_screencal_dialog(
             d,
             Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT),
@@ -79,7 +80,7 @@ void ConfigView::menu_callback(const char *label, bool pressed)
     Serial.print(" ");
     Serial.print(pressed?"pressed":"released");
     Serial.print(" in state ");
-    Serial.print(m_state);
+    Serial.println(m_state);
 
     if (!pressed)
     {
@@ -113,7 +114,9 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                 {
                     set_state(COS_Network);
                     m_current_dialog = &m_network_config_dialog;
+
                     // this->show();
+                    m_change_cb("SETTINGS", m_change_data);
                 }
                 else if (!strcmp(label, "SCALE calibration"))
                 {
@@ -128,7 +131,8 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                 {
                     set_state(COS_Screen);
                     m_current_dialog = &m_screencal_dialog;
-                    this->show();
+                    m_change_cb("SETTINGS", m_change_data);
+                    // this->show();
                 }
                 else
                 {
@@ -146,7 +150,8 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                     // Reset state to offer
                     set_state(COS_Offer);
                     m_current_dialog = &m_offer_config_dialog;
-                    this->show();
+                    m_change_cb("SETTINGS", m_change_data);
+                    // this->show();
                 }
                 else
                 {
@@ -157,7 +162,8 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                     // Reset state to offer
                     set_state(COS_Offer);
                     m_current_dialog = &m_offer_config_dialog;
-                    this->show();
+                    m_change_cb("SETTINGS", m_change_data);
+                    // this->show();
                 }
                 break;
 
@@ -169,6 +175,7 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                     set_state(COS_Offer);
                     m_current_dialog = &m_offer_config_dialog;
                     // this->show();
+                    m_change_cb("SETTINGS", m_change_data);
                 }
                 else
                 {
@@ -178,6 +185,7 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                     // Reset state to offer
                     set_state(COS_Offer);
                     m_current_dialog = &m_offer_config_dialog;
+                    m_change_cb("SETTINGS", m_change_data);
                     // this->show();
                 }
                 break;
@@ -220,7 +228,6 @@ void ConfigView::loop()
             m_current_dialog->show();
         scheduled = now+CONFIG_UPDATE_INTERVAL;
     }
-
 }
 
 
