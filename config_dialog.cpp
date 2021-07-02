@@ -50,6 +50,13 @@ void ConfigDialog::show(void)
     this->GridDialog::show();
 }
 
+// Returns true when dialog anwsered, false while dialog still running
+void ConfigDialog::loop(void)
+{
+    this->GridDialog::loop();
+    // Serial.println("ConfigDialog::loop()");
+}
+
 // Deal with the buttons that get pressed.
 void ConfigDialog::config_button_callback(const char *label, bool pressed)
 {

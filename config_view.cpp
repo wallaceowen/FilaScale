@@ -40,9 +40,9 @@ ConfigView::ConfigView(Display &d, ViewChangeCallback ccb, void *change_user_dat
     m_offer_config_dialog(
             d,
             Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT)),
-    m_filament_config_dialog(
-            d,
-            Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT)),
+    // m_filament_config_dialog(
+            // d,
+            // Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT)),
     m_network_config_dialog(
             d,
             Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT),
@@ -60,7 +60,7 @@ ConfigView::ConfigView(Display &d, ViewChangeCallback ccb, void *change_user_dat
     m_current_dialog(&m_offer_config_dialog)
 {
     m_offer_config_dialog.set_callback(menu_callback_func, this);
-    m_filament_config_dialog.set_callback(menu_callback_func, this);
+    // m_filament_config_dialog.set_callback(menu_callback_func, this);
     m_network_config_dialog.set_callback(menu_callback_func, this);
     m_screencal_dialog.set_callback(menu_callback_func, this);
 
@@ -78,6 +78,13 @@ void ConfigView::touch_callback(uint16_t x, uint16_t y, bool pressed)
 // being asked to check_touch().
 void ConfigView::menu_callback(const char *label, bool pressed)
 {
+    Serial.print("ConfigView::MenuCallback got ");
+    Serial.print(label);
+    Serial.print(" ");
+    Serial.print(pressed?"pressed":"released");
+    Serial.print(" in state ");
+    Serial.print(m_state);
+
     if (!pressed)
     {
         // Here we check m_state to see what state to switch to,
@@ -99,15 +106,22 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                 }
                 else if (!strcmp(label, "FILAMENT drying"))
                 {
-                    set_state(COS_Filament);
-                    m_current_dialog = &m_filament_config_dialog;
-                    this->show();
+                    // set_state(COS_Filament);
+                    // m_current_dialog = &m_filament_config_dialog;
+                    // this->show();
+
+                    // Reset state to offer
+                    set_state(COS_Offer);
+                    m_current_dialog = &m_offer_config_dialog;
+
+                    // Tell control to go to filament view
+                    m_change_cb("FILAMENT", m_change_data);
                 }
                 else if (!strcmp(label, "NETWORK settings"))
                 {
                     set_state(COS_Network);
                     m_current_dialog = &m_network_config_dialog;
-                    this->show();
+                    // this->show();
                 }
                 else if (!strcmp(label, "SCALE calibration"))
                 {
@@ -122,7 +136,7 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                 {
                     set_state(COS_Screen);
                     m_current_dialog = &m_screencal_dialog;
-                    this->show();
+                    // this->show();
                 }
                 else
                 {
@@ -140,7 +154,7 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                     m_current_dialog = &m_offer_config_dialog;
                     set_state(COS_Offer);
 
-                    this->show();
+                    // this->show();
                 }
                 else
                 {
@@ -149,7 +163,7 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                     // Reset state to offer
                     set_state(COS_Offer);
                     m_current_dialog = &m_offer_config_dialog;
-                    this->show();
+                    // this->show();
                 }
                 break;
 
@@ -160,7 +174,7 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                     // Reset state to offer
                     set_state(COS_Offer);
                     m_current_dialog = &m_offer_config_dialog;
-                    this->show();
+                    // this->show();
                 }
                 else
                 {
@@ -171,7 +185,7 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                     // Reset state to offer
                     set_state(COS_Offer);
                     m_current_dialog = &m_offer_config_dialog;
-                    this->show();
+                    // this->show();
                 }
                 break;
 
@@ -183,7 +197,7 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                     set_state(COS_Offer);
                     m_current_dialog = &m_offer_config_dialog;
 
-                    this->show();
+                    // this->show();
                 }
                 else
                 {
@@ -193,7 +207,7 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                     // Reset state to offer
                     set_state(COS_Offer);
                     m_current_dialog = &m_offer_config_dialog;
-                    this->show();
+                    // this->show();
                 }
                 break;
 

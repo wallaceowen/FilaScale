@@ -110,13 +110,13 @@ void CalibView::menu_callback(const char *label, bool pressed)
             {
                 case CS_Ask:
                     set_state(CS_Zero);
-                    this->show();
+                    // this->show();
                     break;
 
                 case  CS_Zero:
                     m_scale.set_offset();
                     set_state(CS_Gain);
-                    this->show();
+                    // this->show();
                     break;
                 case  CS_Gain:
                     m_scale.set_gain();

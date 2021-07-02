@@ -9,6 +9,7 @@ public:
     ConfigDialog(Display&d, const Rect &rect);
     bool check_touch(uint16_t x, uint16_t y, bool pressed);
     void show(void);
+    void loop(void);
     void set_callback(PressEventCB, void*);
 
 private:

@@ -42,6 +42,7 @@ int TextBox::render_word(char *word, uint16_t &x, uint16_t &y, bool actual)
 {
     auto twidth = m_tft.textWidth(word, m_font);
     int result = 1;
+    if (0)
     {
         static char buff[120];
         sprintf(buff, "@@ if (%hu-%hu+%hu < %hu) kkp y at %hu",
@@ -72,6 +73,7 @@ int TextBox::render_word(char *word, uint16_t &x, uint16_t &y, bool actual)
             result = -1;
     }
 
+    if (0)
     {
         static char buff[120];
         sprintf(buff, "TextBox::render_word \"%s\" pushed x,y to [%hu, %hu, %hu]",
