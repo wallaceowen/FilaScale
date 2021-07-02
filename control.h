@@ -12,6 +12,7 @@
 #include "calib_view.h"
 #include "config_view.h"
 #include "filament_view.h"
+#include "network_view.h"
 
 class Control
 {
@@ -37,6 +38,7 @@ private:
     CalibView *m_scale_calib_view;
     ConfigView *m_config_view;
     FilamentView *m_filament_view;
+    NetworkView *m_network_view;
     View *m_view;
     Protocol &m_protocol;
 };

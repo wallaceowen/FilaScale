@@ -23,14 +23,6 @@
 #define CONF_OFFER_ROWS 5
 #define CONF_OFFER_COLS 2
 
-static ButtonData network_bd[] = {
-    ButtonData("IP", TFT_WHITE, TFT_DARKGREY, CC_DATUM),
-    ButtonData("NETMASK", TFT_WHITE, TFT_DARKGREY, CC_DATUM),
-    ButtonData("GATEWAY", TFT_WHITE, TFT_DARKGREY, CC_DATUM),
-    ButtonData("CANCEL", TFT_WHITE, TFT_RED, CC_DATUM),
-};
-#define NUM_NET_BUTTONS (sizeof(network_bd)/sizeof(network_bd[0]))
-
 // Here is where we configure our filament temperature and humidity thresholds, for each of
 // the types of filament defined
 ConfigView::ConfigView(Display &d, ViewChangeCallback ccb, void *change_user_data) :
@@ -40,14 +32,6 @@ ConfigView::ConfigView(Display &d, ViewChangeCallback ccb, void *change_user_dat
     m_offer_config_dialog(
             d,
             Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT)),
-    m_network_config_dialog(
-            d,
-            Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT),
-            "Network Settings",
-            "Select something to configure",
-            network_bd, NUM_NET_BUTTONS,
-            Menu::O_Vert,
-            TFT_WHITE, TFT_BLACK, TITLE_FONT, 2),
     m_screencal_dialog(
             d,
             Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT),
@@ -58,7 +42,6 @@ ConfigView::ConfigView(Display &d, ViewChangeCallback ccb, void *change_user_dat
     m_current_dialog(&m_offer_config_dialog)
 {
     m_offer_config_dialog.set_callback(menu_callback_func, this);
-    m_network_config_dialog.set_callback(menu_callback_func, this);
     m_screencal_dialog.set_callback(menu_callback_func, this);
 
     // Clear the display
@@ -112,11 +95,9 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                 }
                 else if (!strcmp(label, "NETWORK settings"))
                 {
-                    set_state(COS_Network);
-                    m_current_dialog = &m_network_config_dialog;
-
-                    // this->show();
-                    m_change_cb("SETTINGS", m_change_data);
+                    set_state(COS_Offer);
+                    m_current_dialog = &m_offer_config_dialog;
+                    m_change_cb("NETWORK", m_change_data);
                 }
                 else if (!strcmp(label, "SCALE calibration"))
                 {

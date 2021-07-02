@@ -51,8 +51,6 @@ private:
     Display        &m_display;
     ConfigState     m_state;
     ConfigDialog    m_offer_config_dialog;
-    // FilamentDialog  m_filament_config_dialog;
-    MenuDialog      m_network_config_dialog;
     MenuDialog      m_screencal_dialog;
     Dialog         *m_current_dialog;
 };

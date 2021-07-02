@@ -43,7 +43,7 @@ private:
     // static void filament_dialog_callback_func(const char *label, bool pressed, void *user_data);
     // void filament_dialog_callback(const char *label, bool pressed);
 
-    void draw_filament();
+    // void draw_filament();
 
     Display         &m_display;
     FilamentState    m_state;
@@ -51,7 +51,7 @@ private:
     FilamentDialog   m_filament_dialog;
     FilAdjustDialog  m_filadjust_dialog;
     Dialog          *m_current_dialog;
-    const char      *m_current_filament;
+    // const char      *m_current_filament;
 };
 
 #endif

@@ -112,7 +112,7 @@ void FilamentView::menu_callback(const char *label, bool pressed)
 
             // Tell control to go back to state view
             if (m_change_cb)
-                m_change_cb("CANCEL", m_change_data);
+                m_change_cb("SETTINGS", m_change_data);
         }
         else if (!strcmp(label, "OK"))
         {
@@ -142,7 +142,7 @@ void FilamentView::menu_callback(const char *label, bool pressed)
                     set_state(FS_Offer);
                     // Tell control to go back to state view
                     if (m_change_cb)
-                        m_change_cb("DONE", m_change_data);
+                        m_change_cb("STATE", m_change_data);
                     break;
 
                 default:

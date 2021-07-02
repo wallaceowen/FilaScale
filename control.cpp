@@ -6,6 +6,7 @@ static char state_buff[sizeof(StateView)];
 static char config_buff[sizeof(ConfigView)];
 static char calib_buff[sizeof(CalibView)];
 static char filament_buff[sizeof(FilamentView)];
+static char network_buff[sizeof(NetworkView)];
 
 void Control::touch_callback(uint16_t x, uint16_t y, bool pressed)
 {
@@ -35,6 +36,7 @@ Control::Control(Scale &scale, Display &display, BME280_IF &bme280, Protocol &pr
     m_scale_calib_view(new(calib_buff) CalibView(m_display, change_view_func, this, m_scale)),
     m_config_view(new(config_buff) ConfigView(m_display, change_view_func, this)),
     m_filament_view(new(filament_buff) FilamentView(m_display, change_view_func, this)),
+    m_network_view(new(network_buff) NetworkView(m_display, change_view_func, this)),
     m_view(m_state_view),
     m_protocol(protocol)
 {
@@ -67,6 +69,11 @@ void Control::change_view(const char *view_name)
     else if (!strcmp(view_name, "FILAMENT"))
     {
         m_view = m_filament_view;
+        m_mode = M_Show;
+    }
+    else if (!strcmp(view_name, "NETWORK"))
+    {
+        m_view = m_network_view;
         m_mode = M_Show;
     }
 
