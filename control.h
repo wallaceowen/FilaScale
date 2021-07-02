@@ -34,11 +34,13 @@ private:
     Scale &m_scale;
     BME280_IF &m_bme280;
     Display &m_display;
-    StateView *m_state_view;
-    CalibView *m_scale_calib_view;
-    ConfigView *m_config_view;
-    FilamentView *m_filament_view;
-    NetworkView *m_network_view;
+
+    StateView m_state_view;
+    CalibView m_scale_calib_view;
+    ConfigView m_config_view;
+    FilamentView m_filament_view;
+    NetworkView m_network_view;
+
     View *m_view;
     Protocol &m_protocol;
 };
