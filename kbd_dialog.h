@@ -12,7 +12,7 @@ public:
     KbdDialog(Display&d, const Rect &rect, const char *title);
     bool check_touch(uint16_t x, uint16_t y, bool pressed);
     void show(void);
-    const char *get_value(void) const { return value; }
+    const char *get_value(void) const { return m_value; }
     void set_callback(PressEventCB, void*);
 
 private:
@@ -22,8 +22,8 @@ private:
     void make_buttons(void);
 
     PressEventCB m_cb;
-    void *m_user_data;
-    char value[MAX_VAL_LEN];
+    void        *m_user_data;
+    char         m_value[MAX_VAL_LEN];
 };
 
 

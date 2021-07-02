@@ -23,11 +23,11 @@ public:
     }
 
 private:
-    HX711 m_hx711;
-    bool m_report_weight;
-    int32_t m_raw;
-    int32_t m_offset;
-    double m_gain;
+    HX711    m_hx711;
+    bool     m_report_weight;
+    int32_t  m_raw;
+    int32_t  m_offset;
+    double   m_gain;
     Averager m_averager;
 };
 

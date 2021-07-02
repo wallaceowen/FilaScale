@@ -36,7 +36,7 @@ public:
 protected:
 
     Display &m_display;
-    Rect m_rect;
+    Rect     m_rect;
     uint16_t m_val;
 };
 

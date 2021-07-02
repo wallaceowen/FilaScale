@@ -30,9 +30,9 @@ protected:
     // Update the view, whatever that means for the view.  Only called by loop().
     virtual bool update(void) = 0;
 
-    Display &m_display;
+    Display           &m_display;
     ViewChangeCallback m_change_cb;
-    void *m_change_data;
+    void              *m_change_data;
 };
 
 #endif

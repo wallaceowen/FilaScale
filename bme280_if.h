@@ -16,7 +16,7 @@ public:
     float alt(void) const { return m_alt; }
 
 private:
-    bool m_initialized;
+    bool  m_initialized;
     float m_temp;
     float m_humid;
     float m_pres;

@@ -38,15 +38,15 @@ private:
 
     void draw_state(void);
 
-    Display &m_display;
-    Scale &m_scale;
+    Display   &m_display;
+    Scale     &m_scale;
     BME280_IF &m_bme;
-    Menu m_menu;
-    float m_temp;
-    float m_humid;
-    float m_weight;
-    float m_full_weight;
-    uint16_t m_title_height;
+    Menu       m_menu;
+    float      m_temp;
+    float      m_humid;
+    float      m_weight;
+    float      m_full_weight;
+    uint16_t   m_title_height;
 };
 
 #endif

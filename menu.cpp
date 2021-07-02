@@ -23,17 +23,17 @@ Menu::Menu(Display &d,
         const uint16_t num,
         Orient o) :
     m_display(d),
-    num_buttons(num),
+    m_num_buttons(num),
     m_bcb(0),
     m_user_data(0)
 {
-    m_buttons = new BPTR[num_buttons];
+    m_buttons = new BPTR[m_num_buttons];
     TFT_eSPI &tft = d.get_tft();
 
     int widest = widest_button(tft, bdata, num);
 
     // Make the buttons
-    for (int i = 0; i < num_buttons; ++i)
+    for (int i = 0; i < m_num_buttons; ++i)
     {
         uint16_t button_w=0, button_h=0;
         uint16_t button_x=0, button_y=0;
@@ -42,14 +42,14 @@ Menu::Menu(Display &d,
             case O_Vert:
             {
                 button_w = widest;
-                button_h = rect.h/num_buttons;
+                button_h = rect.h/m_num_buttons;
                 button_x = rect.x;
                 button_y = rect.y+button_h*i;
                 break;
             }
             case O_Horiz:
             {
-                button_w = rect.w/num_buttons;
+                button_w = rect.w/m_num_buttons;
                 button_h = rect.h;
                 button_x = rect.x+button_w*i;
                 button_y = rect.y;
@@ -72,13 +72,13 @@ void Menu::set_callback(PressEventCB m, void *user_data)
 
 void Menu::show()
 {
-    for (unsigned i = 0; i < num_buttons; ++i)
+    for (unsigned i = 0; i < m_num_buttons; ++i)
         m_buttons[i]->draw(m_display);
 }
 
 bool Menu::check_touch(uint16_t x, uint16_t y, bool pressed)
 {
-    for (int i = 0; i < num_buttons; ++i)
+    for (int i = 0; i < m_num_buttons; ++i)
     {
         if (m_buttons[i]->within(x, y))
         {

@@ -28,13 +28,13 @@ public:
     void show();
 
 private:
-    TFT_eSPI   &tft;
-    Rect        m_rect;
-    uint16_t    m_rows;
-    uint16_t    m_columns;
-    Button     **buttons;
-    PressEventCB    bcb;
-    void       *user_data;
+    TFT_eSPI    &m_tft;
+    Rect         m_rect;
+    uint16_t     m_rows;
+    uint16_t     m_columns;
+    Button     **m_buttons;
+    PressEventCB m_bcb;
+    void        *m_user_data;
 };
 
 #endif

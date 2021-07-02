@@ -29,9 +29,11 @@ public:
     void draw(Display &d);
     void draw(TFT_eSPI&);
     void set_label(const char *txt);
+
 private:
+
     LabelData m_labeldata;
-    Rect m_rect;
+    Rect      m_rect;
 };
 
 #endif

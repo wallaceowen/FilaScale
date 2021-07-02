@@ -53,7 +53,7 @@ KbdDialog::KbdDialog(Display &d, const Rect &rect, const char *title) :
     m_user_data(0)
 {
     // Clear the value
-    memset(value, 0, sizeof(value));
+    memset(m_value, 0, sizeof(m_value));
 
     // TFT_eSPI &tft = m_display.get_tft();
 
@@ -84,7 +84,7 @@ void KbdDialog::draw_value()
 
     tft.setTextColor(VALUE_COLOR_FG, VALUE_COLOR_BG);
     char buffer[40];
-    sprintf(buffer, "%s   ", value);
+    sprintf(buffer, "%s   ", m_value);
     tft.drawString(buffer, m_rect.x+value_offset, m_rect.y+VALUE_MARGIN_Y, VALUE_FONT);
 
     // Draw the value frame
@@ -104,7 +104,7 @@ void KbdDialog::show(void)
     this->GridDialog::show();
 
     // Clear the value
-    memset(value, 0, sizeof(value));
+    memset(m_value, 0, sizeof(m_value));
 
     // Draw the value frame
     uint16_t value_offset = (m_rect.w/KBD_COLS)*3;
@@ -115,16 +115,16 @@ void KbdDialog::kbd_button_callback(const char *label, bool pressed)
 {
     if ((isdigit(*label) || *label == '.') && !pressed)
     {
-        strcat(value, label);
+        strcat(m_value, label);
         draw_value();
         delay(200);
     }
     else if (!strcmp(label, "BS") && !pressed)
     {
-        unsigned len = strlen(value);
+        unsigned len = strlen(m_value);
         if (len)
         {
-            value[len-1] = '\0';
+            m_value[len-1] = '\0';
             draw_value();
             delay(200);
         }

@@ -49,7 +49,6 @@ private:
     NetworkDialog    m_network_dialog;
     NetAdjustDialog  m_netadjust_dialog;
     Dialog          *m_current_dialog;
-    // const char      *m_param_name;
 };
 
 #endif

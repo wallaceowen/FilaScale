@@ -35,7 +35,6 @@ public:
     Display(void);
     void loop(void);
     bool add_callback(const CallbackData&);
-    // TFT_eSPI& get_tft(void);
     TFT_eSPI& get_tft(void) { return display_tft; }
     void calibrate(void);
     void set_calibration(uint16_t params[5]);
@@ -45,9 +44,9 @@ private:
     bool check_touch(void);
     unsigned num_cb(void) const { return m_callback_count; }
 
-    bool m_touch_state;
+    bool         m_touch_state;
     CallbackData m_callbacks[MAX_CALLBACKS];
-    unsigned m_callback_count;
+    unsigned     m_callback_count;
 };
 
 #endif

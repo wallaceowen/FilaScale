@@ -28,7 +28,7 @@ public:
     uint16_t button_y(void) const { return m_prompt.last_y(); }
 
 protected:
-    Display &m_display;
+    Display     &m_display;
     const Rect   m_rect;
     const char  *m_title;
     TextBox      m_prompt;

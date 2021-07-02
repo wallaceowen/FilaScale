@@ -30,11 +30,11 @@ public:
     void set_callback(PressEventCB m, void *user_data);
 
 private:
-    Display    &m_display;
-    uint16_t    num_buttons;
-    PressEventCB    m_bcb;
-    void       *m_user_data;
-    Button    **m_buttons;
+    Display     &m_display;
+    uint16_t     m_num_buttons;
+    PressEventCB m_bcb;
+    void        *m_user_data;
+    Button     **m_buttons;
 };
 
 #endif

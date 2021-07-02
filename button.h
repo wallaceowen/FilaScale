@@ -30,17 +30,17 @@ public:
     bool within(uint16_t x, uint16_t y);
 
     // Get the label
-    const char *label(void) const { return b_d.label; }
+    const char *label(void) const { return m_b_d.label; }
 
     // Set the label
-    void label(const char *l) { b_d.label = l; }
+    void label(const char *l) { m_b_d.label = l; }
 
     // Get the datum
-    uint16_t datum(void) const { return b_d.datum; }
+    uint16_t datum(void) const { return m_b_d.datum; }
 
 private:
-    ButtonData b_d;
-    Rect rect;
+    ButtonData m_b_d;
+    Rect m_rect;
 };
 
 typedef Button *BPTR;

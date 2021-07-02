@@ -12,7 +12,7 @@ ButtonData::ButtonData(const char *l, uint16_t pfg, uint16_t pbg, uint16_t txt_d
     : label(l), fg(pfg), bg(pbg), datum(txt_datum) { }
 
 Button::Button(const ButtonData &d, const Rect &r)
-    : b_d(d), rect(r) { }
+    : m_b_d(d), m_rect(r) { }
 
 void Button::draw(Display &d)
 {
@@ -22,28 +22,28 @@ void Button::draw(Display &d)
 
 void Button::draw(TFT_eSPI &tft)
 {
-    tft.fillRoundRect(rect.x, rect.y, rect.w, rect.h, rect.h/2, b_d.bg);
-    tft.setTextColor(b_d.fg, b_d.bg);
+    tft.fillRoundRect(m_rect.x, m_rect.y, m_rect.w, m_rect.h, m_rect.h/2, m_b_d.bg);
+    tft.setTextColor(m_b_d.fg, m_b_d.bg);
     int16_t label_x =  0;
     int16_t label_y =  0;
-    if (b_d.datum == CC_DATUM)
+    if (m_b_d.datum == CC_DATUM)
     {
-        label_x = rect.x+(rect.w/2);
-        label_y = rect.y+(rect.h/2);
+        label_x = m_rect.x+(m_rect.w/2);
+        label_y = m_rect.y+(m_rect.h/2);
     }
     else
     {
-        label_x = rect.x;
-        label_y = rect.y;
+        label_x = m_rect.x;
+        label_y = m_rect.y;
     }
-    tft.setTextDatum(b_d.datum);
-    tft.drawString(b_d.label, label_x, label_y, BUTTON_FONT);
+    tft.setTextDatum(m_b_d.datum);
+    tft.drawString(m_b_d.label, label_x, label_y, BUTTON_FONT);
 }
 
 bool Button::within(uint16_t x, uint16_t y)
 {
-    return ((x > rect.x)
-            && (x < rect.x+rect.w)
-            && (y > rect.y)
-            && (y < rect.y+rect.h));
+    return ((x > m_rect.x)
+            && (x < m_rect.x+m_rect.w)
+            && (y > m_rect.y)
+            && (y < m_rect.y+m_rect.h));
 }

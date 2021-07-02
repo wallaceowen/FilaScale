@@ -14,7 +14,6 @@ public:
             const Rect &rect,
             const char *title,
             const char *prompt,
-            // uint16_t fg, bg, title_font, prompt_font,
 
             const ButtonData *button_data,
             unsigned num_buttons,
@@ -26,7 +25,6 @@ public:
             uint16_t prompt_font = PROMPT_FONT
             );
 
-    // Returns true when dialog anwsered, false while dialog still running
     void loop(void);
     void show(void);
     void set_callback(PressEventCB, void*);
@@ -34,6 +32,7 @@ public:
 
 private:
     Rect computeMenuRect(const Rect &in, uint16_t num_buttons, Menu::Orient o);
+
     Menu         m_menu;
 };
 

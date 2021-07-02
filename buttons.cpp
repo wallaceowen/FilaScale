@@ -4,12 +4,12 @@
 
 static char buttons_debug_buff[75];
 Buttons::Buttons(Display &d, const Rect &w, uint16_t r, uint16_t c) :
-    tft(d.get_tft()),
+    m_tft(d.get_tft()),
     m_rect(w),
     m_rows(r),
     m_columns(c),
-    bcb(0),
-    user_data(0)
+    m_bcb(0),
+    m_user_data(0)
 {
     if ((m_rows == 0) || (m_columns == 0))
     {
@@ -18,14 +18,14 @@ Buttons::Buttons(Display &d, const Rect &w, uint16_t r, uint16_t c) :
         Serial.print(" or columns (");
         Serial.print(m_columns);
         Serial.println(")");
-        buttons = 0;
+        m_buttons = 0;
     }
     else
     {
         unsigned count = m_rows*m_columns;
-        buttons = new BPTR[count];
-        if (buttons)
-            memset(buttons, 0, (count)*sizeof(BPTR));
+        m_buttons = new BPTR[count];
+        if (m_buttons)
+            memset(m_buttons, 0, (count)*sizeof(BPTR));
         else
             Serial.println("CANT ALLOC BUTTONS");
     }
@@ -44,7 +44,7 @@ bool Buttons::add_button(const ButtonData &bd, uint16_t row, uint16_t col)
 
         Button *b = new Button(bd, Rect(x, y, width, height));
 
-        buttons[(row*m_columns)+col] = b;
+        m_buttons[(row*m_columns)+col] = b;
 
         return true;
     }
@@ -67,7 +67,7 @@ bool Buttons::add_button(
 
         Button *b = new Button(bd, Rect(x, y, width, height));
 
-        buttons[(row*m_columns)+col] = b;
+        m_buttons[(row*m_columns)+col] = b;
 
         return true;
     }
@@ -95,7 +95,7 @@ bool Buttons::add_grid_button(
 
         Button *b = new Button(bd, Rect(x, y, cellwidth, cellheight));
 
-        buttons[(row*m_columns)+col] = b;
+        m_buttons[(row*m_columns)+col] = b;
 
         return true;
     }
@@ -111,7 +111,7 @@ bool Buttons::add_grid_button(
 Button *Buttons::get_button(uint16_t row, uint16_t col)
 {
     if (row < m_rows && col < m_columns)
-        return buttons[row*m_columns+col];
+        return m_buttons[row*m_columns+col];
     return 0;
 }
 
@@ -120,10 +120,10 @@ void Buttons::show()
     for (unsigned column = 0; column < m_columns; ++column)
         for (unsigned row = 0; row < m_rows; ++row)
         {
-            Button *b = buttons[row*m_columns+column];
+            Button *b = m_buttons[row*m_columns+column];
             if (b)
             {
-                b->draw(tft);
+                b->draw(m_tft);
             }
         }
 }
@@ -131,8 +131,8 @@ void Buttons::show()
 
 void Buttons::set_callback(PressEventCB m, void *u)
 {
-    bcb = m;
-    user_data = u;
+    m_bcb = m;
+    m_user_data = u;
 }
 
 bool Buttons::check_touch(uint16_t x, uint16_t y, bool pressed)
@@ -140,12 +140,12 @@ bool Buttons::check_touch(uint16_t x, uint16_t y, bool pressed)
     for (unsigned column = 0; column < m_columns; ++column)
         for (unsigned row = 0; row < m_rows; ++row)
         {
-            Button *b = buttons[row*m_columns+column];
+            Button *b = m_buttons[row*m_columns+column];
             if (b)
                 if (b->within(x, y))
                 {
-                    if (bcb)
-                        bcb(b->label(), pressed, user_data);
+                    if (m_bcb)
+                        m_bcb(b->label(), pressed, m_user_data);
                     return true;
                 }
         }
