@@ -69,6 +69,17 @@ void Control::change_view(const char *view_name)
         m_view = m_filament_view;
         m_mode = M_Show;
     }
+
+    // This is the other button on the state screen.
+    // I don't know what 'stop' means.  So it just basically
+    // gets ignored for now, just some code here that catches
+    // it and sets the view to the state view, which is the
+    // only view with the stop button.  So duh.
+    else if (!strcmp(view_name, "STOP"))
+    {
+        m_view = m_state_view;
+        m_mode = M_Show;
+    }
     // Default to state view
     else
     {

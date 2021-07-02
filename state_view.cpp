@@ -5,27 +5,18 @@
 #include "state_view.h"
 #include "bar.h"
 
-#define SCREEN_W 320
 #define SCREEN_H 240
 
 #define UPDATE_INTERVAL 500
 #define VALUES_X 148
-#define LABELS_X VALUES_X
 #define VALUES_Y 50
 #define LABELS_Y VALUES_Y+16
 
 #define MENU_X 0
 #define MENU_HEIGHT 36
 #define MENU_Y SCREEN_H-MENU_HEIGHT
-// #define MENU_WIDTH 80
-
-// #define R_MARGIN 10
-
-// #define BORDER_THICKNESS 5
-// #define MARGIN BORDER_THICKNESS+2
 #define PLOT_THICKNESS 10
 #define VALUES_GAP 10
-
 #define VALUE_BG TFT_BLACK
 #define VALUE_FG TFT_WHITE
 
@@ -57,7 +48,6 @@ StateView::StateView(Display &d,
     m_menu.set_callback(state_menu_callback_func, this);
 
     TFT_eSPI &tft = m_display.get_tft();
-    // tft.setTextSize(2);
     m_title_height = tft.fontHeight(TITLE_FONT);
 }
 
@@ -87,12 +77,12 @@ void StateView::show()
     tft.fillRect(0, 0, tft.width(), tft.height(), SCREEN_BG);
 
     // Show the view name and our field names
-    // tft.setTextSize(2);
+    tft.setTextSize(2);
     tft.setTextColor(TFT_WHITE);
     tft.setTextDatum(TC_DATUM);
     tft.drawString("FilaScale", tft.width()/2, 0, TITLE_FONT);
 
-    // tft.setTextSize(1);
+    tft.setTextSize(1);
     tft.setTextColor(TFT_YELLOW, TFT_BLACK);
     tft.setTextDatum(CR_DATUM);
     int field_spacing = (MENU_Y-VALUES_Y)/NUM_STATE_LINES;

@@ -121,19 +121,22 @@ void FilamentView::menu_callback(const char *label, bool pressed)
             {
                 case FS_Introduce:
                     set_state(FS_Offer);
-                    this->show();
+                    // this->show();
+                    m_change_cb("FILAMENT", m_change_data);
                     break;
 
                 // No-op - stay in this state
                 case FS_Offer:
                     set_state(FS_Adjust);
-                    this->show();
+                    // this->show();
+                    m_change_cb("FILAMENT", m_change_data);
                     break;
 
                 // OK on FS_Adjust means user is done adjusting
                 case  FS_Adjust:
                     set_state(FS_Offer);
-                    this->show();
+                    // this->show();
+                    m_change_cb("FILAMENT", m_change_data);
                     break;
 
                     set_state(FS_Offer);
@@ -154,13 +157,15 @@ void FilamentView::menu_callback(const char *label, bool pressed)
                 set_state(FS_Adjust);
                 m_filadjust_dialog.set_filament_name(label);
             }
-            this->show();
+            // this->show();
+            m_change_cb("FILAMENT", m_change_data);
         }
 
         else if (m_state == FS_Adjust)
         {
             m_filadjust_dialog.set_filament_name(label);
-            this->show();
+            // this->show();
+            m_change_cb("FILAMENT", m_change_data);
         }
     }
 }

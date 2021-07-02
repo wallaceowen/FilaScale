@@ -101,7 +101,7 @@ void CalibView::menu_callback(const char *label, bool pressed)
 
             // Tell control to go back to state view
             if (m_change_cb)
-                m_change_cb(label, m_change_data);
+                m_change_cb("SETTINGS", m_change_data);
         }
         else if (!strcmp(label, "OK"))
         {
@@ -110,13 +110,13 @@ void CalibView::menu_callback(const char *label, bool pressed)
             {
                 case CS_Ask:
                     set_state(CS_Zero);
-                    // this->show();
+                    m_change_cb("SCALE", m_change_data);
                     break;
 
                 case  CS_Zero:
                     m_scale.set_offset();
                     set_state(CS_Gain);
-                    // this->show();
+                    m_change_cb("SCALE", m_change_data);
                     break;
                 case  CS_Gain:
                     m_scale.set_gain();
@@ -124,7 +124,7 @@ void CalibView::menu_callback(const char *label, bool pressed)
                     set_state(CS_Ask);
                     // Tell control to go back to state view
                     if (m_change_cb)
-                        m_change_cb("DONE", m_change_data);
+                        m_change_cb("STATE", m_change_data);
                     break;
 
                 default:
