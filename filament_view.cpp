@@ -32,7 +32,6 @@ static const char *state_names[] = { "FS_Introduce", "FS_Offer", "FS_Adjust", "F
 FilamentView::FilamentView(Display &d, ViewChangeCallback ccb, void *change_user_data) :
     View(d, ccb, change_user_data),
     m_display(d),
-    // m_state(FS_Introduce),
     m_state(FS_Introduce),
     m_filintro_dialog(d,
             Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT),
@@ -44,15 +43,14 @@ FilamentView::FilamentView(Display &d, ViewChangeCallback ccb, void *change_user
     m_filament_dialog(
             d,
             Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT)),
-    // m_filadjust_dialog(
-            // d,
-            // Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT), "PLA"),
+    m_filadjust_dialog(
+            d,
+            Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT), "PLA"),
     m_current_dialog(&m_filintro_dialog)
-    // m_current_dialog(&m_filament_dialog)
 {
     m_filintro_dialog.set_callback(menu_callback_func, this);
     m_filament_dialog.set_callback(menu_callback_func, this);
-    // m_filadjust_dialog.set_callback(menu_callback_func, this);
+    m_filadjust_dialog.set_callback(menu_callback_func, this);
 }
 
 void FilamentView::touch_callback(uint16_t x, uint16_t y, bool pressed)
@@ -72,13 +70,24 @@ void FilamentView::set_state(FilamentState cs)
             m_current_dialog = &m_filament_dialog;
             break;
         case FS_Adjust:
-            // m_current_dialog = &m_filadjust_dialog;
+            m_current_dialog = &m_filadjust_dialog;
            break;
         default:
             m_state = FS_Introduce;
             m_current_dialog = &m_filintro_dialog;
            break;
     }
+}
+
+const char *filanames[] = { "PLA", "ABS", "ASA", "PETG", "Nylon", "TPU" };
+#define NUM_FILANAMES (sizeof(filanames)/sizeof(filanames[0]))
+
+bool valid_fila_name(const char *label)
+{
+    for (unsigned i = 0; i < NUM_FILANAMES; ++i)
+        if (!strcmp(label, filanames[i]))
+            return true;
+    return false;
 }
 
 void FilamentView::menu_callback(const char *label, bool pressed)
@@ -126,9 +135,6 @@ void FilamentView::menu_callback(const char *label, bool pressed)
                     this->show();
                     break;
 
-                // case  FS_Gain:
-                    // m_scale.set_gain();
-
                     set_state(FS_Offer);
                     // Tell control to go back to state view
                     if (m_change_cb)
@@ -139,10 +145,21 @@ void FilamentView::menu_callback(const char *label, bool pressed)
                     break;
             }
         }
+
+        else if (m_state == FS_Offer)
+        {
+            if (valid_fila_name(label))
+            {
+                set_state(FS_Adjust);
+                m_filadjust_dialog.set_filament_name(label);
+            }
+            this->show();
+        }
+
         else if (m_state == FS_Adjust)
         {
-            // m_filadjust_dialog.set_filament_name(label);
-            // this->show();
+            m_filadjust_dialog.set_filament_name(label);
+            this->show();
         }
     }
 }

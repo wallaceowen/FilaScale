@@ -49,7 +49,7 @@ private:
     FilamentState    m_state;
     MenuDialog       m_filintro_dialog;
     FilamentDialog   m_filament_dialog;
-    // FilAdjustDialog  m_filadjust_dialog;
+    FilAdjustDialog  m_filadjust_dialog;
     Dialog          *m_current_dialog;
     const char      *m_current_filament;
 };

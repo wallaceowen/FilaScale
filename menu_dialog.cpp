@@ -70,6 +70,6 @@ void MenuDialog::show(void)
 // Returns true when dialog anwsered, false while dialog still running
 void MenuDialog::loop(void)
 {
-    Serial.println("MenuDialog::loop()");
+    // Serial.println("MenuDialog::loop()");
 }
 
