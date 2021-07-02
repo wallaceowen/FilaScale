@@ -27,7 +27,7 @@ public:
 
     bool update();
 
-    void touch_callback(uint16_t x, uint16_t y, bool pressed);
+    bool touch_callback(uint16_t x, uint16_t y, bool pressed);
 
 protected:
 

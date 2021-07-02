@@ -24,8 +24,8 @@ public:
 
 private:
 
-    static void touch_callback_func(Display *d, void *user, uint16_t x, uint16_t y, bool pressed);
-    void touch_callback(uint16_t x, uint16_t y, bool touched);
+    static bool touch_callback_func(Display *d, void *user, uint16_t x, uint16_t y, bool pressed);
+    bool touch_callback(uint16_t x, uint16_t y, bool touched);
 
     static void change_view_func(const char *view_name, void *user);
     void change_view(const char *view_name);

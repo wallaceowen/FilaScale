@@ -141,9 +141,9 @@ void StateView::loop()
     }
 }
 
-void StateView::touch_callback(uint16_t x, uint16_t y, bool pressed)
+bool StateView::touch_callback(uint16_t x, uint16_t y, bool pressed)
 {
-    m_menu.check_touch(x, y, pressed);
+    return m_menu.check_touch(x, y, pressed);
 }
 
 // Update the state on the screen with the latest values we hold.

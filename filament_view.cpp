@@ -54,9 +54,9 @@ FilamentView::FilamentView(Display &d, ViewChangeCallback ccb, void *change_user
     m_filadjust_dialog.set_callback(menu_callback_func, this);
 }
 
-void FilamentView::touch_callback(uint16_t x, uint16_t y, bool pressed)
+bool FilamentView::touch_callback(uint16_t x, uint16_t y, bool pressed)
 {
-    m_current_dialog->check_touch(x, y, pressed);
+    return m_current_dialog->check_touch(x, y, pressed);
 }
 
 void FilamentView::set_state(FilamentState cs)

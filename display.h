@@ -13,7 +13,7 @@ class Display;
 
 #define SCREEN_BG TFT_BLACK
 
-typedef void (*TouchCallbackFunc)(
+typedef bool (*TouchCallbackFunc)(
         Display *d,
         void *user,
         uint16_t x,
@@ -27,20 +27,23 @@ struct CallbackData
 };
 
 
+extern TFT_eSPI display_tft;
+
 class Display
 {
 public:
     Display(void);
     void loop(void);
     bool add_callback(const CallbackData&);
-    unsigned num_cb(void) { return m_callback_count; }
-    TFT_eSPI& get_tft(void);
+    // TFT_eSPI& get_tft(void);
+    TFT_eSPI& get_tft(void) { return display_tft; }
     void calibrate(void);
     void set_calibration(uint16_t params[5]);
 
 private:
-    void invoke_callbacks(uint16_t x, uint16_t y, bool pressed);
-    void check_touch(void);
+    bool invoke_callbacks(uint16_t x, uint16_t y, bool pressed);
+    bool check_touch(void);
+    unsigned num_cb(void) const { return m_callback_count; }
 
     bool m_touch_state;
     CallbackData m_callbacks[MAX_CALLBACKS];

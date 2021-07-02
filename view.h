@@ -23,7 +23,7 @@ public:
     virtual void show(void) = 0;
 
     // Handle the user touching your view
-    virtual void touch_callback(uint16_t x, uint16_t y, bool pressed) = 0;
+    virtual bool touch_callback(uint16_t x, uint16_t y, bool pressed) = 0;
 
 protected:
 

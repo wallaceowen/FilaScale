@@ -2,7 +2,7 @@
 
 #include "control.h"
 
-void Control::touch_callback(uint16_t x, uint16_t y, bool pressed)
+bool Control::touch_callback(uint16_t x, uint16_t y, bool pressed)
 {
 #ifdef DEBUG_TOUCH
     if (pressed)
@@ -12,13 +12,15 @@ void Control::touch_callback(uint16_t x, uint16_t y, bool pressed)
 #endif
 
     if (m_view)
-        m_view->touch_callback(x, y, pressed);
+        return m_view->touch_callback(x, y, pressed);
+    else
+        return false;
 }
 
-void Control::touch_callback_func(Display *d, void *user, uint16_t x, uint16_t y, bool pressed)
+bool Control::touch_callback_func(Display *d, void *user, uint16_t x, uint16_t y, bool pressed)
 {
     Control *control = reinterpret_cast<Control*>(user);
-    control->touch_callback(x, y, pressed);
+    return control->touch_callback(x, y, pressed);
 }
 
 Control::Control(Scale &scale, Display &display, BME280_IF &bme280, Protocol &protocol) :

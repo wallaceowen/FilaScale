@@ -1,0 +1,796 @@
+diff --git a/calib_view.cpp b/calib_view.cpp
+index e8c4350..9fbe34d 100644
+--- a/calib_view.cpp
++++ b/calib_view.cpp
+@@ -110,13 +110,13 @@ void CalibView::menu_callback(const char *label, bool pressed)
+             {
+                 case CS_Ask:
+                     set_state(CS_Zero);
+-                    // this->show();
++                    this->show();
+                     break;
+ 
+                 case  CS_Zero:
+                     m_scale.set_offset();
+                     set_state(CS_Gain);
+-                    // this->show();
++                    this->show();
+                     break;
+                 case  CS_Gain:
+                     m_scale.set_gain();
+diff --git a/config_dialog.cpp b/config_dialog.cpp
+index 5130703..951008c 100644
+--- a/config_dialog.cpp
++++ b/config_dialog.cpp
+@@ -67,10 +67,3 @@ void ConfigDialog::config_button_callback_func(const char *label, bool pressed,
+     ConfigDialog *cd = reinterpret_cast<ConfigDialog*>(user_data);
+     cd->config_button_callback(label, pressed);
+ }
+-// Returns true when dialog anwsered, false while dialog still running
+-void ConfigDialog::loop(void)
+-{
+-    this->GridDialog::loop();
+-    // Serial.println("ConfigDialog::loop()");
+-}
+-
+diff --git a/config_dialog.h b/config_dialog.h
+index c981983..6c6a8b4 100644
+--- a/config_dialog.h
++++ b/config_dialog.h
+@@ -9,7 +9,6 @@ public:
+     ConfigDialog(Display&d, const Rect &rect);
+     bool check_touch(uint16_t x, uint16_t y, bool pressed);
+     void show(void);
+-    void loop(void);
+     void set_callback(PressEventCB, void*);
+ 
+ private:
+diff --git a/config_view.cpp b/config_view.cpp
+index 950074f..d5dfe0d 100644
+--- a/config_view.cpp
++++ b/config_view.cpp
+@@ -40,9 +40,9 @@ ConfigView::ConfigView(Display &d, ViewChangeCallback ccb, void *change_user_dat
+     m_offer_config_dialog(
+             d,
+             Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT)),
+-    // m_filament_config_dialog(
+-            // d,
+-            // Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT)),
++    m_filament_config_dialog(
++            d,
++            Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT)),
+     m_network_config_dialog(
+             d,
+             Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT),
+@@ -60,7 +60,7 @@ ConfigView::ConfigView(Display &d, ViewChangeCallback ccb, void *change_user_dat
+     m_current_dialog(&m_offer_config_dialog)
+ {
+     m_offer_config_dialog.set_callback(menu_callback_func, this);
+-    // m_filament_config_dialog.set_callback(menu_callback_func, this);
++    m_filament_config_dialog.set_callback(menu_callback_func, this);
+     m_network_config_dialog.set_callback(menu_callback_func, this);
+     m_screencal_dialog.set_callback(menu_callback_func, this);
+ 
+@@ -99,10 +99,9 @@ void ConfigView::menu_callback(const char *label, bool pressed)
+                 }
+                 else if (!strcmp(label, "FILAMENT drying"))
+                 {
+-                    // set_state(COS_Filament);
+-                    // m_current_dialog = &m_filament_config_dialog;
+-                    // this->show();
+-                    m_change_cb("FILAMENT", m_change_data);
++                    set_state(COS_Filament);
++                    m_current_dialog = &m_filament_config_dialog;
++                    this->show();
+                 }
+                 else if (!strcmp(label, "NETWORK settings"))
+                 {
+@@ -237,7 +236,6 @@ void ConfigView::loop()
+         scheduled = now+CONFIG_UPDATE_INTERVAL;
+     }
+ 
+-    m_current_dialog->loop();
+ }
+ 
+ 
+diff --git a/config_view.h b/config_view.h
+index 8680805..8db284a 100644
+--- a/config_view.h
++++ b/config_view.h
+@@ -51,7 +51,7 @@ private:
+     Display        &m_display;
+     ConfigState     m_state;
+     ConfigDialog    m_offer_config_dialog;
+-    // FilamentDialog  m_filament_config_dialog;
++    FilamentDialog  m_filament_config_dialog;
+     MenuDialog      m_network_config_dialog;
+     MenuDialog      m_screencal_dialog;
+     Dialog         *m_current_dialog;
+diff --git a/control.cpp b/control.cpp
+index 4264281..fecbcf9 100644
+--- a/control.cpp
++++ b/control.cpp
+@@ -3,9 +3,8 @@
+ #include "control.h"
+ 
+ static char state_buff[sizeof(StateView)];
+-static char calib_buff[sizeof(CalibView)];
+ static char config_buff[sizeof(ConfigView)];
+-static char filament_buff[sizeof(FilamentView)];
++static char calib_buff[sizeof(CalibView)];
+ 
+ void Control::touch_callback(uint16_t x, uint16_t y, bool pressed)
+ {
+@@ -34,7 +33,7 @@ Control::Control(Scale &scale, Display &display, BME280_IF &bme280, Protocol &pr
+     m_state_view(new(state_buff) StateView(m_display, change_view_func, this, m_scale, m_bme280)),
+     m_scale_calib_view(new(calib_buff) CalibView(m_display, change_view_func, this, m_scale)),
+     m_config_view(new(config_buff) ConfigView(m_display, change_view_func, this)),
+-    // m_filament_view(new(filament_buff) FilamentView(m_display, change_view_func, this)), m_view(m_state_view),
++    m_view(m_state_view),
+     m_protocol(protocol)
+ {
+     CallbackData cd;
+@@ -45,8 +44,8 @@ Control::Control(Scale &scale, Display &display, BME280_IF &bme280, Protocol &pr
+ 
+ void Control::change_view(const char *view_name)
+ {
+-    Serial.print("Control::change_view got ");
+-    Serial.println(view_name);
++    // Serial.print("Control::change_view got ");
++    // Serial.println(view_name);
+ 
+     if (!strcmp(view_name, "SETTINGS"))
+     {
+@@ -63,12 +62,6 @@ void Control::change_view(const char *view_name)
+         m_view = m_scale_calib_view;
+         m_mode = M_Show;
+     }
+-    // else if (!strcmp(view_name, "FILAMENT"))
+-    // {
+-        // m_view = m_filament_view;
+-        // m_mode = M_Show;
+-    // }
+-
+     // Default to state view
+     else
+     {
+@@ -79,7 +72,7 @@ void Control::change_view(const char *view_name)
+     TFT_eSPI &tft = m_display.get_tft();
+     tft.fillScreen(TFT_BLACK);
+ 
+-    // m_view->show();
++    m_view->show();
+ 
+     // Serial.println("Control::change_view back from show()");
+ }
+@@ -90,9 +83,6 @@ void Control::change_view_func(const char *viewname, void *user)
+ 
+ void Control::loop()
+ {
+-    Serial.print("Control::loop(): mode = ");
+-    Serial.println(m_mode);
+-
+     switch(m_mode)
+     {
+         case M_Show:
+diff --git a/control.h b/control.h
+index 0a38702..be14e5e 100644
+--- a/control.h
++++ b/control.h
+@@ -11,7 +11,6 @@
+ #include "state_view.h"
+ #include "calib_view.h"
+ #include "config_view.h"
+-#include "filament_view.h"
+ 
+ class Control
+ {
+@@ -36,7 +35,6 @@ private:
+     StateView *m_state_view;
+     CalibView *m_scale_calib_view;
+     ConfigView *m_config_view;
+-    // FilamentView *m_filament_view;
+ 
+     View *m_view;
+     Protocol &m_protocol;
+diff --git a/dialog.cpp b/dialog.cpp
+index b8bb541..b214582 100644
+--- a/dialog.cpp
++++ b/dialog.cpp
+@@ -2,14 +2,15 @@
+ #include "dialog.h"
+ #include "config.h"
+ 
+-// #define ADJ_OFFSET 50
++#define TEXT_DAILOG_FONT 4
++
++#define ADJ_OFFSET 50
+ 
+ Dialog::Dialog(
+         Display &d,
+         const Rect &rect,
+         const char *title,
+         const char *prompt_txt,
+-        uint16_t font,
+         uint16_t fg,
+         uint16_t bg) :
+     m_display(d),
+@@ -22,7 +23,7 @@ Dialog::Dialog(
+                 m_rect.y+PROMPT_Y,
+                 rect.w-PROMPT_X,
+                 rect.h-PROMPT_Y),
+-            font,
++            TEXT_DAILOG_FONT,
+             prompt_txt, fg, bg),
+     m_fg(fg),
+     m_bg(bg)
+@@ -45,6 +46,14 @@ void Dialog::show(void)
+     {
+         tft.setTextColor(m_fg, m_bg);
+         tft.setTextDatum(TC_DATUM);
++
++        // {
++            // static char buff[90];
++            // sprintf(buff, "TITLE %s at %hu, %hu",
++                // m_title, m_rect.x+(m_rect.w/2), m_rect.y);
++            // Serial.println(buff);
++        // }
++
+         tft.drawString(m_title, m_rect.x+(m_rect.w/2), m_rect.y, TITLE_FONT);
+         tft.setTextDatum(TL_DATUM);
+     }
+diff --git a/dialog.h b/dialog.h
+index 1f2732c..a10c57c 100644
+--- a/dialog.h
++++ b/dialog.h
+@@ -6,8 +6,6 @@
+ #include "rect.h"
+ #include "text_box.h"
+ 
+-#define TEXT_DAILOG_FONT 4
+-
+ class Dialog
+ {
+ public:
+@@ -16,7 +14,6 @@ public:
+             const Rect &rect,
+             const char *title,
+             const char *prompt,
+-            const uint16_t font = TEXT_DAILOG_FONT,
+             uint16_t fg = TFT_WHITE,
+             uint16_t bg = TFT_BLACK);
+ 
+diff --git a/filadjust_dialog.cpp b/filadjust_dialog.cpp
+deleted file mode 100644
+index 87d3694..0000000
+--- a/filadjust_dialog.cpp
++++ /dev/null
+@@ -1,44 +0,0 @@
+-
+-#include "filadjust_dialog.h"
+-#include "stock_buttons.h"
+-
+-#define ADJ_OFFSET 50
+-
+-// #define TITLE_MARGIN 50
+-
+-FilAdjustDialog::FilAdjustDialog(Display &d, const Rect &rect, const char *filament) :
+-    MenuDialog(d,
+-            rect,
+-            "FILAMENT SETTINGS",
+-            "Adjust filament thresholds",
+-            ok_cancel_bd, NUM_OK_BUTTONS)
+-{
+-    set_filament_name(filament);
+-}
+-
+-void FilAdjustDialog::set_filament_name(const char *filament)
+-{
+-    memset(m_filament, 0, MAX_FILAMENT_NAMELEN);
+-    if (strlen(filament) < MAX_FILAMENT_NAMELEN)
+-        strcpy(m_filament, filament);
+-    else
+-        Serial.println("filament name too long for filadjust dialog");
+-}
+-
+-void FilAdjustDialog::show(void)
+-{
+-    this->MenuDialog::show();
+-
+-    // FilamentData *fildata = fetch_fildata(m_filament);
+-
+-    // Let's stretch and put up multiple Adjusts?
+-    // render_filata(fildata);
+-}
+-
+-// Returns true when dialog anwsered, false while dialog still running
+-void FilAdjustDialog::loop(void)
+-{
+-    this->MenuDialog::loop();
+-    // Serial.println("FilAdjustDialog::loop()");
+-}
+-
+diff --git a/filadjust_dialog.h b/filadjust_dialog.h
+deleted file mode 100644
+index a6cba5c..0000000
+--- a/filadjust_dialog.h
++++ /dev/null
+@@ -1,35 +0,0 @@
+-#ifndef __filadjust_dialog_h
+-#define __filadjust_dialog_h
+-
+-#include "dialog.h"
+-#include "menu_dialog.h"
+-#include "buttons.h"
+-
+-#define MAX_FILAMENT_NAMELEN 32
+-
+-class FilAdjustDialog: public MenuDialog
+-{
+-public:
+-    // enum DialogState { DS_Init, DS_Prompting, DS_Answered };
+-
+-    // MenuDialog(Display&,
+-            // const Rect &rect,
+-            // const char *title,
+-            // const char *prompt,
+-            // const ButtonData *button_data,
+-            // unsigned num_buttons,
+-            // Menu::Orient o=Menu::O_Horiz);
+-
+-    FilAdjustDialog(Display&, const Rect &rect, const char *filament);
+-
+-    // Returns true when dialog anwsered, false while dialog still running
+-    void loop(void);
+-    void show(void);
+-
+-    void set_filament_name(const char *label);
+-
+-private:
+-    char m_filament[MAX_FILAMENT_NAMELEN];
+-};
+-
+-#endif
+diff --git a/filament_dialog.cpp b/filament_dialog.cpp
+index f5ff888..1637d73 100644
+--- a/filament_dialog.cpp
++++ b/filament_dialog.cpp
+@@ -34,16 +34,35 @@ void FilamentDialog::add_buttons()
+ 
+ bool FilamentDialog::check_touch(uint16_t x, uint16_t y, bool pressed)
+ {
+-    return this->GridDialog::check_touch(x, y, pressed)?1:0;
++    bool button_touched = this->GridDialog::check_touch(x, y, pressed)?1:0;
++#ifdef FILAMENTS_HAS_ADJUSTER
++    bool slider_touched = m_adj.check_touch(x, y, pressed)?1:0;
++    if (slider_touched && pressed)
++    {
++        bool result = false;
++        TFT_eSPI &tft = m_display.get_tft();
++        do
++        {
++            uint16_t x, y;
++            result = tft.getTouch(&x, &y);
++            if (result)
++                m_adj.check_touch(x, y, pressed);
++        } while (result);
++    }
++#endif
++    return button_touched
++#ifdef FILAMENTS_HAS_ADJUSTER
++        || slider_touched
++#endif
++        ;
+ }
+ 
+ void FilamentDialog::show(void)
+ {
+     this->GridDialog::show();
+-}
+ 
+-void FilamentDialog::loop(void)
+-{
+-    this->GridDialog::loop();
+-    // Serial.println("Filament_dialog::loop()");
++#ifdef FILAMENTS_HAS_ADJUSTER
++    // Show the adjuster
++    m_adj.show();
++#endif
+ }
+diff --git a/filament_dialog.h b/filament_dialog.h
+index 4ada7c3..4a7df07 100644
+--- a/filament_dialog.h
++++ b/filament_dialog.h
+@@ -11,7 +11,6 @@ public:
+     FilamentDialog(Display&d, const Rect &rect);
+     bool check_touch(uint16_t x, uint16_t y, bool pressed);
+     void show(void);
+-    void loop(void);
+ private:
+     void add_buttons(void);
+ };
+diff --git a/filament_view.cpp b/filament_view.cpp
+deleted file mode 100644
+index d0fe61b..0000000
+--- a/filament_view.cpp
++++ /dev/null
+@@ -1,191 +0,0 @@
+-// filament_view.cpp
+-
+-#include <stdio.h>
+-
+-#include "stock_buttons.h"
+-#include "filament_view.h"
+-
+-#ifdef SMALL_DIALOG
+-#define DLG_X 18
+-#define DLG_Y 18
+-#define DLG_HEIGHT 160
+-#define DLG_WIDTH 270
+-#else
+-#define DLG_X 0
+-#define DLG_Y 0
+-#define DLG_HEIGHT 240
+-#define DLG_WIDTH 320
+-#endif
+-
+-#define BORDER_THICKNESS 5
+-#define MARGIN BORDER_THICKNESS+2
+-
+-#define SCREEN_BG TFT_BLACK
+-#define FILINTRO_FONT 4
+-
+-static const char filament_intro_title[] = "Filament Settings";
+-static const char filament_intro_body[] = "These dialogs are used for setting filament drying temperature, "
+-"humidity alert levels, and defining new filament types.";
+-
+-static const char *state_names[] = { "FS_Introduce", "FS_Offer", "FS_Adjust", "FS_NUmStates" };
+-
+-FilamentView::FilamentView(Display &d, ViewChangeCallback ccb, void *change_user_data) :
+-    View(d, ccb, change_user_data),
+-    m_display(d),
+-    m_state(FS_Introduce),
+-    m_filintro_dialog(d, 
+-            Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT),
+-            filament_intro_title,
+-            filament_intro_body,
+-            ok_cancel_bd, NUM_OK_BUTTONS,
+-            Menu::O_Horiz, FILINTRO_FONT),
+-    m_filament_dialog(
+-            d,
+-            Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT)),
+-    m_filadjust_dialog(
+-            d,
+-            Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT), "PLA"),
+-    m_current_dialog(&m_filintro_dialog)
+-{
+-    m_filintro_dialog.set_callback(menu_callback_func, this);
+-    m_filament_dialog.set_callback(menu_callback_func, this);
+-    m_filadjust_dialog.set_callback(menu_callback_func, this);
+-}
+-
+-void FilamentView::touch_callback(uint16_t x, uint16_t y, bool pressed)
+-{
+-    m_current_dialog->check_touch(x, y, pressed);
+-}
+-
+-void FilamentView::set_state(FilamentState cs)
+-{
+-    m_state = cs;
+-    switch (m_state)
+-    {
+-        case FS_Introduce:
+-            m_current_dialog = &m_filintro_dialog;
+-            break;
+-        case FS_Offer:
+-            m_current_dialog = &m_filament_dialog;
+-            break;
+-        case FS_Adjust:
+-            m_current_dialog = &m_filadjust_dialog;
+-           break;
+-        default:
+-            m_state = FS_Offer;
+-            m_current_dialog = &m_filintro_dialog;
+-           break;
+-    }
+-}
+-
+-void FilamentView::menu_callback(const char *label, bool pressed)
+-{
+-    Serial.print("Filament view menu callback got \"");
+-    Serial.print(label),
+-    Serial.print("\" state = ");
+-    Serial.print(state_names[m_state]),
+-    Serial.print(" pressed = ");
+-    Serial.println(pressed?"PRESSED":"RELEASED");
+-
+-
+-    // Here we check m_state to see what state to switch to,
+-    // then deal with switching to that state
+-    if (!pressed)
+-    {
+-        if (!strcmp(label, "CANCEL"))
+-        {
+-            // Reset state to Ask
+-            set_state(FS_Introduce);
+-
+-            // Tell control to go back to state view
+-            if (m_change_cb)
+-                m_change_cb("CANCEL", m_change_data);
+-        }
+-        else if (!strcmp(label, "OK"))
+-        {
+-            // Switch to the next state
+-            switch(m_state)
+-            {
+-                case FS_Introduce:
+-                    set_state(FS_Offer);
+-                    this->show();
+-                    break;
+-
+-                // No-op - stay in this state
+-                case FS_Offer:
+-                    set_state(FS_Adjust);
+-                    this->show();
+-                    break;
+-
+-                // OK on FS_Adjust means user is done adjusting
+-                case  FS_Adjust:
+-                    set_state(FS_Offer);
+-                    this->show();
+-                    break;
+-
+-                // case  FS_Gain:
+-                    // m_scale.set_gain();
+-
+-                    set_state(FS_Offer);
+-                    // Tell control to go back to state view
+-                    if (m_change_cb)
+-                        m_change_cb("DONE", m_change_data);
+-                    break;
+-
+-                default:
+-                    break;
+-            }
+-        }
+-        else if (m_state == FS_Adjust)
+-        {
+-            m_filadjust_dialog.set_filament_name(label);
+-            this->show();
+-        }
+-    }
+-}
+-
+-void FilamentView::menu_callback_func(const char *label, bool pressed, void *user_data)
+-{
+-    FilamentView *cv = reinterpret_cast<FilamentView*>(user_data);
+-    cv->menu_callback(label, pressed);
+-}
+-
+-
+-// Show the static part of the view
+-void FilamentView::show()
+-{
+-    Serial.println("FilamentView::show()");
+-
+-    // Show the initial dialog
+-    m_current_dialog->show();
+-}
+-
+-bool FilamentView::update()
+-{
+-    Serial.println("FilamentView::update()");
+-    return true;
+-}
+-
+-void FilamentView::loop()
+-{
+-    // Serial.println("FilamentView::loop()");
+-#ifdef FILAMENTVIEW_LOOP_HAS_A_JOB
+-    TFT_eSPI &tft = m_display.get_tft();
+-    switch(m_state)
+-    {
+-        case FS_Init:
+-            break;
+-
+-        case FS_Offer:
+-            break;
+-
+-        case  FS_Adjust:
+-            break;
+-
+-        default:
+-            break;
+-    }
+-#endif
+-    m_current_dialog->loop();
+-}
+-
+diff --git a/filament_view.h b/filament_view.h
+deleted file mode 100644
+index f2eb05c..0000000
+--- a/filament_view.h
++++ /dev/null
+@@ -1,58 +0,0 @@
+-// scale_filament_view.h
+-
+-#ifndef __filament_view_h
+-#define __filament_view_h
+-
+-#include "display.h"
+-#include "button.h"
+-#include "view.h"
+-#include "filament_dialog.h"
+-#include "filadjust_dialog.h"
+-#include "menu_dialog.h"
+-
+-#define NUM_BUTTONS 3
+-
+-
+-class FilamentView: public View
+-{
+-public:
+-    enum FilamentState { FS_Introduce, FS_Offer, FS_Adjust, FS_NUmStates };
+-
+-    FilamentView(Display&, ViewChangeCallback ccb, void *change_user_data);
+-    // Call this often.  It drives the state machine.
+-    void loop();
+-
+-    // Render the static parts of the view when commanded by Control objhect
+-    // (or after displaying a simple dialog, which doesn't do save-unders)
+-    void show();
+-
+-    void touch_callback(uint16_t x, uint16_t y, bool pressed);
+-
+-    // To handle menu choices in dialogs we show
+-    void menu_callback(const char *label, bool pressed);
+-    static void menu_callback_func(const char *label, bool pressed, void *user_data);
+-
+-protected:
+-
+-    bool update();
+-
+-private:
+-
+-    void set_state(FilamentState cs);
+-
+-    // static void filament_dialog_callback_func(const char *label, bool pressed, void *user_data);
+-    // void filament_dialog_callback(const char *label, bool pressed);
+-
+-    void draw_filament();
+-
+-    Display         &m_display;
+-    FilamentState    m_state;
+-    MenuDialog       m_filintro_dialog;
+-    FilamentDialog   m_filament_dialog;
+-    FilAdjustDialog  m_filadjust_dialog;
+-    Dialog          *m_current_dialog;
+-    const char      *m_current_filament;
+-};
+-
+-#endif
+-
+diff --git a/grid_dialog.cpp b/grid_dialog.cpp
+index 6f8d878..f92d090 100644
+--- a/grid_dialog.cpp
++++ b/grid_dialog.cpp
+@@ -37,8 +37,7 @@ void GridDialog::show(void)
+ // Returns true when dialog anwsered, false while dialog still running
+ void GridDialog::loop(void)
+ {
+-    Serial.print(m_title);
+-    // Serial.println(" GridDialog::loop()");
++    Serial.println("GridDialog::loop()");
+ }
+ 
+ bool GridDialog::add_grid_button(const GridButtonData &gbd)
+diff --git a/kbd_dialog.cpp b/kbd_dialog.cpp
+index f7f0661..5ec5a03 100644
+--- a/kbd_dialog.cpp
++++ b/kbd_dialog.cpp
+@@ -147,11 +147,3 @@ void KbdDialog::kbd_button_callback_func(const char *label, bool pressed, void *
+     KbdDialog *kd = reinterpret_cast<KbdDialog*>(user_data);
+     kd->kbd_button_callback(label, pressed);
+ }
+-
+-// Returns true when dialog anwsered, false while dialog still running
+-void KbdDialog::loop(void)
+-{
+-    this->GridDialog::loop();
+-    Serial.println("KbdDialog::loop()");
+-}
+-
+diff --git a/kbd_dialog.h b/kbd_dialog.h
+index 52c73f9..c9ce18d 100644
+--- a/kbd_dialog.h
++++ b/kbd_dialog.h
+@@ -12,7 +12,6 @@ public:
+     KbdDialog(Display&d, const Rect &rect, const char *title);
+     bool check_touch(uint16_t x, uint16_t y, bool pressed);
+     void show(void);
+-    void loop(void);
+     const char *get_value(void) const { return value; }
+     void set_callback(PressEventCB, void*);
+ 
+diff --git a/menu_dialog.cpp b/menu_dialog.cpp
+index 2902ca4..c1e32c0 100644
+--- a/menu_dialog.cpp
++++ b/menu_dialog.cpp
+@@ -10,13 +10,12 @@ MenuDialog::MenuDialog(Display &d,
+         const char *title,
+         const char *prompt,
+         const ButtonData *button_data,
+-        unsigned num_buttons, Menu::Orient o,
+-        uint16_t prompt_font) :
+-    Dialog(d, rect, title, prompt, prompt_font),
++        unsigned num_buttons, Menu::Orient o) :
++    Dialog(d, rect, title, prompt),
+     m_menu(d, computeMenuRect(rect, num_buttons, o),
+             button_data, num_buttons, o)
+ {
+-    // this->show();
++    this->show();
+ }
+ 
+ Rect MenuDialog::computeMenuRect(const Rect &in, uint16_t num_buttons, Menu::Orient o)
+diff --git a/menu_dialog.h b/menu_dialog.h
+index 7c2a149..b490598 100644
+--- a/menu_dialog.h
++++ b/menu_dialog.h
+@@ -5,8 +5,6 @@
+ #include "menu.h"
+ #include "buttons.h"
+ 
+-#define MENU_DAILOG_FONT 4
+-
+ class MenuDialog: public Dialog
+ {
+ public:
+@@ -18,12 +16,11 @@ public:
+             const char *prompt,
+             const ButtonData *button_data,
+             unsigned num_buttons,
+-            Menu::Orient o=Menu::O_Horiz,
+-            uint16_t prompt_font = MENU_DAILOG_FONT);
++            Menu::Orient o=Menu::O_Horiz);
+ 
+     // Returns true when dialog anwsered, false while dialog still running
+-    virtual void loop(void);
+-    virtual void show(void);
++    void loop(void);
++    void show(void);
+     void set_callback(PressEventCB, void*);
+     bool check_touch(uint16_t x, uint16_t y, bool pressed);
+ 
+diff --git a/text_box.cpp b/text_box.cpp
+index dda9888..835a9eb 100644
+--- a/text_box.cpp
++++ b/text_box.cpp
+@@ -22,7 +22,7 @@ TextBox::TextBox(Display &d, const Rect &r, uint16_t font, const char *txt, uint
+         m_buffer[TB_BUFFER_SIZE-1] = 0;
+     }
+ 
+-    // reserve_space_for_text();
++    reserve_space_for_text();
+ }
+ 
+ char *terminate_next(char *txt)
+@@ -141,7 +141,7 @@ void TextBox::render_text()
+ 
+ void TextBox::show(void)
+ {
+-    // render_text();
++    render_text();
+ }
+ 
+ void TextBox::reserve_space_for_text()
+@@ -199,6 +199,9 @@ void TextBox::reserve_space_for_text()
+     }
+ 
+     m_last_x = x-m_rect.x;
++    // m_last_y = y-m_rect.y + m_tft.fontHeight(m_font);
++    // m_last_y = y-m_rect.y;
++    // m_last_y = y;
+     m_last_y = y + m_tft.fontHeight(m_font);
+ 
+     Serial.print("after reserve, last x, y = ");

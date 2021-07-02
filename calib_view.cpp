@@ -54,9 +54,9 @@ CalibView::CalibView(Display &d, ViewChangeCallback ccb, void *change_user_data,
     m_gain_dialog.set_callback(menu_callback_func, this);
 }
 
-void CalibView::touch_callback(uint16_t x, uint16_t y, bool pressed)
+bool CalibView::touch_callback(uint16_t x, uint16_t y, bool pressed)
 {
-    m_current_dialog->check_touch(x, y, pressed);
+    return m_current_dialog->check_touch(x, y, pressed);
 }
 
 void CalibView::set_state(CalibState cs)

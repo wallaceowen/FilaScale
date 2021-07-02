@@ -49,9 +49,9 @@ ConfigView::ConfigView(Display &d, ViewChangeCallback ccb, void *change_user_dat
     tft.fillRect(0, 0, tft.width(), tft.height(), SCREEN_BG);
 }
 
-void ConfigView::touch_callback(uint16_t x, uint16_t y, bool pressed)
+bool ConfigView::touch_callback(uint16_t x, uint16_t y, bool pressed)
 {
-    m_current_dialog->check_touch(x, y, pressed);
+    return m_current_dialog->check_touch(x, y, pressed);
 }
 
 // Callback that is invoked as a side-effect of either the Menu or Buttons class

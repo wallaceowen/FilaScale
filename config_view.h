@@ -33,7 +33,7 @@ public:
     // (or after displaying a simple dialog, which doesn't do save-unders)
     void show();
 
-    void touch_callback(uint16_t x, uint16_t y, bool pressed);
+    bool touch_callback(uint16_t x, uint16_t y, bool pressed);
 
     // To handle menu choices in dialogs we show
     void menu_callback(const char *label, bool pressed);

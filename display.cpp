@@ -4,7 +4,7 @@
 
 #include "display.h"
 
-static TFT_eSPI tft = TFT_eSPI();       // Invoke custom library
+TFT_eSPI display_tft = TFT_eSPI();       // Invoke custom library
 
 uint16_t cal_params[5] = { 310, 3269, 417, 3233, 7 };
 
@@ -13,17 +13,17 @@ Display::Display(void) :
     m_callback_count(0)
 {
     memset(m_callbacks, 0, sizeof(m_callbacks));
-    tft.init();
-    tft.setRotation(ROTATION);
-    tft.fillScreen(TFT_BLACK);
-    tft.setTouch(cal_params);
-    tft.setTextPadding(5);
+    display_tft.init();
+    display_tft.setRotation(ROTATION);
+    display_tft.fillScreen(TFT_BLACK);
+    display_tft.setTouch(cal_params);
+    display_tft.setTextPadding(5);
 }
 
-TFT_eSPI& Display::get_tft(void)
-{
-    return tft;
-}
+// TFT_eSPI& Display::get_tft(void)
+// {
+    // return display_tft;
+// }
 
 void set_calibration(uint16_t params[5])
 {
@@ -42,6 +42,7 @@ bool Display::add_callback(const CallbackData &cd)
     return false;
 }
 
+#ifdef BOZO
 void Display::invoke_callbacks(uint16_t x, uint16_t y, bool pressed)
 {
     static unsigned iteration = 0;
@@ -54,14 +55,28 @@ void Display::invoke_callbacks(uint16_t x, uint16_t y, bool pressed)
     else
         iteration = 0;
 }
+#else
+bool Display::invoke_callbacks(uint16_t x, uint16_t y, bool pressed)
+{
+    // if (m_callback_count > iteration)
+    for (uint16_t iteration = 0; iteration < m_callback_count; ++iteration)
+    {
+        CallbackData &cd = m_callbacks[iteration];
+        bool result = cd.cb(this, cd.user, x, y, pressed);
+        if (result)
+            return true;
+    }
+    return false;
+}
+#endif
 
 void Display::calibrate(void)
 {
     uint16_t touch_parameters[5];
 
-    tft.fillRect(0, 0, tft.width(), tft.height(), TFT_BLACK);
+    display_tft.fillRect(0, 0, display_tft.width(), display_tft.height(), TFT_BLACK);
 
-    tft.calibrateTouch(touch_parameters, TFT_YELLOW, TFT_MAROON, 20);
+    display_tft.calibrateTouch(touch_parameters, TFT_YELLOW, TFT_MAROON, 20);
 
     Serial.print("touch parameters: ");
     for (size_t i = 0; i < 5; ++i)
@@ -73,27 +88,28 @@ void Display::calibrate(void)
     Serial.println("");
 }
 
-void Display::check_touch(void)
+bool Display::check_touch(void)
 {
     uint16_t x, y;
-    auto result = tft.getTouch(&x, &y);
+    auto result = display_tft.getTouch(&x, &y);
     if (result)
     {
         if (!m_touch_state)
         {
             m_touch_state=true;
-            invoke_callbacks(x, y, m_touch_state);
+            return invoke_callbacks(x, y, m_touch_state);
         }
     }
     else
     {
         if (m_touch_state)
         {
-            tft.last_touched(x, y);
+            display_tft.last_touched(x, y);
             m_touch_state = false;
-            invoke_callbacks(x, y, m_touch_state);
+            return invoke_callbacks(x, y, m_touch_state);
         }
     }
+    return false;
 }
 
 void Display::loop(void)
