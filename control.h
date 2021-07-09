@@ -6,7 +6,7 @@
 
 #include "bme280_if.h"
 #include "display.h"
-#include "protocol.h"
+#include "tag_protocol.h"
 #include "scale.h"
 #include "state_view.h"
 #include "calib_view.h"
@@ -19,7 +19,7 @@ class Control
 public:
 
     enum Mode { M_Show, M_Update, M_Error };
-    Control(Scale &scale, Display &display, BME280_IF &bme280, Protocol &protocol);
+    Control(Scale &scale, Display &display, BME280_IF &bme280, TagProtocol &tag_protocol);
     void loop();
 
 private:
@@ -42,7 +42,7 @@ private:
     NetworkView m_network_view;
 
     View *m_view;
-    Protocol &m_protocol;
+    TagProtocol &m_tag_protocol;
 };
 
 #endif

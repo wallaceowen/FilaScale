@@ -23,7 +23,7 @@ bool Control::touch_callback_func(Display *d, void *user, uint16_t x, uint16_t y
     return control->touch_callback(x, y, pressed);
 }
 
-Control::Control(Scale &scale, Display &display, BME280_IF &bme280, Protocol &protocol) :
+Control::Control(Scale &scale, Display &display, BME280_IF &bme280, TagProtocol &tag_protocol) :
     m_mode(M_Show),
     m_scale(scale),
     m_bme280(bme280),
@@ -36,7 +36,7 @@ Control::Control(Scale &scale, Display &display, BME280_IF &bme280, Protocol &pr
     m_network_view(NetworkView(m_display, change_view_func, this)),
 
     m_view(&m_state_view),
-    m_protocol(protocol)
+    m_tag_protocol(tag_protocol)
 {
     CallbackData cd;
     cd.cb = touch_callback_func;

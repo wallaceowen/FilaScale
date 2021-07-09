@@ -1,6 +1,6 @@
 #include "bme280_if.h"
 #include "display.h"
-#include "protocol.h"
+#include "tag_protocol.h"
 #include "scale.h"
 #include "control.h"
 
@@ -15,15 +15,21 @@ char scale_buff[sizeof(Scale)];
 BME280_IF *bme280 = 0;
 char bme_buff[sizeof(BME280_IF)];
 
-Protocol *protocol = 0;
-char proto_buff[sizeof(Protocol)];
+TagProtocol *tag_protocol = 0;
+char tagproto_buff[sizeof(TagProtocol)];
 
 Control *control = 0;
 char control_buff[sizeof(Control)];
 
+void tag_handler(char tag[MSGLEN], void *user_data)
+{
+    Serial.print("Got tag :");
+    Serial.println(tag);
+}
+
 void setup(void)
 {
-    Serial.begin(115200);
+    Serial.begin(9600);
     while(!Serial) {} // Wait for serial port
 
     display = new(display_buff) Display();
@@ -35,10 +41,10 @@ void setup(void)
     bme280 = new(bme_buff) BME280_IF();
     // Serial.println("bme made");
 
-    protocol = new(proto_buff) Protocol(*scale);
+    tag_protocol = new(tagproto_buff) TagProtocol(tag_handler, 0);
     // Serial.println("proto made");
 
-    control = new(control_buff) Control(*scale, *display, *bme280, *protocol);
+    control = new(control_buff) Control(*scale, *display, *bme280, *tag_protocol);
     // Serial.println("control made");
 
     delay(500);
@@ -54,7 +60,7 @@ void loop()
     // Serial.println("after scale loop");
     bme280->loop();
     // Serial.println("after bme loop");
-    protocol->loop();
+    tag_protocol->loop();
     // Serial.println("after proto loop");
     control->loop();
     // Serial.println("after control loop");
