@@ -3,8 +3,6 @@
 
 #define TEXT_DAILOG_FONT 4
 
-#define ADJ_OFFSET 50
-
 Dialog::Dialog(
         Display &d,
         const Rect &rect,
@@ -33,9 +31,6 @@ Dialog::Dialog(
 
 void Dialog::show(void)
 {
-    // Serial.print(m_title);
-    // Serial.println(" Dialog::show( )");
-
     TFT_eSPI &tft = m_display.get_tft();
     tft.fillRect(
             m_rect.x, m_rect.y,
@@ -47,12 +42,6 @@ void Dialog::show(void)
     {
         tft.setTextColor(m_fg, m_bg);
         tft.setTextDatum(TC_DATUM);
-        // {
-            // static char buff[90];
-            // sprintf(buff, "TITLE %s at %hu, %hu",
-                // m_title, m_rect.x+(m_rect.w/2), m_rect.y);
-            // Serial.println(buff);
-        // }
         tft.drawString(m_title, m_rect.x+(m_rect.w/2), m_rect.y, m_title_font);
         tft.setTextDatum(TL_DATUM);
     }
