@@ -7,7 +7,8 @@
 
 class Display;
 
-#define ROTATION 3
+// #define ROTATION 3
+#define ROTATION 1
 
 #define MAX_CALLBACKS 10
 

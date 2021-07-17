@@ -19,7 +19,7 @@ MenuDialog::MenuDialog(Display &d,
     Dialog(d, rect, title, prompt, fg, bg, title_font, prompt_font),
     m_menu(d, computeMenuRect(rect, num_buttons, o), button_data, num_buttons, o)
 {
-    this->show();
+    // this->show();
 }
 
 Rect MenuDialog::computeMenuRect(const Rect &in, uint16_t num_buttons, Menu::Orient o)

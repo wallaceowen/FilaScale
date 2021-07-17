@@ -25,7 +25,7 @@ Display::Display(void) :
     // return display_tft;
 // }
 
-void set_calibration(uint16_t params[5])
+void Display::set_calibration(uint16_t params[5])
 {
     for (unsigned i = 0; i < 5; ++i)
         cal_params[i] = params[i];
@@ -94,6 +94,12 @@ bool Display::check_touch(void)
     auto result = display_tft.getTouch(&x, &y);
     if (result)
     {
+#ifdef DEBUG_TOUCH
+        Serial.print("touched at ");
+        Serial.print(x);
+        Serial.print(",");
+        Serial.println(y);
+#endif
         if (!m_touch_state)
         {
             m_touch_state=true;

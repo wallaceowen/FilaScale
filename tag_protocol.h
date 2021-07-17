@@ -32,7 +32,7 @@ public:
     void loop();
 
 private:
-    bool read_tag(void);
+    TagRxState read_tag(void);
 
     TagReceivedCB m_cb;
     void         *m_user_data;

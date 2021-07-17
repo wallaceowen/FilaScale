@@ -33,8 +33,9 @@ Dialog::Dialog(
 
 void Dialog::show(void)
 {
-    Serial.print(m_title);
-    Serial.println(" Dialog::show( )");
+    // Serial.print(m_title);
+    // Serial.println(" Dialog::show( )");
+
     TFT_eSPI &tft = m_display.get_tft();
     tft.fillRect(
             m_rect.x, m_rect.y,

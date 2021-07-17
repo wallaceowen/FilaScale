@@ -5,6 +5,10 @@
 
 #include "tag_protocol.h"
 
+#define INTER_MSG_DELAY 1000
+
+#define TAG_PORT Serial2
+
 // If there's nothing waiting, return 0
 // if there's something to read
 //    If there's no room in buffer, return -1
@@ -12,13 +16,12 @@
 //       If the char added is a \n, reset offset and
 //       return 1, else return 0 (we're still adding
 //       bytes to the buffer)
-bool TagProtocol::read_tag()
+TagProtocol::TagRxState TagProtocol::read_tag()
 {
-    int tag_received = false;
-
-    if (Serial.available())
+    static auto until = millis();
+    // if (TAG_PORT.available())
     {
-        int val = Serial.read();
+        // int val = TAG_PORT.read();
 
         switch(m_state)
         {
@@ -31,35 +34,53 @@ bool TagProtocol::read_tag()
             }
             case TS_WaitSTX:
             {
-                if (val == STX)
+                if (TAG_PORT.available())
                 {
-                    m_state = TS_GotSTX;
+                    int val = TAG_PORT.read();
+
+                    if (val == STX)
+                    {
+                        m_state = TS_GotSTX;
+                    }
                 }
 
                 break;
             }
             case TS_GotSTX:
             {
-                if (val == ETX)
+                if (TAG_PORT.available())
                 {
-                    m_buffer[m_offset++] = '\0';
-                    m_cb(m_buffer, m_user_data);
-                    tag_received = true;
-                    m_state = TS_GotETX;
-                }
-                else
-                {
-                    m_buffer[m_offset++] = val;
-                    if (m_offset >= MSGLEN)
+                    int val = TAG_PORT.read();
+                    if (val == ETX)
                     {
-                        m_state = TS_Init;
+                        m_buffer[m_offset++] = '\0';
+                        if (m_cb)
+                            m_cb(m_buffer, m_user_data);
+                        until = millis()+INTER_MSG_DELAY;
+                        m_state = TS_GotETX;
+                    }
+                    else
+                    {
+                        m_buffer[m_offset++] = val;
+                        if (m_offset >= MSGLEN)
+                        {
+                            m_state = TS_Init;
+                        }
                     }
                 }
                 break;
             }
             case TS_GotETX:
             {
-                m_state = TS_Init;
+                if (until < millis())
+                {
+                    m_state = TS_Init;
+                }
+                else
+                {
+                    while (TAG_PORT.available())
+                        TAG_PORT.read();
+                }
                 break;
             }
             default:
@@ -70,11 +91,13 @@ bool TagProtocol::read_tag()
         }
     }
 
-    return tag_received;
+    return m_state;
 }
 
 void TagProtocol::loop(void)
 {
+    // TagProtocol::TagRxState state = read_tag();
+    // Serial.println((int)state);
     read_tag();
 }
 

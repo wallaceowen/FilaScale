@@ -202,9 +202,9 @@ void TextBox::reserve_space_for_text()
     // m_last_y = y;
     m_last_y = y + m_tft.fontHeight(m_font);
 
-    Serial.print("after reserve, last x, y = ");
-    Serial.print(m_last_x);
-    Serial.print(",");
-    Serial.println(m_last_y);
+    // Serial.print("after reserve, last x, y = ");
+    // Serial.print(m_last_x);
+    // Serial.print(",");
+    // Serial.println(m_last_y);
 }
 

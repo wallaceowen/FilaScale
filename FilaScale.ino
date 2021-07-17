@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "bme280_if.h"
 #include "display.h"
 #include "tag_protocol.h"
@@ -23,13 +25,19 @@ char control_buff[sizeof(Control)];
 
 void tag_handler(char tag[MSGLEN], void *user_data)
 {
-    Serial.print("Got tag :");
-    Serial.println(tag);
+    // tag looks like "010A0786AF25"
+    // Serial.print("Got tag: ");
+    // Serial.println(tag);
+    // Serial.println("\r\n\r\n");
+
+    uint64_t tag_val = strtoull(tag, 0, 16);
+    std::cout << "RECEIVED TAG " << std::hex << tag_val << std::endl;
 }
 
 void setup(void)
 {
-    Serial.begin(9600);
+    Serial.begin(115200);
+    Serial2.begin(9600);
     while(!Serial) {} // Wait for serial port
 
     display = new(display_buff) Display();
@@ -48,6 +56,10 @@ void setup(void)
     // Serial.println("control made");
 
     delay(500);
+
+    // display->calibrate();
+    uint16_t dparams[5] = {508, 3292, 648, 2851, 1 };
+    display->set_calibration(dparams);
 }
 
 void loop()
