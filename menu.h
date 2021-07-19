@@ -25,6 +25,8 @@ public:
             // Vertial or horizontal
             Orient o);
 
+    ~Menu(void);
+
     void show();
     bool check_touch(uint16_t x, uint16_t y, bool pressed);
     void set_callback(PressEventCB m, void *user_data);

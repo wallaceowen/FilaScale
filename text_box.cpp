@@ -9,20 +9,19 @@ TextBox::TextBox(Display &d, const Rect &r, uint16_t font, const char *txt, uint
     m_max_rows(m_rect.w/m_tft.fontHeight(m_font)),
     m_len(strlen(txt)), m_last_x(0), m_last_y(0),
     m_fg(fg),
-    m_bg(bg)
+    m_bg(bg),
+    m_buffer(new char[m_len+1])
 {
-    memset(m_buffer, 0, TB_BUFFER_SIZE);
-    if (m_len < TB_BUFFER_SIZE)
-    {
-        strcpy(m_buffer, txt);
-    }
-    else
-    {
-        strncpy(m_buffer, txt, TB_BUFFER_SIZE-1);
-        m_buffer[TB_BUFFER_SIZE-1] = 0;
-    }
+    memset(m_buffer, 0, m_len);
+    strcpy(m_buffer, txt);
 
+    // Compute how much height we need
     render_text(false);
+}
+
+TextBox::~TextBox(void)
+{
+    delete [] m_buffer;
 }
 
 char *terminate_next(char *txt)

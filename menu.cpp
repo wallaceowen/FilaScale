@@ -64,6 +64,13 @@ Menu::Menu(Display &d,
     }
 }
 
+Menu::~Menu(void)
+{
+    for (auto i = 0U; i < m_num_buttons; ++i)
+        delete [] m_buttons[i];
+    delete [] m_buttons;
+}
+
 void Menu::set_callback(PressEventCB m, void *user_data)
 {
     m_bcb = m;

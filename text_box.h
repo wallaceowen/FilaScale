@@ -9,7 +9,7 @@
 #include "rect.h"
 #include "point.h"
 
-#define TB_BUFFER_SIZE 500
+// #define TB_BUFFER_SIZE 500
 
 class TextBox
 {
@@ -17,6 +17,7 @@ public:
     // Provide a box into which we can render text.
     // wraps long lines.
     TextBox(Display &d, const Rect &w, uint16_t font, const char *txt, uint16_t fg, uint16_t bg);
+    ~TextBox(void);
 
     // Render it
     void show();
@@ -41,9 +42,10 @@ private:
     uint16_t  m_len;
     uint16_t  m_last_x;
     uint16_t  m_last_y;
-    char      m_buffer[TB_BUFFER_SIZE];
     uint16_t  m_fg;
     uint16_t  m_bg;
+    // char      m_buffer[TB_BUFFER_SIZE];
+    char     *m_buffer;
 };
 
 #endif
