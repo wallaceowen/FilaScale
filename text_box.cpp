@@ -22,7 +22,7 @@ TextBox::TextBox(Display &d, const Rect &r, uint16_t font, const char *txt, uint
         m_buffer[TB_BUFFER_SIZE-1] = 0;
     }
 
-    reserve_space_for_text();
+    render_text(false);
 }
 
 char *terminate_next(char *txt)
@@ -84,13 +84,14 @@ int TextBox::render_word(char *word, uint16_t &x, uint16_t &y, bool actual)
     return result;
 }
 
-void TextBox::render_text()
+void TextBox::render_text(bool actual)
 {
     char *cur = m_buffer;
     auto x = m_rect.x;
     auto y = m_rect.y;
 
-    m_tft.setTextColor(m_fg, m_bg);
+    if (actual)
+        m_tft.setTextColor(m_fg, m_bg);
 
     while (y < (m_rect.y+m_rect.h))
     {
@@ -105,7 +106,7 @@ void TextBox::render_text()
             // 0 if no y change, 1 if y change.
             // (if y changed, we wrapped, so don't
             // need to render the space.)
-            int rw_result = render_word(cur, x, y, true);
+            int rw_result = render_word(cur, x, y, actual);
 
             // If there's no room for it, break out
             if (rw_result == -1)
@@ -131,6 +132,9 @@ void TextBox::render_text()
             break;
     }
 
+    m_last_x = x-m_rect.x;
+    m_last_y = y + m_tft.fontHeight(m_font);
+
     // Serial.print("after render, last x, y = ");
     // Serial.print(m_last_x);
     // Serial.print(",");
@@ -139,72 +143,6 @@ void TextBox::render_text()
 
 void TextBox::show(void)
 {
-    render_text();
-}
-
-void TextBox::reserve_space_for_text()
-{
-    char *cur = m_buffer;
-    auto x = m_rect.x;
-    auto y = m_rect.y;
-
-    while (y < (m_rect.y+m_rect.h))
-    {
-        char *v = 0;
-
-        // If we 
-        if (*cur)
-        {
-            v = terminate_next(cur);
-
-            // Returns with -1 if no room left,
-            // 0 if no y change, 1 if y change.
-            // (if y changed, we wrapped, so don't
-            // need to render the space.)
-            // int rw_result = reserve_space_for_word(cur, x, y);
-            int rw_result = render_word(const_cast<char*>(" "), x, y, false);
-
-            // If there's no room for it, break out
-            if (rw_result == -1)
-                break;
-
-            // If there's more to render, restore the space
-            // char and move our current pointer forward to
-            // the next word; Else break out: no more to render
-            if (v < m_buffer+m_len)
-            {
-                *v = ' ';
-                cur = v+1;
-
-                // if there's room for the following space, send it
-                if (rw_result == 0)
-                {
-                    // rw_result = reserve_space_for_word(const_cast<char*>(" "), x, y);
-                    rw_result = render_word(const_cast<char*>(" "), x, y, false);
-                    if (rw_result == -1)
-                    {
-                        Serial.println("TextBox::reserve_space_for_word returned -1!!!");
-                        break;
-                    }
-                }
-            }
-            else
-                break;
-
-        }
-        else
-            break;
-    }
-
-    m_last_x = x-m_rect.x;
-    // m_last_y = y-m_rect.y + m_tft.fontHeight(m_font);
-    // m_last_y = y-m_rect.y;
-    // m_last_y = y;
-    m_last_y = y + m_tft.fontHeight(m_font);
-
-    // Serial.print("after reserve, last x, y = ");
-    // Serial.print(m_last_x);
-    // Serial.print(",");
-    // Serial.println(m_last_y);
+    render_text(true);
 }
 

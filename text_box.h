@@ -25,18 +25,14 @@ public:
     const char *buffer(void) const { return m_buffer; }
 
     // Get the last position written to
-    Point last_pos(void) const { return Point(m_last_x, m_last_y); }
     uint16_t last_y(void) const { return m_last_y; }
 
 private:
-    // Figure out how much room we need for the text
-    void reserve_space_for_text();
-    // Helper for above
-    int reserve_space_for_word(char *word, uint16_t &x, uint16_t &y);
-
     // Returns -1 if no more room, 1 if we've wrapped and 0 if we haven't
     int render_word(char *word, uint16_t &x, uint16_t &y, bool actual);
-    void render_text();
+
+    // Effectively only computes and sets m_last_x, n_last_y when actual is false.
+    void render_text(bool actual = true);
 
     TFT_eSPI &m_tft;
     Rect      m_rect;
