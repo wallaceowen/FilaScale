@@ -14,6 +14,7 @@ class Buttons
 public:
     // Create a grid structure to hold a 2D array of pointers to buttons
     Buttons(Display &d, const Rect &w, uint16_t r, uint16_t c);
+    ~Buttons(void);
 
     bool add_button(const ButtonData &bd, uint16_t r,  uint16_t c);
     bool add_button(const ButtonData &bd,
@@ -32,6 +33,7 @@ private:
     Rect         m_rect;
     uint16_t     m_rows;
     uint16_t     m_columns;
+    uint16_t     m_num_buttons;
     Button     **m_buttons;
     PressEventCB m_bcb;
     void        *m_user_data;

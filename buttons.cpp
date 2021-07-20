@@ -8,6 +8,7 @@ Buttons::Buttons(Display &d, const Rect &w, uint16_t r, uint16_t c) :
     m_rect(w),
     m_rows(r),
     m_columns(c),
+    m_num_buttons(0),
     m_bcb(0),
     m_user_data(0)
 {
@@ -22,13 +23,24 @@ Buttons::Buttons(Display &d, const Rect &w, uint16_t r, uint16_t c) :
     }
     else
     {
-        unsigned count = m_rows*m_columns;
-        m_buttons = new BPTR[count];
+        m_num_buttons = m_rows*m_columns;
+        m_buttons = new BPTR[m_num_buttons];
         if (m_buttons)
-            memset(m_buttons, 0, (count)*sizeof(BPTR));
+            memset(m_buttons, 0, (m_num_buttons)*sizeof(BPTR));
         else
-            Serial.println("CANT ALLOC BUTTONS");
+            Serial.println("CANT ALLOC BUTTONS STORAGE");
     }
+}
+
+Buttons::~Buttons(void)
+{
+    for (uint16_t i = 0U; i < m_num_buttons; ++i)
+    {
+        Button *b = m_buttons[i];
+        if (b)
+            delete [] b;
+    }
+    delete [] m_buttons;
 }
 
 bool Buttons::add_button(const ButtonData &bd, uint16_t row, uint16_t col)
