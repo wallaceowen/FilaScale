@@ -20,7 +20,7 @@ public:
             Menu::Orient o=Menu::O_Horiz,
 
             uint16_t fg = TFT_WHITE,
-            uint16_t bg = TFT_BLACK,
+            uint16_t bg = TFT_DARKGREY,
             uint16_t title_font = TITLE_FONT,
             uint16_t prompt_font = PROMPT_FONT
             );

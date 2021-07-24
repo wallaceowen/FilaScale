@@ -23,6 +23,7 @@ void Button::draw(Display &d)
 void Button::draw(TFT_eSPI &tft)
 {
     tft.fillRoundRect(m_rect.x, m_rect.y, m_rect.w, m_rect.h, m_rect.h/2, m_b_d.bg);
+    tft.drawRoundRect(m_rect.x, m_rect.y, m_rect.w, m_rect.h, m_rect.h/2, TFT_BLACK);
     tft.setTextColor(m_b_d.fg, m_b_d.bg);
     int16_t label_x =  0;
     int16_t label_y =  0;
