@@ -19,7 +19,7 @@ NetworkDialog::NetworkDialog(Display &d, const Rect &rect) :
             rect,
             "NETWORK",
             "Select net setting",
-            TFT_WHITE, TFT_BLACK, NETWORK_ROWS, NETWORK_COLS)
+            TFT_BLACK, TFT_LIGHTGREY, NETWORK_ROWS, NETWORK_COLS)
 {
     this->add_buttons();
 }

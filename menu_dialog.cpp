@@ -19,7 +19,6 @@ MenuDialog::MenuDialog(Display &d,
     Dialog(d, rect, title, prompt, fg, bg, title_font, prompt_font),
     m_menu(d, computeMenuRect(rect, num_buttons, o), button_data, num_buttons, o)
 {
-    // this->show();
 }
 
 Rect MenuDialog::computeMenuRect(const Rect &in, uint16_t num_buttons, Menu::Orient o)
@@ -48,9 +47,9 @@ Rect MenuDialog::computeMenuRect(const Rect &in, uint16_t num_buttons, Menu::Ori
     {
         Rect r(
                 in.x,
-                in.y+in.h-tft.fontHeight(BUTTON_FONT),
+                in.y+in.h-(tft.fontHeight(BUTTON_FONT)+5),
                 in.w,
-                tft.fontHeight(BUTTON_FONT));
+                tft.fontHeight(BUTTON_FONT)+5);
         return r;
     }
 }

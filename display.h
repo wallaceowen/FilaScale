@@ -12,7 +12,7 @@ class Display;
 
 #define MAX_CALLBACKS 10
 
-#define SCREEN_BG TFT_BLACK
+// #define SCREEN_BG TFT_BROWN
 
 typedef bool (*TouchCallbackFunc)(
         Display *d,

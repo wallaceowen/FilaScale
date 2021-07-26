@@ -20,8 +20,6 @@
 #define BORDER_THICKNESS 5
 #define MARGIN BORDER_THICKNESS+2
 
-#define SCREEN_BG TFT_BLACK
-
 static const char *state_names[] = { "CS_Ask", "CS_Zero", "CS_Gain", "CS_NUmStates" };
 
 CalibView::CalibView(Display &d, ViewChangeCallback ccb, void *change_user_data, Scale &s) :
@@ -33,19 +31,22 @@ CalibView::CalibView(Display &d, ViewChangeCallback ccb, void *change_user_data,
             Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT),
             "Calibrate scale?",
             "Press OK or CANCEL",
-            ok_cancel_bd, NUM_OK_BUTTONS),
+            ok_cancel_bd, NUM_OK_BUTTONS,
+            Menu::O_Horiz, TFT_WHITE, TFT_DARKGREY),
     m_zero_dialog(
             d,
             Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT),
             "Remove all from scale",
             "Press OK or CANCEL",
-            ok_cancel_bd, NUM_OK_BUTTONS),
+            ok_cancel_bd, NUM_OK_BUTTONS,
+            Menu::O_Horiz, TFT_WHITE, TFT_DARKGREY),
     m_gain_dialog(
             d,
             Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT),
             "Put cal wt. on scale",
             "Press OK or CANCEL",
-            ok_cancel_bd, NUM_OK_BUTTONS),
+            ok_cancel_bd, NUM_OK_BUTTONS,
+            Menu::O_Horiz, TFT_WHITE, TFT_DARKGREY),
     m_current_dialog(&m_ask_dialog),
     m_scale(s)
 {

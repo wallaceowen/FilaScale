@@ -14,7 +14,7 @@ static GridButtonData config_offer_gbd[] = {
 
 
 ConfigDialog::ConfigDialog(Display &d, const Rect &rect) :
-    GridDialog(d, rect, "Settings", "Select from the list below", TFT_WHITE, TFT_DARKGREY, NUM_CO_BUTTONS, 1),
+    GridDialog(d, rect, "Settings", "Select from the list below", TFT_BLACK, TFT_LIGHTGREY, NUM_CO_BUTTONS, 1),
     m_cb(0),
     m_user_data(0)
 {

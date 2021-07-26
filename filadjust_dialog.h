@@ -10,16 +10,6 @@
 class FilAdjustDialog: public MenuDialog
 {
 public:
-    // enum DialogState { DS_Init, DS_Prompting, DS_Answered };
-
-    // MenuDialog(Display&,
-            // const Rect &rect,
-            // const char *title,
-            // const char *prompt,
-            // const ButtonData *button_data,
-            // unsigned num_buttons,
-            // Menu::Orient o=Menu::O_Horiz);
-
     FilAdjustDialog(Display&, const Rect &rect, const char *filament);
 
     // Returns true when dialog anwsered, false while dialog still running

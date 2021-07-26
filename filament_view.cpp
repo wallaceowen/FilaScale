@@ -20,7 +20,6 @@
 #define BORDER_THICKNESS 5
 #define MARGIN BORDER_THICKNESS+2
 
-#define SCREEN_BG TFT_BLACK
 #define FILINTRO_FONT 4
 
 static const char filament_intro_title[] = "Filament Settings";
@@ -39,7 +38,7 @@ FilamentView::FilamentView(Display &d, ViewChangeCallback ccb, void *change_user
             filament_intro_body,
             ok_cancel_bd, NUM_OK_BUTTONS,
             Menu::O_Horiz,
-            TFT_WHITE, TFT_BLACK, TITLE_FONT, PROMPT_FONT
+            TFT_BLACK, TFT_LIGHTGREY, TITLE_FONT, PROMPT_FONT
             ),
     m_filament_dialog(
             d,

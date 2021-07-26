@@ -11,7 +11,8 @@ FilAdjustDialog::FilAdjustDialog(Display &d, const Rect &rect, const char *filam
             rect,
             "FILAMENT SETTINGS",
             "Adjust filament thresholds",
-            ok_cancel_bd, NUM_OK_BUTTONS)
+            ok_cancel_bd, NUM_OK_BUTTONS,
+            Menu::O_Horiz, TFT_BLACK, TFT_LIGHTGREY)
 {
     set_filament_name(filament);
 }

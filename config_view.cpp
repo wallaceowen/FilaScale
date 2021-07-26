@@ -18,8 +18,6 @@
 #define BORDER_THICKNESS 5
 #define MARGIN BORDER_THICKNESS+2
 
-#define SCREEN_BG TFT_BLACK
-
 #define CONF_OFFER_ROWS 5
 #define CONF_OFFER_COLS 2
 
@@ -46,7 +44,7 @@ ConfigView::ConfigView(Display &d, ViewChangeCallback ccb, void *change_user_dat
 
     // Clear the display
     TFT_eSPI &tft = m_display.get_tft();
-    tft.fillRect(0, 0, tft.width(), tft.height(), SCREEN_BG);
+    tft.fillRect(0, 0, tft.width(), tft.height(), TFT_LIGHTGREY);
 }
 
 bool ConfigView::touch_callback(uint16_t x, uint16_t y, bool pressed)
@@ -73,8 +71,8 @@ void ConfigView::menu_callback(const char *label, bool pressed)
         {
             case COS_Offer:
             {
-                TFT_eSPI &tft = m_display.get_tft();
-                tft.fillRect(0, 0, tft.width(), tft.height(), SCREEN_BG);
+                // TFT_eSPI &tft = m_display.get_tft();
+                // tft.fillRect(0, 0, tft.width(), tft.height(), TFT_LIGHTGREY);
                 if (!strcmp(label, "CANCEL"))
                 {
                     // Reset state to offer

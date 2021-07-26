@@ -13,12 +13,16 @@
 #define LABELS_Y VALUES_Y+16
 
 #define MENU_X 0
-#define MENU_HEIGHT 36
+#define MENU_HEIGHT 40
 #define MENU_Y SCREEN_H-MENU_HEIGHT
 #define PLOT_THICKNESS 10
 #define VALUES_GAP 10
-#define VALUE_BG TFT_BLACK
+#define STATE_BG TFT_DARKGREY
+// #define VALUE_BG TFT_BLACK
+#define VALUE_BG STATE_BG
+#define TITLE_FG TFT_WHITE
 #define VALUE_FG TFT_WHITE
+
 
 ButtonData state_menu_button_data[] = {
     ButtonData("SETTINGS", TFT_WHITE, TFT_BLUE, CC_DATUM),
@@ -74,16 +78,16 @@ void StateView::show()
     TFT_eSPI &tft = m_display.get_tft();
 
     // Fill screen with dark grey
-    tft.fillRect(0, 0, tft.width(), tft.height(), SCREEN_BG);
+    tft.fillRect(0, 0, tft.width(), tft.height(), STATE_BG);
 
     // Show the view name and our field names
     tft.setTextSize(2);
-    tft.setTextColor(TFT_WHITE);
+    tft.setTextColor(TITLE_FG, VALUE_BG);
     tft.setTextDatum(TC_DATUM);
     tft.drawString("FilaScale", tft.width()/2, 0, TITLE_FONT);
 
     tft.setTextSize(1);
-    tft.setTextColor(TFT_YELLOW, TFT_BLACK);
+    tft.setTextColor(TFT_YELLOW, STATE_BG);
     tft.setTextDatum(CR_DATUM);
     int field_spacing = (MENU_Y-VALUES_Y)/NUM_STATE_LINES;
     int line = 0;
