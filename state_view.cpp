@@ -24,12 +24,6 @@
 #define VALUE_FG TFT_WHITE
 
 
-ButtonData state_menu_button_data[] = {
-    ButtonData("SETTINGS", TFT_WHITE, TFT_BLUE, CC_DATUM),
-    ButtonData("STOP", TFT_WHITE, TFT_RED, CC_DATUM)
-};
-#define NUM_STATE_BUTTONS (sizeof(state_menu_button_data)/sizeof(state_menu_button_data[0]))
-
 #define NUM_STATE_LINES 4
 
 StateView::StateView(Display &d,
@@ -40,17 +34,11 @@ StateView::StateView(Display &d,
     m_display(d),
     m_scale(s),
     m_bme(b),
-    m_menu(
-            d,
-            Rect(MENU_X, MENU_Y, d.get_tft().width(), MENU_HEIGHT),
-            state_menu_button_data, NUM_STATE_BUTTONS, Menu::O_Horiz),
     m_temp(0.0),
     m_humid(0.0),
     m_weight(0.0),
     m_full_weight(0.0)
 {
-    m_menu.set_callback(state_menu_callback_func, this);
-
     TFT_eSPI &tft = m_display.get_tft();
     m_title_height = tft.fontHeight(TITLE_FONT);
 }
@@ -62,12 +50,6 @@ void StateView::state_menu_callback(const char *label, bool pressed)
     // Signal to the control module that a new view is requested
     if (m_change_cb && !pressed)
         m_change_cb(label, m_change_data);
-}
-
-void StateView::state_menu_callback_func(const char *label, bool pressed, void *user_data)
-{
-    StateView *sv = reinterpret_cast<StateView*>(user_data);
-    sv->state_menu_callback(label, pressed);
 }
 
 // Show the static part of the view
@@ -101,8 +83,6 @@ void StateView::show()
     y += field_spacing;
     tft.drawString("WEIGHT", x, y, STATE_FONT);
 
-    // Show the buttons
-    m_menu.show();
 
     // Now show the state
     draw_state();
@@ -147,7 +127,8 @@ void StateView::loop()
 
 bool StateView::touch_callback(uint16_t x, uint16_t y, bool pressed)
 {
-    return m_menu.check_touch(x, y, pressed);
+    state_menu_callback("SETTINGS", pressed);
+    return 1;
 }
 
 // Update the state on the screen with the latest values we hold.
