@@ -8,6 +8,10 @@
 
 #include "scale.h"
 
+// First gen boards have tag tied to serial rx; rev 2 uses serial2 rx
+#define TAG_PORT_IS_SERIAL
+// #define TAG_PORT_IS_SERIAL2
+
 #define MSGLEN 16
 
 #define STX 2

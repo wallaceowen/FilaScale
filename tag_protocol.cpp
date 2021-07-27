@@ -7,7 +7,13 @@
 
 #define INTER_MSG_DELAY 1000
 
+#ifdef TAG_PORT_IS_SERIAL
+#define TAG_PORT Serial
+#elif defined(TAG_PORT_IS_SERIAL2)
 #define TAG_PORT Serial2
+#else
+#error define a tag port
+#endif
 
 // If there's nothing waiting, return 0
 // if there's something to read

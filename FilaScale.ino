@@ -6,8 +6,6 @@
 #include "scale.h"
 #include "control.h"
 
-// #define BOZO
-
 Display *display = 0;
 char display_buff[sizeof(Display)];
 
@@ -36,8 +34,12 @@ void tag_handler(char tag[MSGLEN], void *user_data)
 
 void setup(void)
 {
+#ifdef TAG_PORT_IS_SERIAL
+    Serial.begin(9600);
+#elif defined(TAG_PORT_IS_SERIAL2)
     Serial.begin(115200);
     Serial2.begin(9600);
+#endif
     while(!Serial) {} // Wait for serial port
 
     display = new(display_buff) Display();
@@ -64,19 +66,10 @@ void setup(void)
 
 void loop()
 {
-#ifdef BOZO
-    for (;;)
-        Serial.println("Test");
-#endif
     scale->loop();
-    // Serial.println("after scale loop");
     bme280->loop();
-    // Serial.println("after bme loop");
     tag_protocol->loop();
-    // Serial.println("after proto loop");
     control->loop();
-    // Serial.println("after control loop");
     display->loop();
-    // Serial.println("after display loop");
 }
 

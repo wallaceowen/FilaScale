@@ -21,7 +21,7 @@
 // #define VALUE_BG TFT_BLACK
 #define VALUE_BG STATE_BG
 #define TITLE_FG TFT_WHITE
-#define VALUE_FG TFT_WHITE
+#define VALUE_FG TFT_BLACK
 
 
 #define NUM_STATE_LINES 4
@@ -148,7 +148,8 @@ void StateView::draw_state()
     tft.setTextDatum(TL_DATUM);
     int y = VALUES_Y;
 
-    sprintf(value_buffer, "%3.1f °C  ", m_temp);
+    float f = m_temp*9.0/5.0+32.0;
+    sprintf(value_buffer, "%3.1fC %3.1fF  ", m_temp, f);
     tft.drawString(value_buffer, x, y, STATE_FONT);
 
     int bar_y = y+tft.fontHeight(STATE_FONT);
