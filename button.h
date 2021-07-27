@@ -8,6 +8,7 @@
 #include "rect.h"
 
 #define BUTTON_FONT 4
+#define BUTTON_PAD 8
 #define BUTTON_RADIUS 10
 
 struct ButtonData

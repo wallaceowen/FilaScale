@@ -99,14 +99,16 @@ bool Buttons::add_grid_button(
 {
     if ((row < m_rows) && (col < m_columns))
     {
-        uint16_t cellwidth = (m_rect.w/m_columns)*column_span;
-        uint16_t cellheight = (m_rect.h/m_rows)*row_span;
+        uint16_t one_cellwidth = m_rect.w/m_columns;
+        uint16_t one_cellheight = m_rect.h/m_rows;
 
-        uint16_t x = m_rect.x+cellwidth*col;
-        uint16_t y = m_rect.y+cellheight*row;
+        uint16_t x = m_rect.x+one_cellwidth*col;
+        uint16_t y = m_rect.y+one_cellheight*row;
+
+        uint16_t cellwidth = one_cellwidth*column_span;
+        uint16_t cellheight = one_cellheight*row_span;
 
         Button *b = new Button(bd, Rect(x, y, cellwidth, cellheight));
-
         m_buttons[(row*m_columns)+col] = b;
 
         return true;

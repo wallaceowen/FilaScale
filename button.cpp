@@ -31,7 +31,7 @@ void Button::draw(TFT_eSPI &tft)
     if (m_b_d.datum == CC_DATUM)
     {
         label_x = m_rect.x+(m_rect.w/2);
-        label_y = m_rect.y+(m_rect.h/2);
+        label_y = m_rect.y+(m_rect.h/2)+(BUTTON_PAD/2)-1;
     }
     else
     {

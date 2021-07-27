@@ -11,7 +11,7 @@ static GridButtonData filament_bd[] = {
     GridButtonData("Nylon",  0, 3, 1, 1, TFT_WHITE, TFT_DARKGREY),
     GridButtonData("PETG",   1, 0, 1, 1, TFT_WHITE, TFT_DARKGREY),
     GridButtonData("TPU",    1, 1, 1, 1, TFT_WHITE, TFT_DARKGREY),
-    GridButtonData("CANCEL", 2, 0, 1, 4, TFT_WHITE, TFT_RED),
+    GridButtonData("CANCEL", 2, 2, 1, 2, TFT_WHITE, TFT_RED),
 };
 #define NUM_FILAMENT_BUTTONS (sizeof(filament_bd)/sizeof(filament_bd[0]))
 
