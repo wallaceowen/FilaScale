@@ -174,7 +174,6 @@ void NetworkView::loop()
 {
     // Serial.println("NetworkView::loop()");
 #ifdef FILAMENTVIEW_LOOP_HAS_A_JOB
-    TFT_eSPI &tft = m_display.get_tft();
     switch(m_state)
     {
         case NS_Init:

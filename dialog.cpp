@@ -32,6 +32,7 @@ Dialog::Dialog(
 void Dialog::show(void)
 {
     TFT_eSPI &tft = m_display.get_tft();
+
     tft.fillRect(
             m_rect.x, m_rect.y,
             m_rect.w, m_rect.h,

@@ -40,11 +40,12 @@ bool FilamentDialog::check_touch(uint16_t x, uint16_t y, bool pressed)
     if (slider_touched && pressed)
     {
         bool result = false;
-        TFT_eSPI &tft = m_display.get_tft();
+        // TFT_eSPI &tft = m_display.get_tft();
         do
         {
             uint16_t x, y;
-            result = tft.getTouch(&x, &y);
+            // result = tft.getTouch(&x, &y);
+            result = m_display.get_tft().tft.getTouch(&x, &y);
             if (result)
                 m_adj.check_touch(x, y, pressed);
         } while (result);

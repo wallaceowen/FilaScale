@@ -39,8 +39,7 @@ StateView::StateView(Display &d,
     m_weight(0.0),
     m_full_weight(0.0)
 {
-    TFT_eSPI &tft = m_display.get_tft();
-    m_title_height = tft.fontHeight(TITLE_FONT);
+    m_title_height = m_display.get_tft().fontHeight(TITLE_FONT);
 }
 
 // All the state menus are for views.  But a menu button could be handled

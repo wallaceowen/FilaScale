@@ -16,8 +16,7 @@ Button::Button(const ButtonData &d, const Rect &r)
 
 void Button::draw(Display &d)
 {
-    TFT_eSPI &tft = d.get_tft();
-    this->draw(tft);
+    this->draw(d.get_tft());
 }
 
 void Button::draw(TFT_eSPI &tft)

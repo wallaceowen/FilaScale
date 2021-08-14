@@ -161,7 +161,6 @@ void CalibView::loop()
 {
 #ifdef CALIBVIEW_LOOP_HAS_A_JOB
     Serial.println("CalibView::loop()");
-    TFT_eSPI &tft = m_display.get_tft();
     switch(m_state)
     {
         case CS_Init:

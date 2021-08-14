@@ -4,9 +4,14 @@
 
 #include "display.h"
 
+#define DEBUG_TOUCH
+
 TFT_eSPI display_tft = TFT_eSPI();       // Invoke custom library
 
-uint16_t cal_params[5] = { 310, 3269, 417, 3233, 7 };
+// Rotation 1:
+// uint16_t cal_params[5] = { 310, 3269, 417, 3233, 7 };
+// Rotation 3:
+uint16_t cal_params[5] = { 537, 3307, 689, 2630, 1 };
 
 Display::Display(void) :
     m_touch_state(false),
@@ -19,11 +24,6 @@ Display::Display(void) :
     display_tft.setTouch(cal_params);
     display_tft.setTextPadding(5);
 }
-
-// TFT_eSPI& Display::get_tft(void)
-// {
-    // return display_tft;
-// }
 
 void Display::set_calibration(uint16_t params[5])
 {

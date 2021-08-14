@@ -23,14 +23,12 @@ MenuDialog::MenuDialog(Display &d,
 
 Rect MenuDialog::computeMenuRect(const Rect &in, uint16_t num_buttons, Menu::Orient o)
 {
-    TFT_eSPI &tft = m_display.get_tft();
 
     if (o == Menu::O_Vert)
     {
 
         Rect r(
                 in.x,
-                // this->button_y(),
                 in.y+this->button_y(),
                 in.w,
                 in.h-this->button_y());
@@ -45,11 +43,12 @@ Rect MenuDialog::computeMenuRect(const Rect &in, uint16_t num_buttons, Menu::Ori
     }
     else
     {
+        uint16_t needed_ht = m_display.get_tft().fontHeight(BUTTON_FONT)+BUTTON_PAD;
         Rect r(
                 in.x,
-                in.y+in.h-(tft.fontHeight(BUTTON_FONT)+BUTTON_PAD),
+                in.y+in.h-needed_ht,
                 in.w,
-                tft.fontHeight(BUTTON_FONT)+BUTTON_PAD);
+                needed_ht);
         return r;
     }
 }

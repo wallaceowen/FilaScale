@@ -28,9 +28,8 @@ Menu::Menu(Display &d,
     m_user_data(0)
 {
     m_buttons = new BPTR[m_num_buttons];
-    TFT_eSPI &tft = d.get_tft();
 
-    int widest = widest_button(tft, bdata, num);
+    int widest = widest_button(d.get_tft(), bdata, num);
 
     // Make the buttons
     for (int i = 0; i < m_num_buttons; ++i)

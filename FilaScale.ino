@@ -21,17 +21,6 @@ char tagproto_buff[sizeof(TagProtocol)];
 Control *control = 0;
 char control_buff[sizeof(Control)];
 
-void tag_handler(char tag[MSGLEN], void *user_data)
-{
-    // tag looks like "010A0786AF25"
-    // Serial.print("Got tag: ");
-    // Serial.println(tag);
-    // Serial.println("\r\n\r\n");
-
-    uint64_t tag_val = strtoull(tag, 0, 16);
-    std::cout << "RECEIVED TAG " << std::hex << tag_val << std::endl;
-}
-
 void setup(void)
 {
 #ifdef TAG_PORT_IS_SERIAL
@@ -46,16 +35,16 @@ void setup(void)
     // Serial.println("display made");
 
     scale = new(scale_buff) Scale();
-    // Serial.println("scale made");
+    Serial.println("scale made");
 
     bme280 = new(bme_buff) BME280_IF();
-    // Serial.println("bme made");
+    Serial.println("bme made");
 
-    tag_protocol = new(tagproto_buff) TagProtocol(tag_handler, 0);
-    // Serial.println("proto made");
+    tag_protocol = new(tagproto_buff) TagProtocol();
+    Serial.println("proto made");
 
     control = new(control_buff) Control(*scale, *display, *bme280, *tag_protocol);
-    // Serial.println("control made");
+    Serial.println("control made");
 
     delay(500);
 

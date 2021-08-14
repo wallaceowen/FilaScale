@@ -8,7 +8,7 @@ static GridButtonData config_offer_gbd[] = {
     {GridButtonData("SCALE calibration",    1, 0, 1, 1, TFT_WHITE, TFT_DARKGREY)},
     {GridButtonData("SCREEN calibration",   2, 0, 1, 1, TFT_WHITE, TFT_DARKGREY)},
     {GridButtonData("NETWORK settings",     3, 0, 1, 1, TFT_WHITE, TFT_DARKGREY)},
-    {GridButtonData("CANCEL",               4, 0, 1, 1, TFT_WHITE, TFT_RED)},
+    {GridButtonData("Back to INFO",         4, 0, 1, 1, TFT_WHITE, TFT_BLUE)},
 };
 #define NUM_CO_BUTTONS (sizeof(config_offer_gbd)/sizeof(config_offer_gbd[0]))
 

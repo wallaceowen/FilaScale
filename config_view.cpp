@@ -35,8 +35,8 @@ ConfigView::ConfigView(Display &d, ViewChangeCallback ccb, void *change_user_dat
             Rect(DLG_X, DLG_Y, DLG_WIDTH, DLG_HEIGHT),
             "Calibrate screen?",
             "Press OK or CANCEL",
-            ok_cancel_bd, NUM_OK_BUTTONS),
-
+            ok_cancel_bd, NUM_OK_BUTTONS,
+            Menu::O_Horiz, TFT_BLACK, TFT_LIGHTGREY),
     m_current_dialog(&m_offer_config_dialog)
 {
     m_offer_config_dialog.set_callback(menu_callback_func, this);
@@ -71,9 +71,7 @@ void ConfigView::menu_callback(const char *label, bool pressed)
         {
             case COS_Offer:
             {
-                // TFT_eSPI &tft = m_display.get_tft();
-                // tft.fillRect(0, 0, tft.width(), tft.height(), TFT_LIGHTGREY);
-                if (!strcmp(label, "CANCEL"))
+                if (!strcmp(label, "Back to INFO"))
                 {
                     // Reset state to offer
                     set_state(COS_Offer);

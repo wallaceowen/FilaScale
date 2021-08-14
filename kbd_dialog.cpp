@@ -55,8 +55,6 @@ KbdDialog::KbdDialog(Display &d, const Rect &rect, const char *title) :
     // Clear the value
     memset(m_value, 0, sizeof(m_value));
 
-    // TFT_eSPI &tft = m_display.get_tft();
-
     this->make_buttons();
     m_buttons.set_callback(kbd_button_callback_func, this);
 }

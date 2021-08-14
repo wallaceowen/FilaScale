@@ -30,6 +30,9 @@ private:
     static void change_view_func(const char *view_name, void *user);
     void change_view(const char *view_name);
 
+    static void tag_handler_func(char tag[TAG_MSGLEN], void *user);
+    void tag_handler(char tag[TAG_MSGLEN]);
+
     Mode m_mode;
     Scale &m_scale;
     BME280_IF &m_bme280;

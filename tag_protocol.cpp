@@ -68,7 +68,7 @@ TagProtocol::TagRxState TagProtocol::read_tag()
                     else
                     {
                         m_buffer[m_offset++] = val;
-                        if (m_offset >= MSGLEN)
+                        if (m_offset >= TAG_MSGLEN)
                         {
                             m_state = TS_Init;
                         }

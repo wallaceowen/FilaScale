@@ -195,7 +195,6 @@ void FilamentView::loop()
 {
     // Serial.println("FilamentView::loop()");
 #ifdef FILAMENTVIEW_LOOP_HAS_A_JOB
-    TFT_eSPI &tft = m_display.get_tft();
     switch(m_state)
     {
         case FS_Init:

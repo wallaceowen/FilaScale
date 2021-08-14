@@ -17,8 +17,7 @@ Bar(Display &d, const Rect &r, uint16_t inlo, uint16_t inhi, uint16_t incolor, u
 // Show the bar
 virtual void Bar::show()
 {
-    TFT_eSPI &tft = m_disp.get_tft();
-    tft.fillRect(m_rect.x, m_rect.y, m_val, m_rect.h);
+    m_disp.get_tft().fillRect(m_rect.x, m_rect.y, m_val, m_rect.h);
 }
 
 void Bar::set(uint16_t value)
