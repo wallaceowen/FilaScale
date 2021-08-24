@@ -9,17 +9,17 @@
 #define DLG_Y 0
 #define DLG_HEIGHT 240
 #define DLG_WIDTH 320
-#define NET_MENU_Y 50
+// #define NET_MENU_Y 50
 
-#define WIDTH 320
-#define HEIGHT 240
-#define VALUES_X 148
-#define CALIB_FONT 4
-#define BORDER_THICKNESS 5
-#define MARGIN BORDER_THICKNESS+2
+// #define WIDTH 320
+// #define HEIGHT 240
+// #define VALUES_X 148
+// #define CALIB_FONT 4
+// #define BORDER_THICKNESS 5
+// #define MARGIN BORDER_THICKNESS+2
 
-#define CONF_OFFER_ROWS 5
-#define CONF_OFFER_COLS 2
+// #define CONF_OFFER_ROWS 5
+// #define CONF_OFFER_COLS 2
 
 // Here is where we configure our filament temperature and humidity thresholds, for each of
 // the types of filament defined
