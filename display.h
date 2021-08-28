@@ -5,6 +5,8 @@
 #include <stdint.h>
 #include <TFT_eSPI.h> // Hardware-specific library
 
+#include "fila_config.h"
+
 class Display;
 
 #define ROTATION 3
@@ -33,7 +35,7 @@ extern TFT_eSPI display_tft;
 class Display
 {
 public:
-    Display(void);
+    Display(FilaConfig *fc);
     void loop(void);
     bool add_callback(const CallbackData&);
     TFT_eSPI& get_tft(void) { return display_tft; }
@@ -46,6 +48,7 @@ private:
     unsigned num_cb(void) const { return m_callback_count; }
 
     bool         m_touch_state;
+    FilaConfig  *m_fc;
     CallbackData m_callbacks[MAX_CALLBACKS];
     unsigned     m_callback_count;
 };

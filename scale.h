@@ -5,7 +5,7 @@
 
 #include "HX711.h"
 #include "Averager.h"
-#include "config.h"
+#include "display_config.h"
 
 class Scale
 {

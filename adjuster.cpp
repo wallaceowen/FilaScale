@@ -1,6 +1,6 @@
 // Adjuster class - presents a slider that can be used to set a value 
 
-#include "config.h"
+#include "display_config.h"
 #include "adjuster.h"
 
 // layout:

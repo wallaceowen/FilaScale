@@ -29,9 +29,20 @@
 #define TFT_DC   26     // Data Command control pin to TFT DC (may be labelled RS = Register Select)
 #define TFT_RST  25     // Reset pin to TFT RST (or RESET)
 #define TOUCH_CS 32     // Connect to T_CS (Touch controller chip select) if XPT2046 is connected to SPI bus
+#define TFT_SCLK 18
+#define TFT_MISO 19
+#define TFT_MOSI 23
 
+#define AUX1_CS  14
+#define AUX2_CS   4
 
-#define SD_CS 14
+#define EXP1_1  12
+#define EXP1_2  13
+
+#define EXP2_1   2
+#define EXP2_2  18
+
+#define SD_CS    5
 
 #endif
 

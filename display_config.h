@@ -1,4 +1,4 @@
-// config.h
+// display_config.h
 
 #ifndef __config_h
 #define __config_h

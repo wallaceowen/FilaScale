@@ -3,3 +3,5 @@ Add a cal_offer view that offers calibration of the screen or the weight,
 add calibration of the screen view
 add thresholds view, move thresholds dialog to it
 
+/home/owen/.arduino15/packages/esp32/hardware/esp32/1.0.6/platform.txt is where we added -DSUPPORT_TRANSACTIONS to c++ opts
+

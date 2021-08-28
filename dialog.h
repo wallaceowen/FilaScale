@@ -5,7 +5,7 @@
 #include "events.h"
 #include "rect.h"
 #include "text_box.h"
-#include "config.h"
+#include "display_config.h"
 
 class Dialog
 {

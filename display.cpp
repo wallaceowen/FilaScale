@@ -13,8 +13,9 @@ TFT_eSPI display_tft = TFT_eSPI();       // Invoke custom library
 // Rotation 3:
 uint16_t cal_params[5] = { 537, 3307, 689, 2630, 1 };
 
-Display::Display(void) :
+Display::Display(FilaConfig *fc) :
     m_touch_state(false),
+    m_fc(fc),
     m_callback_count(0)
 {
     memset(m_callbacks, 0, sizeof(m_callbacks));
