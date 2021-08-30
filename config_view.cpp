@@ -71,7 +71,7 @@ void ConfigView::menu_callback(const char *label, bool pressed)
         {
             case COS_Offer:
             {
-                if (!strcmp(label, "Back to INFO"))
+                if (!strcmp(label, "BACK"))
                 {
                     // Reset state to offer
                     set_state(COS_Offer);
@@ -80,7 +80,7 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                     // Tell control to go back to state view
                     m_change_cb("STATE", m_change_data);
                 }
-                else if (!strcmp(label, "FILAMENT drying"))
+                else if (!strcmp(label, "FILAMENT"))
                 {
                     // Reset state to offer
                     set_state(COS_Offer);
@@ -89,13 +89,13 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                     // Tell control to go to filament view
                     m_change_cb("FILAMENT", m_change_data);
                 }
-                else if (!strcmp(label, "NETWORK settings"))
+                else if (!strcmp(label, "NETWORK"))
                 {
                     set_state(COS_Offer);
                     m_current_dialog = &m_offer_config_dialog;
                     m_change_cb("NETWORK", m_change_data);
                 }
-                else if (!strcmp(label, "SCALE calibration"))
+                else if (!strcmp(label, "SCALE"))
                 {
                     // Reset state to offer
                     set_state(COS_Offer);
@@ -104,7 +104,7 @@ void ConfigView::menu_callback(const char *label, bool pressed)
                     // Tell control to make the SCALE view the current view
                     m_change_cb("SCALE", m_change_data);
                 }
-                else if (!strcmp(label, "SCREEN calibration"))
+                else if (!strcmp(label, "SCREEN"))
                 {
                     set_state(COS_Screen);
                     m_current_dialog = &m_screencal_dialog;

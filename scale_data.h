@@ -7,6 +7,7 @@
 
 struct ScaleData
 {
+    // ScaleData(uint32_t off, float g) : offset(off), gain(g) {}
     uint32_t offset;
     float gain;
 };

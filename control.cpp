@@ -25,7 +25,8 @@ bool Control::touch_callback_func(Display *d, void *user, uint16_t x, uint16_t y
     return control->touch_callback(x, y, pressed);
 }
 
-Control::Control(Scale &scale, Display &display, BME280_IF &bme280, TagProtocol &tag_protocol) :
+Control::Control(Scale &scale, Display &display, BME280_IF &bme280, TagProtocol &tag_protocol, FilaConfig *fc) :
+    m_fc(fc),
     m_mode(M_Show),
     m_scale(scale),
     m_bme280(bme280),

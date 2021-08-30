@@ -3,10 +3,12 @@
 #ifndef __bme280_if_h
 #define __bme280_if_h
 
+#include "fila_config.h"
+
 class BME280_IF
 {
 public:
-    BME280_IF(void);
+    BME280_IF(FilaConfig *fc);
 
     void loop(void);
 
@@ -16,11 +18,12 @@ public:
     float alt(void) const { return m_alt; }
 
 private:
-    bool  m_initialized;
-    float m_temp;
-    float m_humid;
-    float m_pres;
-    float m_alt;
+    FilaConfig  *m_fc;
+    bool         m_initialized;
+    float        m_temp;
+    float        m_humid;
+    float        m_pres;
+    float        m_alt;
 };
 
 #endif

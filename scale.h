@@ -6,29 +6,34 @@
 #include "HX711.h"
 #include "Averager.h"
 #include "display_config.h"
+#include "fila_config.h"
 
 class Scale
 {
 public:
-    Scale();
+    Scale(FilaConfig *fc);
 
     void loop();
     void report_weight(bool state);
     int32_t get_raw(void) const;
     float get_calibrated(void) const;
-    void set_offset(void) { m_offset = m_raw; }
+    void set_offset(void) { m_scale_data.offset = m_raw; }
     void set_gain()
     {
-        m_gain = CAL_WEIGHT_GRAMS/(float((this->get_raw()-this->m_offset)));
+        m_scale_data.gain = CAL_WEIGHT_GRAMS/(float(
+                    (this->get_raw()-this->m_scale_data.offset)
+                    ));
     }
 
 private:
-    HX711    m_hx711;
-    bool     m_report_weight;
-    int32_t  m_raw;
-    int32_t  m_offset;
-    double   m_gain;
-    Averager m_averager;
+    FilaConfig  *m_fc;
+    HX711        m_hx711;
+    bool         m_report_weight;
+    int32_t      m_raw;
+    ScaleData    m_scale_data;
+    // int32_t      m_offset;
+    // double       m_gain;
+    Averager     m_averager;
 };
 
 #endif

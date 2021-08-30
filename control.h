@@ -19,7 +19,7 @@ class Control
 public:
 
     enum Mode { M_Show, M_Update, M_Error };
-    Control(Scale &scale, Display &display, BME280_IF &bme280, TagProtocol &tag_protocol);
+    Control(Scale &scale, Display &display, BME280_IF &bme280, TagProtocol &tag_protocol, FilaConfig *fc);
     void loop();
 
 private:
@@ -33,18 +33,17 @@ private:
     static void tag_handler_func(char tag[TAG_MSGLEN], void *user);
     void tag_handler(char tag[TAG_MSGLEN]);
 
-    Mode m_mode;
-    Scale &m_scale;
-    BME280_IF &m_bme280;
-    Display &m_display;
-
-    StateView m_state_view;
-    CalibView m_scale_calib_view;
-    ConfigView m_config_view;
+    FilaConfig  *m_fc;
+    Mode         m_mode;
+    Scale       &m_scale;
+    BME280_IF   &m_bme280;
+    Display     &m_display;
+    StateView    m_state_view;
+    CalibView    m_scale_calib_view;
+    ConfigView   m_config_view;
     FilamentView m_filament_view;
-    NetworkView m_network_view;
-
-    View *m_view;
+    NetworkView  m_network_view;
+    View        *m_view;
     TagProtocol &m_tag_protocol;
 };
 

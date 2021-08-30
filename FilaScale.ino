@@ -31,6 +31,7 @@ char tagproto_buff[sizeof(TagProtocol)];
 Control *control = 0;
 char control_buff[sizeof(Control)];
 
+#ifdef OLD_SD_CODE
 bool fila_sd_init(void)
 {
     if (!SD.begin(5))
@@ -41,6 +42,7 @@ bool fila_sd_init(void)
 
     return true;
 }
+#endif
 
 void setup(void)
 {
@@ -52,32 +54,41 @@ void setup(void)
 #endif
     while(!Serial) {} // Wait for serial port
 
+#ifdef OLD_SD_CODE
     if (fila_sd_init())
     {
         uint8_t cardType = SD.cardType();
         Serial.print("card type ");
         Serial.println(cardType);
     }
+#endif
 
     sd_if = new(sdif_buff) SD_IF();
     Serial.println("sd_if made");
+
+    if (sd_if->card_present())
+    {
+        uint8_t cardType = SD.cardType();
+        Serial.print("card type ");
+        Serial.println(cardType);
+    }
 
     fila_config = new(config_buff) FilaConfig(sd_if);
     Serial.println("fila_config made");
 
     display = new(display_buff) Display(fila_config);
-    // Serial.println("display made");
+    Serial.println("display made");
 
-    scale = new(scale_buff) Scale();
+    scale = new(scale_buff) Scale(fila_config);
     Serial.println("scale made");
 
-    bme280 = new(bme_buff) BME280_IF();
+    bme280 = new(bme_buff) BME280_IF(fila_config);
     Serial.println("bme made");
 
-    tag_protocol = new(tagproto_buff) TagProtocol();
+    tag_protocol = new(tagproto_buff) TagProtocol(fila_config);
     Serial.println("proto made");
 
-    control = new(control_buff) Control(*scale, *display, *bme280, *tag_protocol);
+    control = new(control_buff) Control(*scale, *display, *bme280, *tag_protocol, fila_config);
     Serial.println("control made");
 
     delay(500);

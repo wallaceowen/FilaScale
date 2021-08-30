@@ -32,7 +32,8 @@
 
 static Adafruit_BME280 bme; // I2C
 
-BME280_IF::BME280_IF() :
+BME280_IF::BME280_IF(FilaConfig *fc) :
+    m_fc(fc),
     m_temp(0.0),
     m_humid(0.0),
     m_pres(0.0),

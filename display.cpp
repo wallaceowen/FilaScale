@@ -11,7 +11,10 @@ TFT_eSPI display_tft = TFT_eSPI();       // Invoke custom library
 // Rotation 1:
 // uint16_t cal_params[5] = { 310, 3269, 417, 3233, 7 };
 // Rotation 3:
-uint16_t cal_params[5] = { 537, 3307, 689, 2630, 1 };
+// uint16_t cal_params[5] = { 537, 3307, 689, 2630, 1 };
+
+// ScreenData sdata = { { 537, 3307, 689, 2630, 1 }, ROTATION };
+ScreenData sdata = { { 519, 3333, 702, 2461, 1 }, ROTATION };
 
 Display::Display(FilaConfig *fc) :
     m_touch_state(false),
@@ -20,16 +23,31 @@ Display::Display(FilaConfig *fc) :
 {
     memset(m_callbacks, 0, sizeof(m_callbacks));
     display_tft.init();
-    display_tft.setRotation(ROTATION);
+    display_tft.setRotation(sdata.rotation);
     display_tft.fillScreen(TFT_BLACK);
-    display_tft.setTouch(cal_params);
+    if (!m_fc->is_present(FilaConfig::PB_Screen))
+        m_fc->set_screen_data(sdata);
+    else
+    {
+        Serial.print("restoring touch parameters from SD card");
+        memcpy(&sdata, &m_fc->get_screen_data(), sizeof(ScreenData));
+    }
+
+    for (size_t i = 0; i < 5; ++i)
+    {
+        if (i)
+            Serial.print(", ");
+        Serial.print(sdata.cal_params[i]);
+    }
+
+    display_tft.setTouch(m_fc->get_screen_data().cal_params);
     display_tft.setTextPadding(5);
 }
 
 void Display::set_calibration(uint16_t params[5])
 {
     for (unsigned i = 0; i < 5; ++i)
-        cal_params[i] = params[i];
+        sdata.cal_params[i] = params[i];
 }
 
 bool Display::add_callback(const CallbackData &cd)
@@ -43,20 +61,6 @@ bool Display::add_callback(const CallbackData &cd)
     return false;
 }
 
-#ifdef BOZO
-void Display::invoke_callbacks(uint16_t x, uint16_t y, bool pressed)
-{
-    static unsigned iteration = 0;
-
-    if (m_callback_count > iteration)
-    {
-        CallbackData &cd = m_callbacks[iteration];
-        cd.cb(this, cd.user, x, y, pressed);
-    }
-    else
-        iteration = 0;
-}
-#else
 bool Display::invoke_callbacks(uint16_t x, uint16_t y, bool pressed)
 {
     // if (m_callback_count > iteration)
@@ -69,24 +73,25 @@ bool Display::invoke_callbacks(uint16_t x, uint16_t y, bool pressed)
     }
     return false;
 }
-#endif
 
 void Display::calibrate(void)
 {
-    uint16_t touch_parameters[5];
+    ScreenData sdata;
+    sdata.rotation = ROTATION;
 
     display_tft.fillRect(0, 0, display_tft.width(), display_tft.height(), TFT_BLACK);
 
-    display_tft.calibrateTouch(touch_parameters, TFT_YELLOW, TFT_MAROON, 20);
+    display_tft.calibrateTouch(sdata.cal_params, TFT_YELLOW, TFT_MAROON, 20);
 
     Serial.print("touch parameters: ");
     for (size_t i = 0; i < 5; ++i)
     {
         if (i)
             Serial.print(", ");
-        Serial.print(touch_parameters[i]);
+        Serial.print(sdata.cal_params[i]);
     }
     Serial.println("");
+    m_fc->set_screen_data(sdata);
 }
 
 bool Display::check_touch(void)
