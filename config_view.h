@@ -23,7 +23,7 @@ public:
         COS_NUmStates
     };
 
-    ConfigView(Display&, ViewChangeCallback ccb, void *change_user_data);
+    ConfigView(Display&, FilaConfig *fc, ViewChangeCallback ccb, void *change_user_data);
 
     // Call this often.  It drives the state machine.
     // or does it??
@@ -49,6 +49,7 @@ protected:
 private:
 
     Display        &m_display;
+    FilaConfig     *m_fc;
     ConfigState     m_state;
     ConfigDialog    m_offer_config_dialog;
     MenuDialog      m_screencal_dialog;

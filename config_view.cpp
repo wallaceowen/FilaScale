@@ -23,8 +23,8 @@
 
 // Here is where we configure our filament temperature and humidity thresholds, for each of
 // the types of filament defined
-ConfigView::ConfigView(Display &d, ViewChangeCallback ccb, void *change_user_data) :
-    View(d, ccb, change_user_data),
+ConfigView::ConfigView(Display &d, FilaConfig *fc, ViewChangeCallback ccb, void *change_user_data) :
+    View(d, fc, ccb, change_user_data),
     m_display(d),
     m_state(COS_Offer),
     m_offer_config_dialog(

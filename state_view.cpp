@@ -27,10 +27,11 @@
 #define NUM_STATE_LINES 4
 
 StateView::StateView(Display &d,
+        FilaConfig *fc,
         ViewChangeCallback ccb,
         void *change_user_data,
         Scale &s, BME280_IF &b) :
-    View(d, ccb, change_user_data),
+    View(d, fc, ccb, change_user_data),
     m_display(d),
     m_scale(s),
     m_bme(b),

@@ -36,7 +36,7 @@ public:
     const FilamentData &get_filament_data(void) const { return m_config_data.filament_data; }
     void set_screen_data(const ScreenData &);
     const ScreenData &get_screen_data(void) const { return m_config_data.screen_data; }
-    void set_scale_data(const ScaleData &);
+    void set_scale_data(ScaleData &);
     const ScaleData &get_scale_data(void) const { return m_config_data.scale_data; }
 
     // bool is_present(PresentBits b) const { return m_config_data.present_bits & (1<<b); }

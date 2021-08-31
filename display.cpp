@@ -4,7 +4,7 @@
 
 #include "display.h"
 
-#define DEBUG_TOUCH
+// #define DEBUG_TOUCH
 
 TFT_eSPI display_tft = TFT_eSPI();       // Invoke custom library
 

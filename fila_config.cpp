@@ -3,14 +3,11 @@
 #include "fila_config.h"
 
 #include "FS.h"
-// #include "SD.h"
-// #include "SPI.h"
-
 #define PATH "/confdata.dat"
 
 // using namespace fs;
 
-#define DEBUG_CONFIG
+// #define DEBUG_CONFIG
 
 FilaConfig::FilaConfig(SD_IF *sd_if) :
     m_sd_if(sd_if)
@@ -76,6 +73,20 @@ void FilaConfig::list_dir(const char * dirname, uint8_t levels){
     }
 }
 
+void show(const char *title, char *ptr, size_t len)
+{
+    char buff[90];
+    Serial.print(title);
+    Serial.print(": ");
+    for (size_t i = 0; i < len; ++i)
+    {
+        sprintf(buff, "%2.2x (%d)", ptr[i], ptr[i]);
+        Serial.print(buff);
+        if (i)
+            Serial.print(" ");
+    }
+
+}
 
 // return 1 in success, 0 if fail (weird, I know.)
 int FilaConfig::save()
@@ -199,15 +210,18 @@ void FilaConfig::set_screen_data(const ScreenData &screen_data)
     this->save();
 }
 
-void FilaConfig::set_scale_data(const ScaleData &scale_data)
+void FilaConfig::set_scale_data(ScaleData &scale_data)
 {
     m_config_data.present_bits |= (1<<PB_Scale);
     memcpy(&m_config_data.scale_data, &scale_data, sizeof(ScaleData));
 #ifdef DEBUG_CONFIG
-    Serial.print("scale data being saved: ");
-    Serial.print(scale_data.offset);
-    Serial.print(", ");
-    Serial.print(scale_data.gain);
+    // scale_data.gain = 0.0015;
+    {
+        char buff[60];
+        sprintf(buff, "scale being saved: %u %6.6f", scale_data.offset, scale_data.gain);
+        Serial.println(buff);
+    }
+    show("scale data: ", reinterpret_cast<char*>(&m_config_data.scale_data), sizeof(ScaleData));
 #endif
     this->save();
 }

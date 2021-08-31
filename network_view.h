@@ -18,7 +18,7 @@ class NetworkView: public View
 public:
     enum NetworkState { NS_Introduce, NS_Offer, NS_Adjust, NS_NUmStates };
 
-    NetworkView(Display&, ViewChangeCallback ccb, void *change_user_data);
+    NetworkView(Display&, FilaConfig *fc, ViewChangeCallback ccb, void *change_user_data);
     // Call this often.  It drives the state machine.
     void loop();
 

@@ -18,7 +18,7 @@ class FilamentView: public View
 public:
     enum FilamentState { FS_Introduce, FS_Offer, FS_Adjust, FS_NUmStates };
 
-    FilamentView(Display&, ViewChangeCallback ccb, void *change_user_data);
+    FilamentView(Display&, FilaConfig *fc, ViewChangeCallback ccb, void *change_user_data);
     // Call this often.  It drives the state machine.
     void loop();
 

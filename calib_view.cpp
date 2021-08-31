@@ -22,8 +22,8 @@
 
 static const char *state_names[] = { "CS_Ask", "CS_Zero", "CS_Gain", "CS_NUmStates" };
 
-CalibView::CalibView(Display &d, ViewChangeCallback ccb, void *change_user_data, Scale &s) :
-    View(d, ccb, change_user_data),
+CalibView::CalibView(Display &d, FilaConfig *fc, ViewChangeCallback ccb, void *change_user_data, Scale &s) :
+    View(d, fc, ccb, change_user_data),
     m_display(d),
     m_state(CS_Ask),
     m_ask_dialog(
@@ -120,10 +120,16 @@ void CalibView::menu_callback(const char *label, bool pressed)
                     m_change_cb("SCALE", m_change_data);
                     break;
                 case  CS_Gain:
+                    Serial.println("Setting scale gain");
+
                     m_scale.set_gain();
+
+                    // Save calibration values in config
+                    m_change_cb("SCALE", m_change_data);
 
                     set_state(CS_Ask);
                     // Tell control to go back to state view
+
                     if (m_change_cb)
                         m_change_cb("STATE", m_change_data);
                     break;

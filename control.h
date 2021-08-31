@@ -33,7 +33,6 @@ private:
     static void tag_handler_func(char tag[TAG_MSGLEN], void *user);
     void tag_handler(char tag[TAG_MSGLEN]);
 
-    FilaConfig  *m_fc;
     Mode         m_mode;
     Scale       &m_scale;
     BME280_IF   &m_bme280;

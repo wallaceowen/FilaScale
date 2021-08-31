@@ -8,12 +8,12 @@
 // This callback lives in Control class, lets control know when the view
 // has changed, so it can ensure the new view renders itself on the display
 // once.
-typedef void (*ViewChangeCallback)(const char *view_name, void *user);
+typedef void (*ViewChangeCallback)(const char *view_name, void *userdata);
 
 class View
 {
 public:
-    View(Display&, ViewChangeCallback, void*);
+    View(Display&, FilaConfig*, ViewChangeCallback, void*);
 
     // Only called if this is the active view
     virtual void loop(void) = 0;
@@ -31,6 +31,7 @@ protected:
     virtual bool update(void) = 0;
 
     Display           &m_display;
+    FilaConfig        *m_fc;
     ViewChangeCallback m_change_cb;
     void              *m_change_data;
 };

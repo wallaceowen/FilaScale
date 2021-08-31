@@ -16,7 +16,7 @@ class StateView: public View
 {
 public:
     // ctor
-    StateView(Display &d, ViewChangeCallback ccb, void *change_user_data, Scale &s, BME280_IF &b);
+    StateView(Display &d, FilaConfig *fc, ViewChangeCallback ccb, void *change_user_data, Scale &s, BME280_IF &b);
 
     // call this often?
     void loop();

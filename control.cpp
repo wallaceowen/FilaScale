@@ -26,17 +26,16 @@ bool Control::touch_callback_func(Display *d, void *user, uint16_t x, uint16_t y
 }
 
 Control::Control(Scale &scale, Display &display, BME280_IF &bme280, TagProtocol &tag_protocol, FilaConfig *fc) :
-    m_fc(fc),
     m_mode(M_Show),
     m_scale(scale),
     m_bme280(bme280),
     m_display(display),
 
-    m_state_view(StateView(m_display, change_view_func, this, m_scale, m_bme280)),
-    m_scale_calib_view(CalibView(m_display, change_view_func, this, m_scale)),
-    m_config_view(ConfigView(m_display, change_view_func, this)),
-    m_filament_view(FilamentView(m_display, change_view_func, this)),
-    m_network_view(NetworkView(m_display, change_view_func, this)),
+    m_state_view(StateView(m_display, fc, change_view_func, this, m_scale, m_bme280)),
+    m_scale_calib_view(CalibView(m_display, fc, change_view_func, this, m_scale)),
+    m_config_view(ConfigView(m_display, fc, change_view_func, this)),
+    m_filament_view(FilamentView(m_display, fc, change_view_func, this)),
+    m_network_view(NetworkView(m_display, fc, change_view_func, this)),
 
     m_view(&m_state_view),
     m_tag_protocol(tag_protocol)

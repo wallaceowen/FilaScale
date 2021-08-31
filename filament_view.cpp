@@ -28,8 +28,8 @@ static const char filament_intro_body[] = "These dialogs are used for setting fi
 
 static const char *state_names[] = { "FS_Introduce", "FS_Offer", "FS_Adjust", "FS_NUmStates" };
 
-FilamentView::FilamentView(Display &d, ViewChangeCallback ccb, void *change_user_data) :
-    View(d, ccb, change_user_data),
+FilamentView::FilamentView(Display &d, FilaConfig *fc, ViewChangeCallback ccb, void *change_user_data) :
+    View(d, fc, ccb, change_user_data),
     m_display(d),
     m_state(FS_Introduce),
     m_filintro_dialog(d,

@@ -19,7 +19,7 @@ class CalibView: public View
 public:
     enum CalibState { CS_Ask, CS_Zero, CS_Gain, CS_NUmStates };
 
-    CalibView(Display&, ViewChangeCallback ccb, void *change_user_data, Scale &s);
+    CalibView(Display&, FilaConfig *fc, ViewChangeCallback ccb, void *change_user_data, Scale &s);
     // Call this often.  It drives the state machine.
     void loop();
 

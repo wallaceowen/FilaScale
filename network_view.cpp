@@ -16,8 +16,8 @@ static const char network_intro_body[] = "These dialogs are used for setting net
 
 static const char *state_names[] = { "NS_Introduce", "NS_Offer", "NS_Adjust", "NS_NUmStates" };
 
-NetworkView::NetworkView(Display &d, ViewChangeCallback ccb, void *change_user_data) :
-    View(d, ccb, change_user_data),
+NetworkView::NetworkView(Display &d, FilaConfig *fc, ViewChangeCallback ccb, void *change_user_data) :
+    View(d, fc, ccb, change_user_data),
     m_display(d),
     m_state(NS_Introduce),
     m_netintro_dialog(d,
