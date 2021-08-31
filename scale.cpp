@@ -64,7 +64,8 @@ void Scale::set_gain()
 
 Scale::Scale(FilaConfig *fc) :
     m_fc(fc),
-    m_hx711(HX711::G_B32),
+    // m_hx711(HX711::G_B32),
+    m_hx711(HX711::G_A128),
     m_raw(0)
 {
     m_scale_data.offset = SCALE_OFFSET;
