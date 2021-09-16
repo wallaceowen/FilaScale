@@ -73,6 +73,7 @@ void FilaConfig::list_dir(const char * dirname, uint8_t levels){
     }
 }
 
+#ifdef DEBUG_CONFIG
 void show(const char *title, char *ptr, size_t len)
 {
     char buff[90];
@@ -87,6 +88,7 @@ void show(const char *title, char *ptr, size_t len)
     }
 
 }
+#endif
 
 // return 1 in success, 0 if fail (weird, I know.)
 int FilaConfig::save()
@@ -215,7 +217,6 @@ void FilaConfig::set_scale_data(ScaleData &scale_data)
     m_config_data.present_bits |= (1<<PB_Scale);
     memcpy(&m_config_data.scale_data, &scale_data, sizeof(ScaleData));
 #ifdef DEBUG_CONFIG
-    // scale_data.gain = 0.0015;
     {
         char buff[60];
         sprintf(buff, "scale being saved: %u %6.6f", scale_data.offset, scale_data.gain);

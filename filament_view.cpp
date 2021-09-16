@@ -28,6 +28,8 @@ static const char filament_intro_body[] = "These dialogs are used for setting fi
 
 static const char *state_names[] = { "FS_Introduce", "FS_Offer", "FS_Adjust", "FS_NUmStates" };
 
+// The currently imagined filament view, but incomlete needs nore attention to flesh it out and
+// integrate it with configuration over the serial interface via octoprint
 FilamentView::FilamentView(Display &d, FilaConfig *fc, ViewChangeCallback ccb, void *change_user_data) :
     View(d, fc, ccb, change_user_data),
     m_display(d),
@@ -92,14 +94,6 @@ bool valid_fila_name(const char *label)
 
 void FilamentView::menu_callback(const char *label, bool pressed)
 {
-    Serial.print("Filament view menu callback got \"");
-    Serial.print(label),
-    Serial.print("\" state = ");
-    Serial.print(state_names[m_state]),
-    Serial.print(" pressed = ");
-    Serial.println(pressed?"PRESSED":"RELEASED");
-
-
     // Here we check m_state to see what state to switch to,
     // then deal with switching to that state
     if (!pressed)
@@ -120,28 +114,19 @@ void FilamentView::menu_callback(const char *label, bool pressed)
             {
                 case FS_Introduce:
                     set_state(FS_Offer);
-                    // this->show();
                     m_change_cb("FILAMENT", m_change_data);
                     break;
 
                 // No-op - stay in this state
                 case FS_Offer:
                     set_state(FS_Adjust);
-                    // this->show();
                     m_change_cb("FILAMENT", m_change_data);
                     break;
 
                 // OK on FS_Adjust means user is done adjusting
                 case  FS_Adjust:
                     set_state(FS_Offer);
-                    // this->show();
                     m_change_cb("FILAMENT", m_change_data);
-                    break;
-
-                    set_state(FS_Offer);
-                    // Tell control to go back to state view
-                    if (m_change_cb)
-                        m_change_cb("STATE", m_change_data);
                     break;
 
                 default:
@@ -156,14 +141,12 @@ void FilamentView::menu_callback(const char *label, bool pressed)
                 set_state(FS_Adjust);
                 m_filadjust_dialog.set_filament_name(label);
             }
-            // this->show();
             m_change_cb("FILAMENT", m_change_data);
         }
 
         else if (m_state == FS_Adjust)
         {
             m_filadjust_dialog.set_filament_name(label);
-            // this->show();
             m_change_cb("FILAMENT", m_change_data);
         }
     }
@@ -179,37 +162,17 @@ void FilamentView::menu_callback_func(const char *label, bool pressed, void *use
 // Show the static part of the view
 void FilamentView::show()
 {
-    Serial.println("FilamentView::show()");
-
     // Show the initial dialog
     m_current_dialog->show();
 }
 
 bool FilamentView::update()
 {
-    Serial.println("FilamentView::update()");
     return true;
 }
 
 void FilamentView::loop()
 {
-    // Serial.println("FilamentView::loop()");
-#ifdef FILAMENTVIEW_LOOP_HAS_A_JOB
-    switch(m_state)
-    {
-        case FS_Init:
-            break;
-
-        case FS_Offer:
-            break;
-
-        case  FS_Adjust:
-            break;
-
-        default:
-            break;
-    }
-#endif
     m_current_dialog->loop();
 }
 

@@ -37,7 +37,6 @@ void GridDialog::show(void)
 // Returns true when dialog anwsered, false while dialog still running
 void GridDialog::loop(void)
 {
-    // Serial.println("GridDialog::loop()");
 }
 
 bool GridDialog::add_grid_button(const GridButtonData &gbd)

@@ -10,7 +10,7 @@ SD_IF::SD_IF() :
 {
     if (!SD.begin(SD_CS))
     {
-        Serial.println("Card Mount Failed");
+        // Serial.println("Card Mount Failed");
     }
     else
         m_available = true;

@@ -15,7 +15,7 @@ TextBox::TextBox(Display &d, const Rect &r, uint16_t font, const char *txt, uint
     memset(m_buffer, 0, m_len);
     strcpy(m_buffer, txt);
 
-    // Compute how much height we need
+    // pass false to compute how much height we need
     render_text(false);
 }
 
@@ -41,13 +41,6 @@ int TextBox::render_word(char *word, uint16_t &x, uint16_t &y, bool actual)
 {
     auto twidth = m_tft.textWidth(word, m_font);
     int result = 1;
-    if (0)
-    {
-        static char buff[120];
-        sprintf(buff, "@@ if (%hu-%hu+%hu < %hu) kkp y at %hu",
-                x, m_rect.x, twidth,  m_rect.w, y);
-        Serial.println(buff);
-    }
 
     if (x-m_rect.x+twidth < m_rect.w)
     {
@@ -61,7 +54,6 @@ int TextBox::render_word(char *word, uint16_t &x, uint16_t &y, bool actual)
         x = 0;
         y += m_tft.fontHeight(m_font);
         if (y + m_tft.fontHeight(m_font) < m_rect.h)
-        // if (y-m_rect.y < m_rect.h)
         {
             if (actual)
                 m_tft.drawString(word, x, y, m_font);
@@ -70,14 +62,6 @@ int TextBox::render_word(char *word, uint16_t &x, uint16_t &y, bool actual)
         }
         else
             result = -1;
-    }
-
-    if (0)
-    {
-        static char buff[120];
-        sprintf(buff, "TextBox::render_word \"%s\" pushed x,y to [%hu, %hu, %hu]",
-                word, x, y, twidth);
-        Serial.println(buff);
     }
 
     return result;
@@ -96,9 +80,10 @@ void TextBox::render_text(bool actual)
     {
         char *v = 0;
 
-        // If we 
+        // If we have more to render
         if (*cur)
         {
+            // terminate the next word and point v at it
             v = terminate_next(cur);
 
             // Returns with -1 if no room left,
@@ -133,11 +118,6 @@ void TextBox::render_text(bool actual)
 
     m_last_x = x-m_rect.x;
     m_last_y = y + m_tft.fontHeight(m_font);
-
-    // Serial.print("after render, last x, y = ");
-    // Serial.print(m_last_x);
-    // Serial.print(",");
-    // Serial.println(m_last_y);
 }
 
 void TextBox::show(void)

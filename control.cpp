@@ -49,9 +49,6 @@ Control::Control(Scale &scale, Display &display, BME280_IF &bme280, TagProtocol 
 
 void Control::change_view(const char *view_name)
 {
-    Serial.print("Control::change_view got ");
-    Serial.println(view_name);
-
     if (!strcmp(view_name, "SETTINGS"))
         m_view = &m_config_view;
     else if (!strcmp(view_name, "STATE"))

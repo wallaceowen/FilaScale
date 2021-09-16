@@ -80,16 +80,6 @@ bool valid_net_name(const char *label)
 
 void NetworkView::menu_callback(const char *label, bool pressed)
 {
-    Serial.print("Network view menu callback got \"");
-    Serial.print(label),
-    Serial.print("\" state = ");
-    Serial.print(state_names[m_state]),
-    Serial.print(" pressed = ");
-    Serial.println(pressed?"PRESSED":"RELEASED");
-
-
-    // Here we check m_state to see what state to switch to,
-    // then deal with switching to that state
     if (!pressed)
     {
         if (!strcmp(label, "CANCEL"))
@@ -135,14 +125,12 @@ void NetworkView::menu_callback(const char *label, bool pressed)
                 set_state(NS_Adjust);
                 m_netadjust_dialog.set_parameter_name(label);
             }
-            // this->show();
             m_change_cb("NETWORK", m_change_data);
         }
 
         else if (m_state == NS_Adjust)
         {
             m_netadjust_dialog.set_parameter_name(label);
-            // this->show();
             m_change_cb("NETWORK", m_change_data);
         }
     }
@@ -154,41 +142,18 @@ void NetworkView::menu_callback_func(const char *label, bool pressed, void *user
     cv->menu_callback(label, pressed);
 }
 
-
-// Show the static part of the view
 void NetworkView::show()
 {
-    Serial.println("NetworkView::show()");
-
-    // Show the initial dialog
     m_current_dialog->show();
 }
 
 bool NetworkView::update()
 {
-    Serial.println("NetworkView::update()");
     return true;
 }
 
 void NetworkView::loop()
 {
-    // Serial.println("NetworkView::loop()");
-#ifdef FILAMENTVIEW_LOOP_HAS_A_JOB
-    switch(m_state)
-    {
-        case NS_Init:
-            break;
-
-        case NS_Offer:
-            break;
-
-        case  NS_Adjust:
-            break;
-
-        default:
-            break;
-    }
-#endif
     m_current_dialog->loop();
 }
 

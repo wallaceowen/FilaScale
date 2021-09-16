@@ -56,7 +56,6 @@ void StateView::state_menu_callback(const char *label, bool pressed)
 void StateView::show()
 {
 
-    // Serial.println("StateView::show()");
     TFT_eSPI &tft = m_display.get_tft();
 
     // Fill screen with dark grey

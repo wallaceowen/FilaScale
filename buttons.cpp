@@ -14,11 +14,10 @@ Buttons::Buttons(Display &d, const Rect &w, uint16_t r, uint16_t c) :
 {
     if ((m_rows == 0) || (m_columns == 0))
     {
-        Serial.print("Bad number of rows (");
-        Serial.print(m_rows);
-        Serial.print(" or columns (");
-        Serial.print(m_columns);
-        Serial.println(")");
+        if (m_rows == 0)
+            m_buttons_errors |= (1<<BE_BAD_ROWS);
+        if (m_columns == 0)
+            m_buttons_errors |= (1<<BE_BAD_COLS);
         m_buttons = 0;
     }
     else
@@ -28,7 +27,7 @@ Buttons::Buttons(Display &d, const Rect &w, uint16_t r, uint16_t c) :
         if (m_buttons)
             memset(m_buttons, 0, (m_num_buttons)*sizeof(BPTR));
         else
-            Serial.println("CANT ALLOC BUTTONS STORAGE");
+            m_buttons_errors |= (1<<BE_ALLOC_FAILED);
     }
 }
 
@@ -62,7 +61,7 @@ bool Buttons::add_button(const ButtonData &bd, uint16_t row, uint16_t col)
     }
     else
     {
-        Serial.println("CANT PLACE BUTTON");
+        m_buttons_errors |= (1<<BE_BOUNDS_ERROR);
         return false;
     }
 }
@@ -84,11 +83,7 @@ bool Buttons::add_button(
         return true;
     }
     else
-    {
-        sprintf(buttons_debug_buff, "ERROR: %s wanted r %u c %u but only %u rows %u height",
-                bd.label, row, col, m_rows, m_columns);
-        Serial.println(buttons_debug_buff);
-    }
+        m_buttons_errors |= (1<<BE_BOUNDS_ERROR);
     return false;
 }
 
@@ -114,11 +109,7 @@ bool Buttons::add_grid_button(
         return true;
     }
     else
-    {
-        sprintf(buttons_debug_buff, "ERROR: %s wanted r %u c %u but only %u rows %u height",
-                bd.label, row, col, m_rows, m_columns);
-        Serial.println(buttons_debug_buff);
-    }
+        m_buttons_errors |= (1<<BE_BOUNDS_ERROR);
     return false;
 }
 
@@ -136,9 +127,7 @@ void Buttons::show()
         {
             Button *b = m_buttons[row*m_columns+column];
             if (b)
-            {
                 b->draw(m_tft);
-            }
         }
 }
 

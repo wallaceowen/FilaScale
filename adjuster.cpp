@@ -111,13 +111,8 @@ bool Adjuster::check_touch(uint16_t x, uint16_t y, bool pressed)
 
         return 1;
     }
-
     else
-    {
-        // Serial.println("Adjuster: nothing within.");
         return 0;
-    }
-    return 0;
 }
 void Adjuster::update_bar(uint16_t plotval)
 {

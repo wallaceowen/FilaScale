@@ -27,14 +27,6 @@ Display::Display(FilaConfig *fc) :
         memcpy(&sdata, &m_fc->get_screen_data(), sizeof(ScreenData));
     else
         m_fc->set_screen_data(sdata);
-
-    for (size_t i = 0; i < 5; ++i)
-    {
-        if (i)
-            Serial.print(", ");
-        Serial.print(sdata.cal_params[i]);
-    }
-
     display_tft.setTouch(m_fc->get_screen_data().cal_params);
     display_tft.setTextPadding(5);
 }
@@ -59,7 +51,6 @@ bool Display::add_callback(const CallbackData &cd)
 
 bool Display::invoke_callbacks(uint16_t x, uint16_t y, bool pressed)
 {
-    // if (m_callback_count > iteration)
     for (uint16_t iteration = 0; iteration < m_callback_count; ++iteration)
     {
         CallbackData &cd = m_callbacks[iteration];
@@ -74,19 +65,8 @@ void Display::calibrate(void)
 {
     ScreenData sdata;
     sdata.rotation = ROTATION;
-
     display_tft.fillRect(0, 0, display_tft.width(), display_tft.height(), TFT_BLACK);
-
     display_tft.calibrateTouch(sdata.cal_params, TFT_YELLOW, TFT_MAROON, 20);
-
-    Serial.print("touch parameters: ");
-    for (size_t i = 0; i < 5; ++i)
-    {
-        if (i)
-            Serial.print(", ");
-        Serial.print(sdata.cal_params[i]);
-    }
-    Serial.println("");
     m_fc->set_screen_data(sdata);
 }
 

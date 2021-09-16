@@ -54,16 +54,11 @@ void ConfigDialog::show(void)
 void ConfigDialog::loop(void)
 {
     this->GridDialog::loop();
-    // Serial.println("ConfigDialog::loop()");
 }
 
 // Deal with the buttons that get pressed.
 void ConfigDialog::config_button_callback(const char *label, bool pressed)
 {
-    // Serial.print("ConfDialog::config_button_callback got \"");
-    // Serial.print(label);
-    // Serial.print("\", ");
-    // Serial.println(pressed?"PRESSED":"RELEASED");
     if (m_cb)
         m_cb(label, pressed, m_user_data);
 

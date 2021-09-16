@@ -83,14 +83,6 @@ void CalibView::set_state(CalibState cs)
 
 void CalibView::menu_callback(const char *label, bool pressed)
 {
-    Serial.print("Calib menu callback got \"");
-    Serial.print(label),
-    Serial.print("\" state = ");
-    Serial.print(state_names[m_state]),
-    Serial.print(" pressed = ");
-    Serial.println(pressed?"PRESSED":"RELEASED");
-
-
     // Here we check m_state to see what state to switch to,
     // then deal with switching to that state
     if (!pressed)
@@ -120,8 +112,6 @@ void CalibView::menu_callback(const char *label, bool pressed)
                     m_change_cb("SCALE", m_change_data);
                     break;
                 case  CS_Gain:
-                    Serial.println("Setting scale gain");
-
                     m_scale.set_gain();
 
                     // Save calibration values in config
@@ -151,39 +141,16 @@ void CalibView::menu_callback_func(const char *label, bool pressed, void *user_d
 // Show the static part of the view
 void CalibView::show()
 {
-    Serial.println("CalibView::show()");
-
     // Show the initial dialog
     m_current_dialog->show();
 }
 
 bool CalibView::update()
 {
-    Serial.println("CalibView::update()");
     return true;
 }
 
 void CalibView::loop()
 {
-#ifdef CALIBVIEW_LOOP_HAS_A_JOB
-    Serial.println("CalibView::loop()");
-    switch(m_state)
-    {
-        case CS_Init:
-            break;
-
-        case CS_Ask:
-            break;
-
-        case  CS_Zero:
-            break;
-
-        case  CS_Gain:
-            break;
-
-        default:
-            break;
-    }
-#endif
 }
 
