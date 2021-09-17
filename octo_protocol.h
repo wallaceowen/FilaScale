@@ -38,7 +38,6 @@ public:
 
 private:
     int recv_bytes(char *buffer, uint16_t qty) const;
-    // void handle_message(MsgType _type, uint16_t length, char *buffer);
 
     MessageHandlerFunc m_handler;
     void *m_user_data;

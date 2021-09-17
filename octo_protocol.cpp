@@ -12,6 +12,9 @@
 #define SIZEOF_HEADER (SIZEOF_SYNC+SIZEOF_MSG_TYPE+SIZEOF_MSG_LENGTH)
 #define SIZEOF_CRC 2
 
+typedef int8_t type_type;
+typedef uint16_t length_type;
+
 // OctoProtocol::OctoProtocol(MessageHandlerFunc func, void *user_data) :
     // m_handler(func),
     // m_user_data(user_data)
@@ -40,8 +43,15 @@ int OctoProtocol::recv_bytes(char *buffer, uint16_t qty) const
     return rcount;
 }
 
-uint16_t compute_msg_crc(char *body, uint16_t len)
+uint16_t compute_msg_crc(type_type _type, length_type length, char *body)
 {
+    uint16_t crc = 0;
+
+    calcCRC16(_type, &crc);
+    calcCRCArray16(reinterpret_cast<uint8_t*>(&length), SIZEOF_MSG_LENGTH, &crc);
+    calcCRCArray16(reinterpret_cast<uint8_t*>(&body), length, &crc);
+
+    return crc;
 }
 
 // Attempt to read an entire message 
@@ -52,37 +62,43 @@ OctoProtocol::OP_Error OctoProtocol::recv_msg(MsgType &_type, uint16_t &length, 
         return OP_NoData;
 
     // Read the message type or time out
-    if (!recv_bytes(body, SIZEOF_MSG_TYPE))
+    // if (!recv_bytes(body, SIZEOF_MSG_TYPE))
+        // return OP_NoData;
+    type_type t;
+    if (!recv_bytes(%t, SIZEOF_MSG_TYPE))
         return OP_NoData;
 
     // Save the type
-    _type = static_cast<MsgType>(body[0]);
+    _type = static_cast<MsgType>(t);
 
     if (_type >= NUM_VALID_MESSAGES)
         return OP_Bad_MsgType;
 
     // Get the length or time out
-    if (!recv_bytes(body+SIZEOF_MSG_TYPE, SIZEOF_MSG_LENGTH))
+    // if (!recv_bytes(body+SIZEOF_MSG_TYPE, SIZEOF_MSG_LENGTH))
+        // return OP_NoData;
+    length_type l;
+    if (!recv_bytes(reinterpret_cast<uin8_t>(&l), SIZEOF_MSG_LENGTH))
         return OP_NoData;
 
-    length = *(reinterpret_cast<uint16_t*>(body+SIZEOF_MSG_TYPE));
+    length = l;
     if (length > MAX_RX_SIZE)
         return OP_BadSize;
 
     if (length)
     {
         // Try to read the body
-            if (!recv_bytes(body+SIZEOF_MSG_TYPE+SIZEOF_MSG_LENGTH, length))
-                return OP_NoData;
-        }
+        if (!recv_bytes(body, length))
+            return OP_NoData;
+    }
 
-        // Read in the transmitted crc
-        uint16_t rcrc;
-        if (!recv_bytes(reinterpret_cast<char*>(&rcrc), SIZEOF_CRC))
+    // Read the transmitted crc
+    uint16_t rcrc;
+    if (!recv_bytes(reinterpret_cast<char*>(&rcrc), SIZEOF_CRC))
         return OP_NoData;
 
     // Compute the CRC of the bytes we received in the message
-    uint16_t ccrc = compute_msg_crc(body, SIZEOF_MSG_TYPE+SIZEOF_MSG_LENGTH+length);
+    uint16_t ccrc = compute_msg_crc(_type, length, body);
 
     if (ccrc != rcrc)
         return OP_Bad_CRC;
@@ -98,7 +114,7 @@ OctoProtocol::OP_Error OctoProtocol::send_msg(MsgType _type, uint16_t length, co
     // else
         // calcCRC16(static_cast<unsigned char>(SYNC_BYTE), &xcrc);
 
-    if (Serial.write(static_cast<int8_t>(_type)) != SIZEOF_MSG_TYPE)
+    if (Serial.write(static_cast<type_type>(_type)) != SIZEOF_MSG_TYPE)
         return OP_NoConnection;
     else
         calcCRC16(_type, &xcrc);
@@ -115,13 +131,9 @@ OctoProtocol::OP_Error OctoProtocol::send_msg(MsgType _type, uint16_t length, co
 
     if (Serial.write(reinterpret_cast<uint8_t*>(&xcrc), SIZEOF_CRC) != SIZEOF_CRC)
         return OP_NoConnection;
-}
 
-// void OctoProtocol::handle_message(MsgType _type, uint16_t length, char *buffer)
-// {
-    // if (m_handler)
-        // m_handler(_type, length, buffer, m_user_data);
-// }
+    return OP_NoError;
+}
 
 static char rx_buffer[OctoProtocol::MAX_RX_SIZE];
 
@@ -135,7 +147,6 @@ void OctoProtocol::loop()
         uint16_t length;
         OP_Error err = recv_msg(_type, length, rx_buffer);
         if (err == OP_NoError)
-            // handle_message(_type, length, rx_buffer);
             if (m_handler)
                 m_handler(_type, length, rx_buffer, m_user_data);
     }
