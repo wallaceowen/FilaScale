@@ -56,6 +56,7 @@ private:
     View         *m_view;
     TagProtocol  &m_tag_protocol;
     OctoProtocol *m_op;
+    uint64_t      m_tag_val;
 };
 
 #endif

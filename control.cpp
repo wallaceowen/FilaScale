@@ -45,13 +45,16 @@ Control::Control(
     m_network_view(NetworkView(m_display, fc, change_view_func, this)),
 
     m_view(&m_state_view),
-    m_tag_protocol(tag_protocol)
+    m_tag_protocol(tag_protocol),
+    m_tag_val(0UL)
 {
     CallbackData cd;
     cd.cb = touch_callback_func;
     cd.user = this;
     m_display.add_callback(cd);
     tag_protocol.set_tag_cb(tag_handler_func, this);
+
+    m_op->set_handler(proto_handler_func, this);
 }
 
 void Control::change_view(const char *view_name)
@@ -82,18 +85,31 @@ void Control::tag_handler(char tag[TAG_MSGLEN])
 {
     uint64_t tag_val = strtoull(tag, 0, 16);
     std::cout << "RECEIVED TAG " << std::hex << tag_val << std::endl;
+    m_tag_val = tag_val;
 }
 
 void Control::tag_handler_func(char tag[TAG_MSGLEN], void *user)
 { Control *c = reinterpret_cast<Control*>(user); c->tag_handler(tag); }
 
+static char json_buffer[OctoProtocol::MAX_TX_SIZE];
 
+// JSON_DATA = {"printername": "bender_prime", "spool_id": 1423659708, "temp": 38.0, "humidity": .48, "weight": 788}
+#define STATUS_FMT "{\"spool_id\": %lu, \"temp\": %f, \"humidity\": %f, \"weight\": %f}"
 void Control::proto_handler(uint8_t _type, uint16_t len, char*body)
 {
     switch(_type)
     {
         case OctoProtocol::MT_STATUS:
+        {
+            // We received a request for status.  Read the sensors and form up a response
+            // in json.
+            float temp = m_bme280.temp();
+            float humidity = m_bme280.humid();
+            float grams = m_scale.get_calibrated();
+            sprintf(json_buffer, STATUS_FMT, m_tag_val, temp, humidity, grams);
+            m_op->send_msg(OctoProtocol::MT_STATUS, strlen(json_buffer), json_buffer);
             break;
+        }
 
         case OctoProtocol::MT_CONFIG:
             break;
@@ -135,5 +151,7 @@ void Control::loop()
         default:
             break;
     }
+
+    m_op->loop();
 }
 
