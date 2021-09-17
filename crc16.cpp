@@ -62,24 +62,16 @@ static unsigned short crctab16[256] = {
     0x8201, 0x42c0, 0x4380, 0x8341, 0x4100, 0x81c1, 0x8081, 0x4040
 };
 
-/* Calc new value for CRC */
-void calcCRC16(unsigned char p, unsigned short *crc)
-{
-	unsigned short x;			/* index to table crctab */
-
-	x = p ^ (*crc & 0xff);		/* make x from unsigned char and low 8 crc */
-	*crc >>= 8;					/* shift crc 8 to right */
-	*crc ^= crctab16[x];			/* x guaranteed 0 <= x <= 255 */
-} 
-
 /* Calculate crc over an array of unsigned char */
-void calcCRCArray16(unsigned char *p, unsigned len, unsigned short *crc)
+void calcCRCArray16(const uint8_t *p, uint16_t len, uint16_t *crc)
 {
-	unsigned i;
+	uint16_t i;
 
 	for (i = 0; i < len; ++i)
-		calcCRC16(p[i], crc);
-
+    {
+        uint8_t b = p[i];
+        *crc = ((*crc<<8)&0xff00) ^ crctab16[((*crc>>8)&0xff)^b];
+    }
 	return;
 }
 

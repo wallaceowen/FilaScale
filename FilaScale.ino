@@ -86,9 +86,6 @@ void setup(void)
     tag_protocol = new(tagproto_buff) TagProtocol(fila_config);
     octo_protocol = new(octo_proto_buff) OctoProtocol();
     control = new(control_buff) Control(*scale, *display, *bme280, *tag_protocol, fila_config, octo_protocol);
-
-    // uint16_t dparams[5] = {508, 3292, 648, 2851, 1 };
-    // display->set_calibration(dparams);
 }
 
 void loop()

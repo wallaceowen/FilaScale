@@ -54,7 +54,8 @@ Control::Control(
     m_display.add_callback(cd);
     tag_protocol.set_tag_cb(tag_handler_func, this);
 
-    m_op->set_handler(proto_handler_func, this);
+    if (m_op)
+        m_op->set_handler(proto_handler_func, this);
 }
 
 void Control::change_view(const char *view_name)
@@ -107,7 +108,8 @@ void Control::proto_handler(uint8_t _type, uint16_t len, char*body)
             float humidity = m_bme280.humid();
             float grams = m_scale.get_calibrated();
             sprintf(json_buffer, STATUS_FMT, m_tag_val, temp, humidity, grams);
-            m_op->send_msg(OctoProtocol::MT_STATUS, strlen(json_buffer), json_buffer);
+            if (m_op)
+                m_op->send_msg(OctoProtocol::MT_STATUS, strlen(json_buffer), json_buffer);
             break;
         }
 
@@ -152,6 +154,7 @@ void Control::loop()
             break;
     }
 
-    m_op->loop();
+    if (m_op)
+        m_op->loop();
 }
 

@@ -8,9 +8,9 @@
 #include <stdint.h>
 // #include <types.h>
 
-typedef unsigned short CRCType;
+typedef uint16_t CRCType;
 
-extern void calcCRC16(unsigned char p, CRCType *crc);
-extern void calcCRCArray16(unsigned char *p, unsigned len, CRCType *crc);
+extern void calcCRC16(uint8_t p, CRCType *crc);
+extern void calcCRCArray16(const uint8_t *p, uint16_t len, CRCType *crc);
 
 #endif
