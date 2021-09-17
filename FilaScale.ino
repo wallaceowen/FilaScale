@@ -21,6 +21,7 @@
 #include "bme280_if.h"
 #include "display.h"
 #include "tag_protocol.h"
+#include "octo_protocol.h"
 #include "scale.h"
 #include "control.h"
 #include "fila_config.h"
@@ -49,6 +50,10 @@ char bme_buff[sizeof(BME280_IF)];
 // The RFID tag reader
 TagProtocol *tag_protocol = 0;
 char tagproto_buff[sizeof(TagProtocol)];
+
+// Octoprint interface
+OctoProtocol *octo_protocol = 0;
+char octo_proto_buff[sizeof(OctoProtocol)];
 
 // Filament Monitor control loop is where the action is
 Control *control = 0;
@@ -79,7 +84,8 @@ void setup(void)
     scale = new(scale_buff) Scale(fila_config);
     bme280 = new(bme_buff) BME280_IF(fila_config);
     tag_protocol = new(tagproto_buff) TagProtocol(fila_config);
-    control = new(control_buff) Control(*scale, *display, *bme280, *tag_protocol, fila_config);
+    octo_protocol = new(octo_proto_buff) OctoProtocol();
+    control = new(control_buff) Control(*scale, *display, *bme280, *tag_protocol, fila_config, octo_protocol);
 
     // uint16_t dparams[5] = {508, 3292, 648, 2851, 1 };
     // display->set_calibration(dparams);

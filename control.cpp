@@ -25,11 +25,18 @@ bool Control::touch_callback_func(Display *d, void *user, uint16_t x, uint16_t y
     return control->touch_callback(x, y, pressed);
 }
 
-Control::Control(Scale &scale, Display &display, BME280_IF &bme280, TagProtocol &tag_protocol, FilaConfig *fc) :
+Control::Control(
+        Scale &scale,
+        Display &display,
+        BME280_IF &bme280,
+        TagProtocol &tag_protocol,
+        FilaConfig *fc,
+        OctoProtocol *op) :
     m_mode(M_Show),
     m_scale(scale),
     m_bme280(bme280),
     m_display(display),
+    m_op(op),
 
     m_state_view(StateView(m_display, fc, change_view_func, this, m_scale, m_bme280)),
     m_scale_calib_view(CalibView(m_display, fc, change_view_func, this, m_scale)),
@@ -80,6 +87,36 @@ void Control::tag_handler(char tag[TAG_MSGLEN])
 void Control::tag_handler_func(char tag[TAG_MSGLEN], void *user)
 { Control *c = reinterpret_cast<Control*>(user); c->tag_handler(tag); }
 
+
+void Control::proto_handler(uint8_t _type, uint16_t len, char*body)
+{
+    switch(_type)
+    {
+        case OctoProtocol::MT_STATUS:
+            break;
+
+        case OctoProtocol::MT_CONFIG:
+            break;
+
+        case OctoProtocol::MT_START:
+            break;
+
+        case OctoProtocol::MT_STOP:
+            break;
+
+        case OctoProtocol::NUM_VALID_MESSAGES:
+            break;
+
+        default:
+            break;
+    }
+}
+
+void Control::proto_handler_func(uint8_t _type, uint16_t len, char*body, void *user)
+{
+    Control *c = reinterpret_cast<Control*>(user);
+    c->proto_handler(_type, len, body);
+}
 
 void Control::loop()
 {
