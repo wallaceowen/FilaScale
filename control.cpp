@@ -95,7 +95,7 @@ void Control::tag_handler_func(char tag[TAG_MSGLEN], void *user)
 // Buffer for holding replies sent to octoprint-filamon
 static char json_buffer[OctoProtocol::MAX_TX_SIZE];
 
-#define STATUS_FMT "{\"spool_id\": %lu, \"temp\": %f, \"humidity\": %f, \"weight\": %f}"
+#define STATUS_FMT "{\"spool_id\": %lu, \"temp\": %3.3f, \"humidity\": %3.3f, \"weight\": %3.3f}"
 void Control::proto_handler(uint8_t _type, uint16_t len, char*body)
 {
     switch(_type)

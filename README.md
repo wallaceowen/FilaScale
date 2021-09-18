@@ -18,6 +18,9 @@ where:
 Download the code and burn it into a FilaScale board (or your own board, or a breadboard, with TFT and sensors connected)
 
 
+## The Hardware
+The KiCAD board design for FilaScale is at https://github.com/wallaceowen/FilaScaleBoard/tree/master
+
 ## Usage
 
 FilaScale listens for packets on the primary serial interface, maintaining a user interface in the background.
