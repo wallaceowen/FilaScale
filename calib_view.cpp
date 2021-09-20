@@ -20,7 +20,7 @@
 #define BORDER_THICKNESS 5
 #define MARGIN BORDER_THICKNESS+2
 
-static const char *state_names[] = { "CS_Ask", "CS_Zero", "CS_Gain", "CS_NUmStates" };
+// static const char *state_names[] = { "CS_Ask", "CS_Zero", "CS_Gain", "CS_NUmStates" };
 
 CalibView::CalibView(Display &d, FilaConfig *fc, ViewChangeCallback ccb, void *change_user_data, Scale &s) :
     View(d, fc, ccb, change_user_data),

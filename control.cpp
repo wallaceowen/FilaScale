@@ -4,6 +4,13 @@
 
 #include "control.h"
 
+
+// We send STATUS
+#define STATUS_FMT "{\"spool_id\": %llu, \"temp\": %3.3f, \"humidity\": %3.3f, \"weight\": %3.3f}"
+
+// We receive CONFIG
+#define CONFIG_FMT "{\"filament\": %s, \"threshold\": %s, \"min\": %3.3f, \"max\": %3.3f, \"optimal\": %3.3f}"
+
 bool Control::touch_callback(uint16_t x, uint16_t y, bool pressed)
 {
 #ifdef DEBUG_TOUCH
@@ -36,7 +43,6 @@ Control::Control(
     m_scale(scale),
     m_bme280(bme280),
     m_display(display),
-    m_op(op),
 
     m_state_view(StateView(m_display, fc, change_view_func, this, m_scale, m_bme280)),
     m_scale_calib_view(CalibView(m_display, fc, change_view_func, this, m_scale)),
@@ -44,14 +50,16 @@ Control::Control(
     m_filament_view(FilamentView(m_display, fc, change_view_func, this)),
     m_network_view(NetworkView(m_display, fc, change_view_func, this)),
 
-    m_view(&m_state_view),
     m_tag_protocol(tag_protocol),
-    m_tag_val(0UL)
+    m_op(op),
+    m_tag_val(0UL),
+    m_thresholds(threshold_cb_func, this)
 {
     CallbackData cd;
     cd.cb = touch_callback_func;
     cd.user = this;
     m_display.add_callback(cd);
+    m_view = &m_state_view;
     tag_protocol.set_tag_cb(tag_handler_func, this);
 
     if (m_op)
@@ -95,7 +103,21 @@ void Control::tag_handler_func(char tag[TAG_MSGLEN], void *user)
 // Buffer for holding replies sent to octoprint-filamon
 static char json_buffer[OctoProtocol::MAX_TX_SIZE];
 
-#define STATUS_FMT "{\"spool_id\": %lu, \"temp\": %3.3f, \"humidity\": %3.3f, \"weight\": %3.3f}"
+// Form up a message to tell FilaMon that a threshold has been exceeded
+void Control::form_up_and_send_status()
+{
+    // We received a request for status.  Read the sensors and form up a response
+    // in json.
+    if (m_op)
+    {
+        float temp = m_bme280.temp();
+        float humidity = m_bme280.humid();
+        float grams = m_scale.get_calibrated();
+        sprintf(json_buffer, STATUS_FMT, m_tag_val, temp, humidity, grams);
+            m_op->send_msg(OctoProtocol::MT_STATUS, strlen(json_buffer), json_buffer);
+    }
+}
+
 void Control::proto_handler(uint8_t _type, uint16_t len, char*body)
 {
     switch(_type)
@@ -104,25 +126,30 @@ void Control::proto_handler(uint8_t _type, uint16_t len, char*body)
         {
             // We received a request for status.  Read the sensors and form up a response
             // in json.
-            float temp = m_bme280.temp();
-            float humidity = m_bme280.humid();
-            float grams = m_scale.get_calibrated();
-            sprintf(json_buffer, STATUS_FMT, m_tag_val, temp, humidity, grams);
-            if (m_op)
-                m_op->send_msg(OctoProtocol::MT_STATUS, strlen(json_buffer), json_buffer);
+            form_up_and_send_status();
             break;
         }
 
+        // Config configures a single threshold.
+        // The config data is json that looks like:
+        // {"filament": "Nylon", "threshold": "Humidity", "min": 0.0, "max": %20.0f, "optimal": 10.0}
         case OctoProtocol::MT_CONFIG:
+        {
+            StaticJsonDocument<MAX_JSON_SIZE> config_json;
+            DeserializationError dse = deserializeJson(config_json, body);
+            if (dse)
+                    return;
+            m_thresholds.set_threshold(
+                    config_json["threshold"],
+                    config_json["filament"],
+                    config_json["min"], config_json["max"], config_json["optimal"]);
             break;
+          }
 
+        // These two don't do qanything _yet_.
         case OctoProtocol::MT_START:
             break;
-
         case OctoProtocol::MT_STOP:
-            break;
-
-        case OctoProtocol::NUM_VALID_MESSAGES:
             break;
 
         default:
@@ -134,6 +161,17 @@ void Control::proto_handler_func(uint8_t _type, uint16_t len, char*body, void *u
 {
     Control *c = reinterpret_cast<Control*>(user);
     c->proto_handler(_type, len, body);
+}
+
+void Control::threshold_cb(const Threshold*, float value)
+{
+    form_up_and_send_status();
+}
+
+void Control::threshold_cb_func(const Threshold *t, float value, void *user)
+{
+    Control *c = reinterpret_cast<Control*>(user);
+    c->threshold_cb(t, value);
 }
 
 void Control::loop()

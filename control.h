@@ -3,6 +3,7 @@
 #define __control_h
 
 #include <stdint.h>
+#include <ArduinoJson.h>
 
 #include "bme280_if.h"
 #include "display.h"
@@ -14,14 +15,16 @@
 #include "filament_view.h"
 #include "network_view.h"
 #include "octo_protocol.h"
+#include "thresholds.h"
+
+#define MAX_JSON_SIZE 1024
 
 class Control
 {
 public:
 
     enum Mode { M_Show, M_Update, M_Error };
-    Control(
-            Scale &scale,
+    Control(Scale &scale,
             Display &display,
             BME280_IF &bme280,
             TagProtocol &tag_protocol,
@@ -30,6 +33,8 @@ public:
     void loop();
 
 private:
+
+    void form_up_and_send_status();
 
     static bool touch_callback_func(Display *d, void *user, uint16_t x, uint16_t y, bool pressed);
     bool touch_callback(uint16_t x, uint16_t y, bool touched);
@@ -43,6 +48,8 @@ private:
     static void proto_handler_func(uint8_t _type, uint16_t len, char*msg, void *user);
     void proto_handler(uint8_t _type, uint16_t len, char*msg);
 
+    static void threshold_cb_func(const Threshold *, float, void *);
+    void threshold_cb(const Threshold*, float);
 
     Mode          m_mode;
     Scale        &m_scale;
@@ -53,10 +60,11 @@ private:
     ConfigView    m_config_view;
     FilamentView  m_filament_view;
     NetworkView   m_network_view;
-    View         *m_view;
     TagProtocol  &m_tag_protocol;
     OctoProtocol *m_op;
     uint64_t      m_tag_val;
+    Thresholds    m_thresholds;
+    View         *m_view;
 };
 
 #endif

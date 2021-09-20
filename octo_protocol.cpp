@@ -46,6 +46,7 @@ void dump_bytes(const char *title, const unsigned char *bytes, int len)
     Serial.println("");
 }
 
+// Handler is invoked with messages as they arrive.
 void OctoProtocol::set_handler(MessageHandlerFunc func, void *user_data)
 {
     m_handler = func;
