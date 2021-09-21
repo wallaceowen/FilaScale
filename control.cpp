@@ -4,12 +4,18 @@
 
 #include "control.h"
 
-
 // We send STATUS
 #define STATUS_FMT "{\"spool_id\": %llu, \"temp\": %3.3f, \"humidity\": %3.3f, \"weight\": %3.3f}"
 
 // We receive CONFIG
-#define CONFIG_FMT "{\"filament\": %s, \"threshold\": %s, \"min\": %3.3f, \"max\": %3.3f, \"optimal\": %3.3f}"
+// example:
+// {"PLA": { "Humidity": { "min": 10.0, "max": 50.0, "optimal": 30.0} } }
+#define CONFIG_FMT "{\"%s\": {\"%s\": {\"min\": %3.3f, \"max\": %3.3f, \"optimal\": %3.3f}}}"
+#define THRESH_ALERT_FMT "{\"filament\": \"%s\", \"limit\": \"%s\", \"min\": %4.4f, \"max\": %4.4f, \"value\": %4.4f}"
+
+
+static const char *FilamentNames[] = {"ABS", "ASA", "Nylon", "PLA", "PETG"};
+#define NUM_FILAMENT_NAMES (sizeof(FilamentNames)/sizeof(FilamentNames[0]))
 
 bool Control::touch_callback(uint16_t x, uint16_t y, bool pressed)
 {
@@ -114,7 +120,25 @@ void Control::form_up_and_send_status()
         float humidity = m_bme280.humid();
         float grams = m_scale.get_calibrated();
         sprintf(json_buffer, STATUS_FMT, m_tag_val, temp, humidity, grams);
-            m_op->send_msg(OctoProtocol::MT_STATUS, strlen(json_buffer), json_buffer);
+        m_op->send_msg(OctoProtocol::MT_STATUS, strlen(json_buffer), json_buffer);
+    }
+}
+
+// Form up a message to tell FilaMon that a threshold has been exceeded
+void Control::send_threshold_alert(const Threshold*thresh, float value)
+{
+    // We received a request for status.  Read the sensors and form up a response
+    // in json.
+    if (m_op)
+    {
+        // {"filament": \"%s\", \"limit\": \"%s\", \"min\": %4.4f, \"max\": %4.4f, \"value\": %4.4f}
+        sprintf(json_buffer, THRESH_ALERT_FMT,
+                thresh->filament,
+                thresh->name,
+                thresh->low,
+                thresh->high,
+                value);
+        m_op->send_msg(OctoProtocol::MT_THRESHOLD, strlen(json_buffer), json_buffer);
     }
 }
 
@@ -133,16 +157,28 @@ void Control::proto_handler(uint8_t _type, uint16_t len, char*body)
         // Config configures a single threshold.
         // The config data is json that looks like:
         // {"filament": "Nylon", "threshold": "Humidity", "min": 0.0, "max": %20.0f, "optimal": 10.0}
+        // {"Nylon": {"Humidity": {"min": 0.0, "max": %20.0f, "optimal": 10.0} } }
+        // {"Nylon": {"DryingTemp": {"min": 0.0, "max": %20.0f, "optimal": 10.0} } }
         case OctoProtocol::MT_CONFIG:
         {
             StaticJsonDocument<MAX_JSON_SIZE> config_json;
             DeserializationError dse = deserializeJson(config_json, body);
             if (dse)
                     return;
-            m_thresholds.set_threshold(
-                    config_json["threshold"],
-                    config_json["filament"],
-                    config_json["min"], config_json["max"], config_json["optimal"]);
+            for (size_t i = 0; i < NUM_FILAMENT_NAMES; ++i)
+            {
+                const char *name = FilamentNames[i];
+                m_thresholds.set_threshold(name, "Humidity",
+                        config_json[name]["Humidity"]["min"],
+                        config_json[name]["Humidity"]["max"],
+                        config_json[name]["Humidity"]["optimal"]);
+
+                m_thresholds.set_threshold(name, "DryingTemp",
+                        config_json[name]["DryingTemp"]["min"],
+                        config_json[name]["DryingTemp"]["max"],
+                        config_json[name]["DryingTemp"]["optimal"]);
+            }
+
             break;
           }
 
@@ -163,9 +199,9 @@ void Control::proto_handler_func(uint8_t _type, uint16_t len, char*body, void *u
     c->proto_handler(_type, len, body);
 }
 
-void Control::threshold_cb(const Threshold*, float value)
+void Control::threshold_cb(const Threshold *thresh, float value)
 {
-    form_up_and_send_status();
+    send_threshold_alert(thresh, value);
 }
 
 void Control::threshold_cb_func(const Threshold *t, float value, void *user)

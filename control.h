@@ -35,6 +35,7 @@ public:
 private:
 
     void form_up_and_send_status();
+    void send_threshold_alert(const Threshold*thresh, float value);
 
     static bool touch_callback_func(Display *d, void *user, uint16_t x, uint16_t y, bool pressed);
     bool touch_callback(uint16_t x, uint16_t y, bool touched);
@@ -50,6 +51,7 @@ private:
 
     static void threshold_cb_func(const Threshold *, float, void *);
     void threshold_cb(const Threshold*, float);
+
 
     Mode          m_mode;
     Scale        &m_scale;

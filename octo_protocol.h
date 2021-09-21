@@ -25,7 +25,7 @@ public:
     // enum RX_State { RS_Sync, RS_Type, RS_Addr, RS_Body, RS_CRC, RS_Ready };
 
     // These must track the message types declared in the FilaMon plugin for octoprint
-    enum MsgType { MT_STATUS, MT_CONFIG, MT_START, MT_STOP, NUM_VALID_MESSAGES };
+    enum MsgType { MT_STATUS, MT_CONFIG, MT_START, MT_STOP, MT_THRESHOLD, NUM_VALID_MESSAGES };
 
 
     OctoProtocol();

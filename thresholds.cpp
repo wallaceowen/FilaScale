@@ -8,16 +8,16 @@
 #include "thresholds.h"
 
 Threshold Thresholds::ms_thresholds[MAX_THRESHOLDS] = {
-    {"DryingTemp", "PLA", 0.0, 60.0, 50.0 },
-    {"DryingTemp", "ABS", 0.0, 90.0, 90.0 },
-    {"DryingTemp", "ASA", 0.0, 90.0, 90.0 },
-    {"DryingTemp", "PETG", 0.0, 90.0, 40.0 },
-    {"DryingTemp", "Nylon", 0.0, 90.0, 40.0 },
-    {"Humidity", "PLA", 0.0, 50.0, 90.0 },
-    {"Humidity", "ASA", 0.0, 25.0, 90.0 },
-    {"Humidity", "ABS", 0.0, 20.0, 40.0 },
-    {"Humidity", "PETG", 0.0, 25.0, 40.0 },
-    {"Humidity", "Nylon", 0.0, 20.0, 40.0 },
+    {"PLA", "DryingTemp", 0.0, 60.0, 50.0 },
+    {"ABS", "DryingTemp", 0.0, 90.0, 90.0 },
+    {"ASA", "DryingTemp", 0.0, 90.0, 90.0 },
+    {"PETG", "DryingTemp", 0.0, 90.0, 40.0 },
+    {"Nylon", "DryingTemp", 0.0, 90.0, 40.0 },
+    {"PLA", "Humidity", 0.0, 50.0, 90.0 },
+    {"ASA", "Humidity", 0.0, 25.0, 90.0 },
+    {"ABS", "Humidity", 0.0, 20.0, 40.0 },
+    {"PETG", "Humidity", 0.0, 25.0, 40.0 },
+    {"Nylon", "Humidity", 0.0, 20.0, 40.0 },
 };
 #define NUM_THRESHOLDS (sizeof(ms_thresholds)/sizeof(ms_thresholds[0]))
 
@@ -30,8 +30,8 @@ Thresholds::Thresholds(Threshold_CB cb, void *user_data) :
 }
 
 Threshold *Thresholds::find_threshold(
-        const char *threshold_name,
-        const char *filament)
+        const char *filament,
+        const char *threshold_name)
 {
     for (unsigned i = 0; i < NUM_THRESHOLDS; ++i)
     {
@@ -46,8 +46,8 @@ Threshold *Thresholds::find_threshold(
 }
 
 void Thresholds::check_threshold(
-        const char *threshold_name,
         const char *filament,
+        const char *threshold_name,
         float value)
 {
     Threshold *thresh_entry = find_threshold(threshold_name, filament);
@@ -62,8 +62,8 @@ void Thresholds::check_threshold(
 }
 
 bool Thresholds::set_threshold(
-        const char *threshold_name,
         const char *filament,
+        const char *threshold_name,
         float low, float high, float optimal)
 {
     Threshold *thresh_entry = find_threshold(threshold_name, filament);

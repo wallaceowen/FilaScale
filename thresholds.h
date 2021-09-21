@@ -12,8 +12,8 @@
 
 struct Threshold
 {
-    char name[16];
     char filament[16];
+    char name[16];
     float low;
     float high;
     float optimal;
@@ -27,13 +27,13 @@ public:
     Thresholds(Threshold_CB cb, void *udata);
 
     void check_threshold(
-            const char *threshold_name,
             const char *filament_name,
+            const char *threshold_name,
             float value);
 
     bool set_threshold(
-            const char *threshold_name,
             const char *filament_name,
+            const char *threshold_name,
             float low, float high, float optimal);
 
     void loop();
