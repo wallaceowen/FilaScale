@@ -26,7 +26,6 @@ static const char filament_intro_title[] = "Filament Settings";
 static const char filament_intro_body[] = "These dialogs are used for setting filament drying temperature, "
 "humidity alert levels, and defining new filament types.";
 
-static const char *state_names[] = { "FS_Introduce", "FS_Offer", "FS_Adjust", "FS_NUmStates" };
 
 // The currently imagined filament view, but incomlete needs nore attention to flesh it out and
 // integrate it with configuration over the serial interface via octoprint

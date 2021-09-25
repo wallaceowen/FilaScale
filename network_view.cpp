@@ -14,8 +14,6 @@ static const char network_intro_title[] = "Network Settings";
 static const char network_intro_body[] = "These dialogs are used for setting network parameters such as "
 "whether to use dhcp, IP address, netmask, gateway, ntp server address, etc.";
 
-static const char *state_names[] = { "NS_Introduce", "NS_Offer", "NS_Adjust", "NS_NUmStates" };
-
 NetworkView::NetworkView(Display &d, FilaConfig *fc, ViewChangeCallback ccb, void *change_user_data) :
     View(d, fc, ccb, change_user_data),
     m_display(d),

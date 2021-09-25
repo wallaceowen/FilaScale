@@ -18,7 +18,6 @@
 
 #include <Wire.h>
 #include <SPI.h>
-#include <Adafruit_Sensor.h>
 #include <Adafruit_BME280.h>
 
 #include "bme280_if.h"

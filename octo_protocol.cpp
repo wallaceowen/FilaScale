@@ -93,7 +93,6 @@ int OctoProtocol::recv_bytes(unsigned char *buffer, uint16_t qty) const
 
 static unsigned char rx_buffer[OctoProtocol::MAX_RX_SIZE];
 
-static char dbg[42];
 // Attempt to read an entire message 
 OctoProtocol::OP_Error OctoProtocol::recv_msg(MsgType &_type, uint16_t &length, char *body, unsigned char *buffer) const
 {
@@ -106,8 +105,6 @@ OctoProtocol::OP_Error OctoProtocol::recv_msg(MsgType &_type, uint16_t &length, 
         if (ch == -1)
             return OP_NoData;
 
-        // sprintf(dbg, "sync? \"%x\"", ch);
-        // Serial.println(dbg);
         if (ch == SYNC_BYTE)
             break;
     }
@@ -120,9 +117,6 @@ OctoProtocol::OP_Error OctoProtocol::recv_msg(MsgType &_type, uint16_t &length, 
     char t = *bptr++;
     _type = static_cast<MsgType>(t);
 
-    // sprintf(dbg, "received msg type \"%x\"", t);
-    // Serial.println(dbg);
-
     if (_type >= NUM_VALID_MESSAGES)
         return OP_Bad_MsgType;
 
@@ -134,8 +128,6 @@ OctoProtocol::OP_Error OctoProtocol::recv_msg(MsgType &_type, uint16_t &length, 
 
     length = *reinterpret_cast<uint16_t*>(bptr);
     bptr += SIZEOF_MSG_LENGTH;
-    // sprintf(dbg, "length: %d", length);
-    // Serial.println(dbg);
     if (length > MAX_RX_SIZE)
         return OP_BadSize;
 
@@ -159,19 +151,9 @@ OctoProtocol::OP_Error OctoProtocol::recv_msg(MsgType &_type, uint16_t &length, 
     // dump_bytes("received msg", buffer, bptr-buffer);
 
     // Compute the CRC of the bytes we received in the message
-    // calcCRCArray16(buffer, SIZEOF_SYNC+SIZEOF_MSG_TYPE+SIZEOF_MSG_LENGTH+SIZEOF_CRC+length, &ccrc);
     uint16_t msize = SIZEOF_SYNC+SIZEOF_MSG_TYPE+SIZEOF_MSG_LENGTH+length;
-    uint16_t isize = bptr-buffer;
-    // sprintf(dbg, "msize %u", msize);
-    // Serial.println(dbg);
-    // dump_bytes("crc over", buffer, msize);
     uint16_t ccrc = 0;
     calcCRCArray16(buffer, msize, &ccrc);
-
-    // dump_bytes("computed crc", reinterpret_cast<unsigned char*>(&ccrc), 2);
-
-    // sprintf(dbg, "ccrc %x rxrx %x", ccrc, rcrc);
-    // Serial.println(dbg);
 
     if (ccrc != rcrc)
         return OP_Bad_CRC;

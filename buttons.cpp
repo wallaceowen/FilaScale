@@ -2,7 +2,6 @@
 
 #include "buttons.h"
 
-static char buttons_debug_buff[75];
 Buttons::Buttons(Display &d, const Rect &w, uint16_t r, uint16_t c) :
     m_tft(d.get_tft()),
     m_rect(w),
