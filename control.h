@@ -35,7 +35,6 @@ public:
 private:
 
     void form_up_and_send_status();
-    void send_threshold_alert(const Threshold*thresh, float value);
 
     static bool touch_callback_func(Display *d, void *user, uint16_t x, uint16_t y, bool pressed);
     bool touch_callback(uint16_t x, uint16_t y, bool touched);
@@ -46,12 +45,12 @@ private:
     static void tag_handler_func(char tag[TAG_MSGLEN], void *user);
     void tag_handler(char tag[TAG_MSGLEN]);
 
-    static void proto_handler_func(uint8_t _type, uint16_t len, char*msg, void *user);
+    static void proto_handler_func(uint8_t _type, uint16_t len,
+            char*msg, void *user);
     void proto_handler(uint8_t _type, uint16_t len, char*msg);
 
-    static void threshold_cb_func(const Threshold *, float, void *);
-    void threshold_cb(const Threshold*, float);
-
+    static void thresh_cb_func(const Threshold*, float, void*);
+    void thresh_cb(const Threshold*, float);
 
     Mode          m_mode;
     Scale        &m_scale;

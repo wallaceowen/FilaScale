@@ -59,7 +59,7 @@ Control::Control(
     m_tag_protocol(tag_protocol),
     m_op(op),
     m_tag_val(0UL),
-    m_thresholds(threshold_cb_func, this)
+    m_thresholds(thresh_cb_func, this)
 {
     CallbackData cd;
     cd.cb = touch_callback_func;
@@ -124,24 +124,6 @@ void Control::form_up_and_send_status()
     }
 }
 
-// Form up a message to tell FilaMon that a threshold has been exceeded
-void Control::send_threshold_alert(const Threshold*thresh, float value)
-{
-    // We received a request for status.  Read the sensors and form up a response
-    // in json.
-    if (m_op)
-    {
-        // {"filament": \"%s\", \"limit\": \"%s\", \"min\": %4.4f, \"max\": %4.4f, \"value\": %4.4f}
-        sprintf(json_buffer, THRESH_ALERT_FMT,
-                thresh->filament,
-                thresh->name,
-                thresh->low,
-                thresh->high,
-                value);
-        m_op->send_msg(OctoProtocol::MT_THRESHOLD, strlen(json_buffer), json_buffer);
-    }
-}
-
 void Control::proto_handler(uint8_t _type, uint16_t len, char*body)
 {
     switch(_type)
@@ -156,11 +138,11 @@ void Control::proto_handler(uint8_t _type, uint16_t len, char*body)
 
         // Config configures a single threshold.
         // The config data is json that looks like:
-        // {"filament": "Nylon", "threshold": "Humidity", "min": 0.0, "max": %20.0f, "optimal": 10.0}
         // {"Nylon": {"Humidity": {"min": 0.0, "max": %20.0f, "optimal": 10.0} } }
         // {"Nylon": {"DryingTemp": {"min": 0.0, "max": %20.0f, "optimal": 10.0} } }
         case OctoProtocol::MT_CONFIG:
         {
+#ifdef RECEIVING_CONFIG_NEEDED
             StaticJsonDocument<MAX_JSON_SIZE> config_json;
             DeserializationError dse = deserializeJson(config_json, body);
             if (dse)
@@ -178,7 +160,7 @@ void Control::proto_handler(uint8_t _type, uint16_t len, char*body)
                         config_json[name]["DryingTemp"]["max"],
                         config_json[name]["DryingTemp"]["optimal"]);
             }
-
+#endif
             break;
           }
 
@@ -199,15 +181,14 @@ void Control::proto_handler_func(uint8_t _type, uint16_t len, char*body, void *u
     c->proto_handler(_type, len, body);
 }
 
-void Control::threshold_cb(const Threshold *thresh, float value)
+void Control::thresh_cb(const Threshold*, float)
 {
-    send_threshold_alert(thresh, value);
 }
 
-void Control::threshold_cb_func(const Threshold *t, float value, void *user)
+void Control::thresh_cb_func(const Threshold*th, float val, void*user)
 {
     Control *c = reinterpret_cast<Control*>(user);
-    c->threshold_cb(t, value);
+    c->thresh_cb(th, val);
 }
 
 void Control::loop()

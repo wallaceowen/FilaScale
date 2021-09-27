@@ -12,11 +12,9 @@
 
 struct Threshold
 {
-    char filament[16];
     char name[16];
     float low;
     float high;
-    float optimal;
 };
 
 typedef void (*Threshold_CB)(const Threshold*, float value, void *user);
@@ -24,23 +22,17 @@ typedef void (*Threshold_CB)(const Threshold*, float value, void *user);
 class Thresholds
 {
 public:
+    enum ThreshType { TT_Humid, TT_DryTemp };
+
     Thresholds(Threshold_CB cb, void *udata);
 
-    void check_threshold(
-            const char *filament_name,
-            const char *threshold_name,
-            float value);
+    void check_threshold( const char *threshold_name, float value);
 
-    bool set_threshold(
-            const char *filament_name,
-            const char *threshold_name,
-            float low, float high, float optimal);
+    void set_threshold(const char *threshold_name, float low, float high);
 
     void loop();
 
 private:
-    Threshold *find_threshold(const char *thresh_name, const char *filament);
-
     static Threshold ms_thresholds[];
     Threshold_CB     m_cb;
     void            *m_user_data;
