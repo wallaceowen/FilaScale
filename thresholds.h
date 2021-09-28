@@ -17,12 +17,13 @@ struct Threshold
     float high;
 };
 
-typedef void (*Threshold_CB)(const Threshold*, float value, void *user);
 
 class Thresholds
 {
 public:
-    enum ThreshType { TT_Humid, TT_DryTemp };
+    enum ThreshType { TT_Humid, TT_DryTemp, TT_Weight, TT_Num };
+
+    typedef void (*Threshold_CB)(ThreshType _type, const Threshold*, float value, void *user);
 
     Thresholds(Threshold_CB cb, void *udata);
 

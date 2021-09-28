@@ -28,6 +28,8 @@ public:
 
     bool touch_callback(uint16_t x, uint16_t y, bool pressed);
 
+    void set_tag(uint64_t &tag);
+
 protected:
 
 private:
@@ -44,6 +46,7 @@ private:
     float      m_weight;
     float      m_full_weight;
     uint16_t   m_title_height;
+    uint64_t   m_tag;
 };
 
 #endif

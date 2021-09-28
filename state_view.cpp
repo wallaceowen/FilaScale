@@ -38,7 +38,8 @@ StateView::StateView(Display &d,
     m_temp(0.0),
     m_humid(0.0),
     m_weight(0.0),
-    m_full_weight(0.0)
+    m_full_weight(0.0),
+    m_tag(0llu)
 {
     m_title_height = m_display.get_tft().fontHeight(TITLE_FONT);
 }
@@ -50,6 +51,11 @@ void StateView::state_menu_callback(const char *label, bool pressed)
     // Signal to the control module that a new view is requested
     if (m_change_cb && !pressed)
         m_change_cb(label, m_change_data);
+}
+
+void StateView::set_tag(uint64_t &tag)
+{
+    m_tag = tag;
 }
 
 // Show the static part of the view
@@ -81,6 +87,9 @@ void StateView::show()
     ++line;
     y += field_spacing;
     tft.drawString("WEIGHT", x, y, STATE_FONT);
+    ++line;
+    y += field_spacing;
+    tft.drawString("TOKEN", x, y, STATE_FONT);
 
 
     // Now show the state
@@ -177,4 +186,10 @@ void StateView::draw_state()
             m_weight, 0,
             static_cast<uint16_t>(CAL_WEIGHT_GRAMS),
             TFT_ORANGE, TFT_BLUE);
+
+    ++line;
+    y += field_spacing;
+    y += tft.fontHeight(STATE_FONT);
+    sprintf(value_buffer, "%llx ", m_tag);
+    tft.drawString(value_buffer, x, y, STATE_FONT);
 }

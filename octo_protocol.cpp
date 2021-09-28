@@ -91,11 +91,10 @@ int OctoProtocol::recv_bytes(unsigned char *buffer, uint16_t qty) const
     return rcount;
 }
 
-static unsigned char rx_buffer[OctoProtocol::MAX_RX_SIZE];
-
 // Attempt to read an entire message 
-OctoProtocol::OP_Error OctoProtocol::recv_msg(MsgType &_type, uint16_t &length, char *body, unsigned char *buffer) const
+OctoProtocol::OP_Error OctoProtocol::recv_msg(MsgType &_type, uint16_t &length, char *body) const
 {
+    unsigned char buffer[MAX_BODY_SIZE+HEADER_SIZE];
     // Read bytes until we find the sync byte or we time out
     // char *bptr = reinterpret_cast<char*>(buffer);
     unsigned char *bptr = buffer;
@@ -128,7 +127,7 @@ OctoProtocol::OP_Error OctoProtocol::recv_msg(MsgType &_type, uint16_t &length, 
 
     length = *reinterpret_cast<uint16_t*>(bptr);
     bptr += SIZEOF_MSG_LENGTH;
-    if (length > MAX_RX_SIZE)
+    if (length > MAX_BODY_SIZE)
         return OP_BadSize;
 
     if (length)
@@ -171,7 +170,7 @@ void OctoProtocol::loop()
     {
         MsgType _type;
         uint16_t length;
-        OP_Error err = recv_msg(_type, length, body, rx_buffer);
+        OP_Error err = recv_msg(_type, length, body);
         if (err == OP_NoError)
             // show_crc();
             if (m_handler)

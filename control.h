@@ -18,6 +18,7 @@
 #include "thresholds.h"
 
 #define MAX_JSON_SIZE 1024
+#define MAX_FILAMENT_TYPE_LEN 16
 
 class Control
 {
@@ -45,13 +46,15 @@ private:
     static void tag_handler_func(char tag[TAG_MSGLEN], void *user);
     void tag_handler(char tag[TAG_MSGLEN]);
 
-    static void proto_handler_func(uint8_t _type, uint16_t len,
-            char*msg, void *user);
+    static void proto_handler_func(uint8_t _type, uint16_t len, char*msg, void *user);
     void proto_handler(uint8_t _type, uint16_t len, char*msg);
 
-    static void thresh_cb_func(const Threshold*, float, void*);
-    void thresh_cb(const Threshold*, float);
+    static void thresh_cb_func(Thresholds::ThreshType, const Threshold*, float, void*);
+    void thresh_cb(Thresholds::ThreshType, const Threshold*, float);
 
+    void check_thresholds(void);
+
+    uint64_t      m_tag_val;
     Mode          m_mode;
     Scale        &m_scale;
     BME280_IF    &m_bme280;
@@ -61,11 +64,11 @@ private:
     ConfigView    m_config_view;
     FilamentView  m_filament_view;
     NetworkView   m_network_view;
-    TagProtocol  &m_tag_protocol;
     OctoProtocol *m_op;
-    uint64_t      m_tag_val;
+    TagProtocol  &m_tag_protocol;
     Thresholds    m_thresholds;
     View         *m_view;
+    char          m_filament_type[MAX_FILAMENT_TYPE_LEN];
 };
 
 #endif
