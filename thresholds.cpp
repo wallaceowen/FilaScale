@@ -7,6 +7,8 @@
 
 #include "thresholds.h"
 
+const char thresh_type_strings[][MAX_THRESHOLD_NAMELEN] = { "Humidity", "DryingTemp", "Weight"};
+
 Threshold Thresholds::ms_thresholds[] = {
     {"Humidity", 0.0, 60.0 },
     {"DryingTemp", 0.0, 60.0 },
@@ -32,6 +34,11 @@ Thresholds::ThreshType threshold_name_to_type(const char *threshold_name)
         ttype = Thresholds::TT_Weight;
 
     return ttype;
+}
+
+const char *Thresholds::threshold_type_to_name(unsigned _type)
+{
+    return ms_thresholds[_type].name;
 }
 
 void Thresholds::check_threshold(const char *threshold_name, float value)

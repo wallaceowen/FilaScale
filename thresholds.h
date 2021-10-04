@@ -9,10 +9,11 @@
 #include <stdint.h>
 
 #define MAX_THRESHOLDS 25
+#define MAX_THRESHOLD_NAMELEN 16
 
 struct Threshold
 {
-    char name[16];
+    char name[MAX_THRESHOLD_NAMELEN];
     float low;
     float high;
 };
@@ -30,6 +31,8 @@ public:
     void check_threshold( const char *threshold_name, float value);
 
     void set_threshold(const char *threshold_name, float low, float high);
+
+    static const char *threshold_type_to_name(unsigned _type);
 
     void loop();
 
