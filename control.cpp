@@ -5,15 +5,13 @@
 #include "control.h"
 
 // We send STATUS
-#define STATUS_FMT "{\"spool_id\": %llu, \"temp\": %3.3f, \"humidity\": %3.3f, \"weight\": %3.3f \"thresholds\": \"%s\"}"
+#define STATUS_FMT "{\"spool_id\": %llu, \"temp\": %3.3f, \"humidity\": %3.3f, \"weight\": %3.3f}"
 
 // We receive CONFIG
 // example:
 // {"PLA": { "Humidity": { "min": 10.0, "max": 50.0, "optimal": 30.0} } }
 // #define CONFIG_FMT "{\"%s\": {\"%s\": {\"min\": %3.3f, \"max\": %3.3f, \"optimal\": %3.3f}}}"
 // #define THRESH_ALERT_FMT "{\"filament\": \"%s\", \"limit\": \"%s\", \"min\": %4.4f, \"max\": %4.4f, \"value\": %4.4f}"
-
-char thresh_state[96];
 
 bool Control::touch_callback(uint16_t x, uint16_t y, bool pressed)
 {
@@ -66,9 +64,6 @@ Control::Control(
     m_view = &m_state_view;
     tag_protocol.set_tag_cb(tag_handler_func, this);
 
-    // Terminate thresh_state
-    strcpy(thresh_state, "OK");
-
     if (m_op)
         m_op->set_handler(proto_handler_func, this);
 }
@@ -110,9 +105,6 @@ void Control::tag_handler_func(char tag[TAG_MSGLEN], void *user)
 
 void Control::thresh_cb(Thresholds::ThreshType tt, const Threshold *thresh, float val)
 {
-    // Here is where we should alter the display of the view to show we're out-of-bounds
-    sprintf(thresh_state, "{\"threshold\": \"%s\" \"val\": %f \"min\": %f \"max\": %f",
-            Thresholds::threshold_type_to_name(tt), val, thresh->low, thresh->high);
 }
 
 // Buffer for holding replies sent to octoprint-filamon
@@ -128,7 +120,7 @@ void Control::form_up_and_send_status()
         float temp = m_bme280.temp();
         float humidity = m_bme280.humid();
         float grams = m_scale.get_calibrated();
-        sprintf(json_buffer, STATUS_FMT, m_tag_val, temp, humidity, grams, thresh_state);
+        sprintf(json_buffer, STATUS_FMT, m_tag_val, temp, humidity, grams);
         m_op->send_msg(OctoProtocol::MT_STATUS, strlen(json_buffer), json_buffer);
     }
 }
