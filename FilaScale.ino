@@ -27,18 +27,6 @@
 #include "fila_config.h"
 #include "sd_if.h"
 
-// For storing config, logging humidity over time, etc.
-SD_IF *sd_if = 0;
-char sdif_buff[sizeof(SD_IF)];
-
-// The filament monitor config object, which uses the SD interface
-FilaConfig *fila_config = 0;
-char config_buff[sizeof(FilaConfig)];
-
-// The display
-Display *display = 0;
-char display_buff[sizeof(Display)];
-
 // The scale code (except the bit-banging)
 Scale *scale = 0;
 char scale_buff[sizeof(Scale)];
@@ -69,23 +57,11 @@ void setup(void)
 #endif
     while(!Serial) {} // Wait for serial port
 
-    sd_if = new(sdif_buff) SD_IF();
-    Serial.println("sd_if made");
-
-    if (sd_if->card_present())
-    {
-        uint8_t cardType = SD.cardType();
-        Serial.print("card type ");
-        Serial.println(cardType);
-    }
-
-    fila_config = new(config_buff) FilaConfig(sd_if);
-    display = new(display_buff) Display(fila_config);
-    scale = new(scale_buff) Scale(fila_config);
-    bme280 = new(bme_buff) BME280_IF(fila_config);
-    tag_protocol = new(tagproto_buff) TagProtocol(fila_config);
+    scale = new(scale_buff) Scale();
+    bme280 = new(bme_buff) BME280_IF();
+    tag_protocol = new(tagproto_buff) TagProtocol();
     octo_protocol = new(octo_proto_buff) OctoProtocol();
-    control = new(control_buff) Control(*scale, *display, *bme280, *tag_protocol, fila_config, octo_protocol);
+    control = new(control_buff) Control(*scale, *bme280, *tag_protocol, octo_protocol);
 }
 
 void loop()
@@ -94,6 +70,5 @@ void loop()
     bme280->loop();
     tag_protocol->loop();
     control->loop();
-    display->loop();
 }
 

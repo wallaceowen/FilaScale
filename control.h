@@ -6,14 +6,8 @@
 #include <ArduinoJson.h>
 
 #include "bme280_if.h"
-#include "display.h"
 #include "tag_protocol.h"
 #include "scale.h"
-#include "state_view.h"
-#include "calib_view.h"
-#include "config_view.h"
-#include "filament_view.h"
-#include "network_view.h"
 #include "octo_protocol.h"
 #include "thresholds.h"
 
@@ -26,7 +20,6 @@ public:
 
     enum Mode { M_Show, M_Update, M_Error };
     Control(Scale &scale,
-            Display &display,
             BME280_IF &bme280,
             TagProtocol &tag_protocol,
             FilaConfig *fc,
@@ -36,12 +29,6 @@ public:
 private:
 
     void form_up_and_send_status();
-
-    static bool touch_callback_func(Display *d, void *user, uint16_t x, uint16_t y, bool pressed);
-    bool touch_callback(uint16_t x, uint16_t y, bool touched);
-
-    static void change_view_func(const char *view_name, void *user);
-    void change_view(const char *view_name);
 
     static void tag_handler_func(char tag[TAG_MSGLEN], void *user);
     void tag_handler(char tag[TAG_MSGLEN]);
@@ -58,16 +45,9 @@ private:
     Mode          m_mode;
     Scale        &m_scale;
     BME280_IF    &m_bme280;
-    Display      &m_display;
-    StateView     m_state_view;
-    CalibView     m_scale_calib_view;
-    ConfigView    m_config_view;
-    FilamentView  m_filament_view;
-    NetworkView   m_network_view;
     OctoProtocol *m_op;
     TagProtocol  &m_tag_protocol;
     Thresholds    m_thresholds;
-    View         *m_view;
     char          m_filament_type[MAX_FILAMENT_TYPE_LEN];
 };
 
