@@ -19,7 +19,7 @@ Download the code and burn it into a FilaScale board (or your own board, or a br
 
 
 ## The Hardware
-The KiCAD board design for FilaScale is at https://github.com/wallaceowen/FilaScaleBoard/tree/nogui_nano
+The KiCAD board design for FilaScale is at https://github.com/wallaceowen/FilaScale-S
 
 ## Usage
 
