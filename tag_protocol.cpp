@@ -1,6 +1,7 @@
 /* protocol.cpp */
 
 #include <Arduino.h>
+#include <SoftwareSerial.h>
 #include <string.h>
 
 #include "tag_protocol.h"
@@ -11,6 +12,9 @@
 #define TAG_PORT Serial
 #elif defined(TAG_PORT_IS_SERIAL2)
 #define TAG_PORT Serial2
+#elif defined(TAG_PORT_IS_SOFT_SERIAL)
+SoftwareSerial softSerial(2, 3);
+#define TAG_PORT softSerial
 #else
 #error define a tag port
 #endif

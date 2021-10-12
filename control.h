@@ -11,18 +11,16 @@
 #include "octo_protocol.h"
 #include "thresholds.h"
 
-#define MAX_JSON_SIZE 1024
+#define MAX_JSON_SIZE 256
 #define MAX_FILAMENT_TYPE_LEN 16
 
 class Control
 {
 public:
 
-    enum Mode { M_Show, M_Update, M_Error };
     Control(Scale &scale,
             BME280_IF &bme280,
             TagProtocol &tag_protocol,
-            FilaConfig *fc,
             OctoProtocol *op);
     void loop();
 
@@ -41,8 +39,7 @@ private:
 
     void check_thresholds(void);
 
-    uint64_t      m_tag_val;
-    Mode          m_mode;
+    char          m_tag_val[TAG_MSGLEN+1];
     Scale        &m_scale;
     BME280_IF    &m_bme280;
     OctoProtocol *m_op;

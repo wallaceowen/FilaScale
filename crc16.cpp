@@ -21,12 +21,13 @@
 */
 
 #include "crc16.h"
+#include <avr/pgmspace.h>
 
 /*
  * CRC-16 values for CRC-16 table driven byte-wise algorithm. 
  */
 
-static unsigned short crctab16[256] = {
+const static unsigned short crctab16[256] PROGMEM = {
 	
 	0x0000, 0xC0C1, 0xC181, 0x0140, 0xC301, 0x03C0, 0x0280, 0xC241, 
 	0xC601, 0x06C0, 0x0780, 0xC741, 0x0500, 0xC5C1, 0xC481, 0x0440, 

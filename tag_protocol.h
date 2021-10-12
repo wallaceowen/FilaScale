@@ -6,12 +6,12 @@
 #include <Arduino.h>
 #include <string.h>
 
-#include "fila_config.h"
 // #include "scale.h"
 
 // First gen boards have tag tied to serial rx; rev 2 uses serial2 rx
 // #define TAG_PORT_IS_SERIAL
-#define TAG_PORT_IS_SERIAL2
+// #define TAG_PORT_IS_SERIAL2
+#define TAG_PORT_IS_SOFT_SERIAL
 
 #define TAG_MSGLEN 16
 
@@ -26,8 +26,7 @@ public:
     enum TagRxState { TS_Init, TS_WaitSTX, TS_GotSTX, TS_GotETX, TS_NumStates };
 
 
-    TagProtocol(FilaConfig *fc) :
-        m_fc(fc),
+    TagProtocol() :
         m_cb(0),
         m_user_data(0),
         m_state(TS_Init),
@@ -46,7 +45,6 @@ public:
 private:
     TagRxState read_tag(void);
 
-    FilaConfig  *m_fc;
     TagReceivedCB m_cb;
     void         *m_user_data;
     TagRxState    m_state;

@@ -5,13 +5,17 @@
 
 #include "HX711.h"
 #include "Averager.h"
-#include "display_config.h"
-#include "fila_config.h"
+
+struct ScaleData
+{
+    uint64_t offset;
+    float gain;
+};
 
 class Scale
 {
 public:
-    Scale(FilaConfig *fc);
+    Scale();
 
     void loop();
     int32_t get_raw(void) const { return m_raw; }
@@ -20,7 +24,6 @@ public:
     void set_gain();
 
 private:
-    FilaConfig  *m_fc;
     HX711        m_hx711;
     int32_t      m_raw;
     ScaleData    m_scale_data;

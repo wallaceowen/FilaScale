@@ -20,7 +20,7 @@ public:
         OP_Bad_CRC,
         OP_Bad_MsgType
     };
-    enum Constants { BaudRate=115200, HEADER_SIZE=4, MAX_BODY_SIZE=1024, SYNC_BYTE=0x55 };
+    enum Constants { BaudRate=115200, HEADER_SIZE=4, MAX_BODY_SIZE=160, SYNC_BYTE=0x55 };
 
     // enum RX_State { RS_Sync, RS_Type, RS_Addr, RS_Body, RS_CRC, RS_Ready };
 

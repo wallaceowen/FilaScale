@@ -14,18 +14,12 @@
  *
  */
 
-#include <iostream>
-#include <FS.h>
-#include <SD.h>
-
 #include "bme280_if.h"
-#include "display.h"
 #include "tag_protocol.h"
 #include "octo_protocol.h"
 #include "scale.h"
 #include "control.h"
-#include "fila_config.h"
-#include "sd_if.h"
+#include "vnew.h"
 
 // The scale code (except the bit-banging)
 Scale *scale = 0;

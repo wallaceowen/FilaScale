@@ -31,12 +31,11 @@
 
 static Adafruit_BME280 bme; // I2C
 
-BME280_IF::BME280_IF(FilaConfig *fc) :
-    m_fc(fc),
+BME280_IF::BME280_IF() :
     m_temp(0.0),
-    m_humid(0.0),
-    m_pres(0.0),
-    m_alt(0.0)
+    m_humid(0.0)
+    // , m_pres(0.0),
+    // m_alt(0.0)
 {
     m_initialized = bme.begin(0x76)?true:false;
 }
@@ -44,7 +43,7 @@ BME280_IF::BME280_IF(FilaConfig *fc) :
 void BME280_IF::loop()
 { 
     m_temp = bme.readTemperature();
-    m_pres = bme.readPressure();
-    m_alt = bme.readAltitude(SEALEVELPRESSURE_HPA);
     m_humid = bme.readHumidity();
+    // m_pres = bme.readPressure();
+    // m_alt = bme.readAltitude(SEALEVELPRESSURE_HPA);
 }
