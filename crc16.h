@@ -6,7 +6,6 @@
 #define __crc_h
 
 #include <stdint.h>
-// #include <types.h>
 
 typedef uint16_t CRCType;
 

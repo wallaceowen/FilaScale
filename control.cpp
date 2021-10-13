@@ -58,9 +58,9 @@ void Control::form_up_and_send_status()
     // in json.
     if (m_op)
     {
-        float temp = m_bme280.temp();
-        float humidity = m_bme280.humid();
-        float grams = m_scale.get_calibrated();
+        double temp = m_bme280.temp();
+        double humidity = m_bme280.humid();
+        double grams = m_scale.get_calibrated();
         sprintf(json_buffer, STATUS_FMT, m_tag_val, temp, humidity, grams);
         m_op->send_msg(OctoProtocol::MT_STATUS, strlen(json_buffer), json_buffer);
     }
@@ -78,15 +78,6 @@ void Control::proto_handler(uint8_t _type, uint16_t len, char*body)
             break;
         }
 
-        // Config configures a single threshold.
-        // The config data is json that looks like:
-        /*
-        {
-            "filament_type": "Nylon",
-            "Humidity": {"min": 10.0, "max": 30},
-            "DryingTemp": {"min": 0.0, "max": 20.0}
-        }
-        */
         case OctoProtocol::MT_CONFIG:
         {
             StaticJsonDocument<MAX_JSON_SIZE> config_json;

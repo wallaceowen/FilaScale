@@ -36,7 +36,7 @@ void dump_bytes(const char *title, const unsigned char *bytes, int len)
     char dbg[12];
     Serial.print(title);
     Serial.print(": ");
-    for (unsigned i = 0; i < len; ++i)
+    for (int i = 0; i < len; ++i)
     {
         sprintf(dbg, "%2x", bytes[i]);
         Serial.print(dbg);
@@ -92,12 +92,10 @@ int OctoProtocol::recv_bytes(unsigned char *buffer, uint16_t qty) const
 }
 
 // Attempt to read an entire message 
-OctoProtocol::OP_Error OctoProtocol::recv_msg(MsgType &_type, uint16_t &length, char *body) const
+OctoProtocol::OP_Error OctoProtocol::recv_msg(MsgType &_type, uint16_t &length, char *msg) const
 {
-    unsigned char buffer[MAX_BODY_SIZE+HEADER_SIZE];
     // Read bytes until we find the sync byte or we time out
-    // char *bptr = reinterpret_cast<char*>(buffer);
-    unsigned char *bptr = buffer;
+    unsigned char *bptr = reinterpret_cast<unsigned char *>(msg);
     while (1)
     {
         int ch = Serial.read();
@@ -108,13 +106,14 @@ OctoProtocol::OP_Error OctoProtocol::recv_msg(MsgType &_type, uint16_t &length, 
             break;
     }
 
-    *bptr++='U';
+    *bptr++=SYNC_BYTE;
 
     if (!Serial.readBytes(bptr, SIZEOF_MSG_TYPE))
         return OP_NoData;
     // Save the type
-    char t = *bptr++;
-    _type = static_cast<MsgType>(t);
+    // char t = *bptr++;
+    // _type = static_cast<MsgType>(t);
+    _type = static_cast<MsgType>(*bptr++);
 
     if (_type >= NUM_VALID_MESSAGES)
         return OP_Bad_MsgType;
@@ -135,7 +134,6 @@ OctoProtocol::OP_Error OctoProtocol::recv_msg(MsgType &_type, uint16_t &length, 
         // Try to read the body
         if (!Serial.readBytes(bptr, length))
             return OP_NoData;
-        memcpy(body, bptr, length);
         bptr += length;
     }
 
@@ -152,7 +150,7 @@ OctoProtocol::OP_Error OctoProtocol::recv_msg(MsgType &_type, uint16_t &length, 
     // Compute the CRC of the bytes we received in the message
     uint16_t msize = SIZEOF_SYNC+SIZEOF_MSG_TYPE+SIZEOF_MSG_LENGTH+length;
     uint16_t ccrc = 0;
-    calcCRCArray16(buffer, msize, &ccrc);
+    calcCRCArray16(reinterpret_cast<unsigned char *>(msg), msize, &ccrc);
 
     if (ccrc != rcrc)
         return OP_Bad_CRC;
@@ -161,19 +159,22 @@ OctoProtocol::OP_Error OctoProtocol::recv_msg(MsgType &_type, uint16_t &length, 
 }
 
 
-static char body[OctoProtocol::MAX_BODY_SIZE];
+static char message[OctoProtocol::MAX_RX_MSG_SIZE];
+
 void OctoProtocol::loop()
 {
     // If there's enough bytes waiting for a minimum message check it out and
     // try to read it
-    if (Serial.available() > SIZEOF_HEADER+SIZEOF_CRC)
+    if (Serial.available() >= SIZEOF_HEADER+SIZEOF_CRC)
     {
         MsgType _type;
         uint16_t length;
-        OP_Error err = recv_msg(_type, length, body);
+        // OP_Error err = recv_msg(_type, length, body);
+        OP_Error err = recv_msg(_type, length, message);
         if (err == OP_NoError)
             // show_crc();
             if (m_handler)
-                m_handler(_type, length, body, m_user_data);
+                // m_handler(_type, length, body, m_user_data);
+                m_handler(_type, length, message+HEADER_SIZE, m_user_data);
     }
 }

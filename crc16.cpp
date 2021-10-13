@@ -71,7 +71,9 @@ void calcCRCArray16(const uint8_t *p, uint16_t len, uint16_t *crc)
 	for (i = 0; i < len; ++i)
     {
         uint8_t b = p[i];
-        *crc = ((*crc<<8)&0xff00) ^ crctab16[((*crc>>8)&0xff)^b];
+        // *crc = ((*crc<<8)&0xff00) ^ crctab16[((*crc>>8)&0xff)^b];
+        uint16_t offset = (((*crc>>8)&0xff)^b);
+        *crc = ((*crc<<8)&0xff00) ^ pgm_read_word((crctab16+offset));
     }
 	return;
 }
