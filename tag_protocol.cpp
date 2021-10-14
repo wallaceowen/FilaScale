@@ -1,23 +1,11 @@
 /* protocol.cpp */
 
 #include <Arduino.h>
-#include <SoftwareSerial.h>
 #include <string.h>
 
 #include "tag_protocol.h"
 
 #define INTER_MSG_DELAY 1000
-
-#ifdef TAG_PORT_IS_SERIAL
-#define TAG_PORT Serial
-#elif defined(TAG_PORT_IS_SERIAL2)
-#define TAG_PORT Serial2
-#elif defined(TAG_PORT_IS_SOFT_SERIAL)
-SoftwareSerial softSerial(2, 3);
-#define TAG_PORT softSerial
-#else
-#error define a tag port
-#endif
 
 // If there's nothing waiting, return 0
 // if there's something to read
@@ -29,9 +17,9 @@ SoftwareSerial softSerial(2, 3);
 TagProtocol::TagRxState TagProtocol::read_tag()
 {
     static auto until = millis();
-    // if (TAG_PORT.available())
+    // if (m_softSerial.available())
     {
-        // int val = TAG_PORT.read();
+        // int val = m_softSerial.read();
 
         switch(m_state)
         {
@@ -44,9 +32,9 @@ TagProtocol::TagRxState TagProtocol::read_tag()
             }
             case TS_WaitSTX:
             {
-                if (TAG_PORT.available())
+                if (m_softSerial.available())
                 {
-                    int val = TAG_PORT.read();
+                    int val = m_softSerial.read();
 
                     if (val == STX)
                     {
@@ -58,9 +46,9 @@ TagProtocol::TagRxState TagProtocol::read_tag()
             }
             case TS_GotSTX:
             {
-                if (TAG_PORT.available())
+                if (m_softSerial.available())
                 {
-                    int val = TAG_PORT.read();
+                    int val = m_softSerial.read();
                     if (val == ETX)
                     {
                         m_buffer[m_offset++] = '\0';
@@ -88,8 +76,8 @@ TagProtocol::TagRxState TagProtocol::read_tag()
                 }
                 else
                 {
-                    while (TAG_PORT.available())
-                        TAG_PORT.read();
+                    while (m_softSerial.available())
+                        m_softSerial.read();
                 }
                 break;
             }

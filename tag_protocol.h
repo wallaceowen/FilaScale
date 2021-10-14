@@ -4,14 +4,8 @@
 #define __tag_protocol_h
 
 #include <Arduino.h>
+#include <SoftwareSerial.h>
 #include <string.h>
-
-// #include "scale.h"
-
-// First gen boards have tag tied to serial rx; rev 2 uses serial2 rx
-// #define TAG_PORT_IS_SERIAL
-// #define TAG_PORT_IS_SERIAL2
-#define TAG_PORT_IS_SOFT_SERIAL
 
 #define TAG_MSGLEN 16
 
@@ -26,7 +20,8 @@ public:
     enum TagRxState { TS_Init, TS_WaitSTX, TS_GotSTX, TS_GotETX, TS_NumStates };
 
 
-    TagProtocol() :
+    TagProtocol(SoftwareSerial &softSerial) :
+        m_softSerial(softSerial),
         m_cb(0),
         m_user_data(0),
         m_state(TS_Init),
@@ -45,11 +40,12 @@ public:
 private:
     TagRxState read_tag(void);
 
-    TagReceivedCB m_cb;
-    void         *m_user_data;
-    TagRxState    m_state;
-    uint16_t      m_offset;
-    char          m_buffer[TAG_MSGLEN];
+    SoftwareSerial &m_softSerial;
+    TagReceivedCB   m_cb;
+    void           *m_user_data;
+    TagRxState      m_state;
+    uint16_t        m_offset;
+    char            m_buffer[TAG_MSGLEN];
 };
 
 #endif

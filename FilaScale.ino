@@ -14,6 +14,8 @@
  *
  */
 
+#include <SoftwareSerial.h>
+
 #include "bme280_if.h"
 #include "tag_protocol.h"
 #include "octo_protocol.h"
@@ -41,28 +43,31 @@ char octo_proto_buff[sizeof(OctoProtocol)];
 Control *control = 0;
 char control_buff[sizeof(Control)];
 
+SoftwareSerial softSerial(2, 3);
+
 void setup(void)
 {
-#ifdef TAG_PORT_IS_SERIAL
-    Serial.begin(9600);
-#elif defined(TAG_PORT_IS_SERIAL2)
     Serial.begin(115200);
-    Serial2.begin(9600);
-#endif
+    softSerial.begin(9600);
     while(!Serial) {} // Wait for serial port
 
     scale = new(scale_buff) Scale();
     bme280 = new(bme_buff) BME280_IF();
-    tag_protocol = new(tagproto_buff) TagProtocol();
+    tag_protocol = new(tagproto_buff) TagProtocol(softSerial);
     octo_protocol = new(octo_proto_buff) OctoProtocol();
     control = new(control_buff) Control(*scale, *bme280, *tag_protocol, octo_protocol);
 }
 
 void loop()
 {
+
+    // Serial.println("scale loop");
     scale->loop();
+    // Serial.println("bme loop");
     bme280->loop();
+    // Serial.println("tag loop");
     tag_protocol->loop();
+    // Serial.println("control loop");
     control->loop();
 }
 
