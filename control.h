@@ -27,6 +27,7 @@ public:
 private:
 
     void form_up_and_send_status();
+    void form_up_and_send_config();
 
     static void tag_handler_func(char tag[TAG_MSGLEN], void *user);
     void tag_handler(char tag[TAG_MSGLEN]);
@@ -37,15 +38,12 @@ private:
     static void thresh_cb_func(Thresholds::ThreshType, const Threshold*, float, void*);
     void thresh_cb(Thresholds::ThreshType, const Threshold*, float);
 
-    void check_thresholds(void);
-
     char          m_tag_val[TAG_MSGLEN+1];
     Scale        &m_scale;
     BME280_IF    &m_bme280;
     OctoProtocol *m_op;
     TagProtocol  &m_tag_protocol;
-    Thresholds    m_thresholds;
-    char          m_filament_type[MAX_FILAMENT_TYPE_LEN];
+    StaticJsonDocument<MAX_JSON_SIZE> m_config_json;
 };
 
 #endif

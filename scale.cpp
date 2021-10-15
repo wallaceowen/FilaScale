@@ -8,26 +8,25 @@
 #include "scale.h"
 #include "HX711.h"
 
+/* "FACTORY RESET" values */
 #define SCALE_OFFSET 36597L
 #define SCALE_GAIN (2.5/1710.0)
-#define CAL_WEIGHT_GRAMS 100
 
 float Scale::get_calibrated(void) const
 {
     return (m_raw-m_scale_data.offset)*m_scale_data.gain;
 }
 
-void Scale::set_offset(void)
+void Scale::set_offset(int32_t offset)
 {
-    m_scale_data.offset = m_raw;
+    m_scale_data.offset = offset;
+    // Serial.print("set_offset(");
+    // Serial.print(offset);
+    // Serial.println(")");
 }
 
-void Scale::set_gain()
+void Scale::set_gain(float gain)
 {
-    uint32_t raw = this->get_raw();
-    double gain = CAL_WEIGHT_GRAMS/
-            double((raw-this->m_scale_data.offset));
-
     m_scale_data.gain = gain;
 }
 

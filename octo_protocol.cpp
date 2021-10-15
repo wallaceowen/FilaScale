@@ -172,9 +172,19 @@ void OctoProtocol::loop()
         // OP_Error err = recv_msg(_type, length, body);
         OP_Error err = recv_msg(_type, length, message);
         if (err == OP_NoError)
+        {
             // show_crc();
             if (m_handler)
                 // m_handler(_type, length, body, m_user_data);
                 m_handler(_type, length, message+HEADER_SIZE, m_user_data);
+        }
+#ifdef DEBUG_COMMS
+        else
+        {
+            Serial.print("Got error ");
+            Serial.print(err);
+            Serial.println(" trying to rx a msg");
+        }
+#endif
     }
 }

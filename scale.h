@@ -8,7 +8,7 @@
 
 struct ScaleData
 {
-    uint64_t offset;
+    int32_t offset;
     float gain;
 };
 
@@ -20,8 +20,10 @@ public:
     void loop();
     int32_t get_raw(void) const { return m_raw; }
     float get_calibrated(void) const;
-    void set_offset(void);
-    void set_gain();
+    int32_t get_offset() const { return m_scale_data.offset; }
+    void set_offset(int32_t);
+    float get_gain() const { return m_scale_data.gain; }
+    void set_gain(float);
 
 private:
     HX711        m_hx711;
