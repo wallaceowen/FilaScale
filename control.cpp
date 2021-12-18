@@ -64,6 +64,13 @@ void add_clause(const char *key, char *val, char *buffer)
     strcat(buffer, formbuff);
 }
 
+void add_clause(const char *key, int32_t val, char *buffer)
+{
+    char formbuff[24];
+    sprintf(formbuff, "\"%s\": %ld", key, val);
+    strcat(buffer, formbuff);
+}
+
 // Form up a message to tell FilaMon that a threshold has been exceeded
 void Control::form_up_and_send_status()
 {
@@ -72,7 +79,6 @@ void Control::form_up_and_send_status()
     if (m_op)
     {
         strcpy(json_buffer, "{");
-        // {'spool_id': 0, 'temp': 0.0, 'humidity': 0, 'weight': 2.6968924e+16}
         add_clause("spool_id", m_tag_val, json_buffer);
         strcat(json_buffer, ", ");
         add_clause("temp", m_bme280.temp(), json_buffer);
